@@ -114,9 +114,7 @@ class _RegistreStudentState extends State<RegistreStudent> {
                       ),
                       onPressed: () async {
                         // Logica
-                        // cadastrarClienteAction(context);
-
-                      
+                        // cadastrarClienteAction(context);                      
                       },
                       child: const Center(
                         child: Text(
