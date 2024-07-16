@@ -2,6 +2,7 @@
 
 import 'dart:async';
 
+import 'package:register_student/shared/dao/sql.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:path/path.dart';

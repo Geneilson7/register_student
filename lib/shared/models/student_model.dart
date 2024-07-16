@@ -9,6 +9,7 @@ class Student {
   String? status;
   String? endereco;
   String? municipio;
+  String? responsavel;
   String? telefone;
   String? telresponsavel;
   String? cep;
@@ -27,6 +28,7 @@ class Student {
     required this.status,
     required this.endereco,
     required this.municipio,
+    required this.responsavel,
     required this.telefone,
     required this.telresponsavel,
     required this.cep,
@@ -47,6 +49,7 @@ class Student {
       status: map['status'],
       endereco: map['endereco'],
       municipio: map['municipio'],
+      responsavel: map['responsavel'],
       telefone: map['telefone'],
       telresponsavel: map['telresponsavel'],
       cep: map['cep'],
