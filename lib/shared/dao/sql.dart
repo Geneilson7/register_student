@@ -30,7 +30,7 @@ class ConnectionSQL {
 
   static String adicionarStudent(Student student) {
     return '''
-      insert into student (nome, cpf, rg, dtnascimento, pcd, sexo, status, endereco, municipio, responsavel, telefone, telresponsavel, cep, escola, endescola, turnoescolar)
+      insert into student (nome, cpf, rg, dtnascimento, pcd, sexo, status, bairro, endereco, municipio, responsavel, telefone, telresponsavel, cep, escola, endescola, turnoescolar)
       values ('${student.nome}','${student.cpf}','${student.rg}','${student.dtnascimento}','${student.pcd}','${student.sexo}','${student.status}','${student.bairro}','${student.endereco}','${student.municipio}','${student.responsavel}','${student.telefone}','${student.telresponsavel}','${student.cep}','${student.escola}','${student.turnoescolar}');
     ''';
   }
