@@ -1,39 +1,68 @@
-// ignore_for_file: avoid_print, use_build_context_synchronously, deprecated_member_use
+// ignore_for_file: avoid_print, use_build_context_synchronously, deprecated_member_use, must_be_immutable, use_key_in_widget_constructors
 import 'package:flutter/material.dart';
+import 'package:register_student/shared/models/student_model.dart';
 import 'package:register_student/src/home_page.dart';
 import 'package:register_student/util/form.dart';
 
-
 class RegistreStudent extends StatefulWidget {
-  final bool isEditMode; // Indica se estamos em modo de edição ou não
-  final int? productId;
-
-  const RegistreStudent({
-    Key? key,
-    this.isEditMode = false,
-    this.productId,
-  }) : super(key: key);
+  Student? student;
+  RegistreStudent({this.student});
 
   @override
   State<RegistreStudent> createState() => _RegistreStudentState();
 }
 
 class _RegistreStudentState extends State<RegistreStudent> {
-  TextEditingController codigoController = TextEditingController();
-  TextEditingController cpfcnpjController = TextEditingController();
-  TextEditingController razaosocialController = TextEditingController();
-  TextEditingController fantaziaController = TextEditingController();
-  TextEditingController contatoController = TextEditingController();
-  String cidadeValue = '';
-  TextEditingController enderecoController = TextEditingController();
-  TextEditingController emailController = TextEditingController();
-
-  int? selectedClienteId;
-  String? userId;
- 
-
   final _formKey = GlobalKey<FormState>();
   bool isEntrando = true;
+
+  Student student = Student.empty();
+
+  TextEditingController txtNome = TextEditingController();
+  TextEditingController txtCpfCnpj = TextEditingController();
+  TextEditingController txtRg = TextEditingController();
+  TextEditingController txtDtnascimento = TextEditingController();
+  TextEditingController txtPcd = TextEditingController();
+  TextEditingController txtSexo = TextEditingController();
+  TextEditingController txtStatus = TextEditingController();
+  TextEditingController txtBairro = TextEditingController();
+  TextEditingController txtEndereco = TextEditingController();
+  TextEditingController txtMunicipio = TextEditingController();
+  TextEditingController txtResponsavel = TextEditingController();
+  TextEditingController txtTelefone = TextEditingController();
+  TextEditingController txtTelresponsavel = TextEditingController();
+  TextEditingController txtCep = TextEditingController();
+  TextEditingController txtEscola = TextEditingController();
+  TextEditingController txtEndescola = TextEditingController();
+  TextEditingController txtTurnoescolar = TextEditingController();
+
+  void iniciarDadosStudent() {
+    if (widget.student != null) {
+      txtNome.text = widget.student!.nome;
+      txtCpfCnpj.text = widget.student!.cpf;
+      txtRg.text = widget.student!.rg;
+      txtDtnascimento.text = widget.student!.dtnascimento;
+      txtPcd.text = widget.student!.pcd;
+      txtSexo.text = widget.student!.sexo;
+      txtStatus.text = widget.student!.status;
+      txtBairro.text = widget.student!.bairro;
+      txtEndereco.text = widget.student!.endereco;
+      txtMunicipio.text = widget.student!.municipio;
+      txtResponsavel.text = widget.student!.responsavel;
+      txtTelefone.text = widget.student!.telefone;
+      txtTelresponsavel.text = widget.student!.telresponsavel;
+      txtCep.text = widget.student!.cep;
+      txtEscola.text = widget.student!.escola;
+      txtEndescola.text = widget.student!.endescola;
+      txtTurnoescolar.text = widget.student!.turnoescolar;
+    }
+  }
+
+  @override
+  void initState(){
+    iniciarDadosStudent();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,9 +83,9 @@ class _RegistreStudentState extends State<RegistreStudent> {
           icon: const Icon(Icons.arrow_back_ios),
           color: const Color(0xFF1F41BB),
         ),
-        title: Text(
-          widget.isEditMode ? 'Alterar Aluno' : 'Cadastrar Aluno',
-          style: const TextStyle(
+        title: const Text(
+          'Cadastro aluno',
+          style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.w700,
             color: Color(0xFF404046),
@@ -75,12 +104,220 @@ class _RegistreStudentState extends State<RegistreStudent> {
             key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [                
+              children: [
                 Padding(
                   padding: const EdgeInsets.only(bottom: 15),
                   child: TextFormField(
                     decoration: textFormField("Nome"),
-                    controller: razaosocialController,
+                    controller: txtNome,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Razão Social não pode está vazio.";
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 15),
+                  child: TextFormField(
+                    decoration: textFormField("CPF"),
+                    controller: txtCpfCnpj,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Razão Social não pode está vazio.";
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 15),
+                  child: TextFormField(
+                    decoration: textFormField("RG"),
+                    controller: txtRg,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Razão Social não pode está vazio.";
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 15),
+                  child: TextFormField(
+                    decoration: textFormField("Data nascimento"),
+                    controller: txtDtnascimento,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Razão Social não pode está vazio.";
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 15),
+                  child: TextFormField(
+                    decoration: textFormField("PCD"),
+                    controller: txtDtnascimento,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Razão Social não pode está vazio.";
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 15),
+                  child: TextFormField(
+                    decoration: textFormField("Sexo"),
+                    controller: txtSexo,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Razão Social não pode está vazio.";
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 15),
+                  child: TextFormField(
+                    decoration: textFormField("Status"),
+                    controller: txtStatus,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Razão Social não pode está vazio.";
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 15),
+                  child: TextFormField(
+                    decoration: textFormField("Bairro"),
+                    controller: txtBairro,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Razão Social não pode está vazio.";
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 15),
+                  child: TextFormField(
+                    decoration: textFormField("Endereço"),
+                    controller: txtEndereco,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Razão Social não pode está vazio.";
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 15),
+                  child: TextFormField(
+                    decoration: textFormField("Municipio"),
+                    controller: txtMunicipio,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Razão Social não pode está vazio.";
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 15),
+                  child: TextFormField(
+                    decoration: textFormField("Responsavel"),
+                    controller: txtResponsavel,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Razão Social não pode está vazio.";
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 15),
+                  child: TextFormField(
+                    decoration: textFormField("Telefone"),
+                    controller: txtTelefone,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Razão Social não pode está vazio.";
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 15),
+                  child: TextFormField(
+                    decoration: textFormField("Telefone Responsavel"),
+                    controller: txtTelresponsavel,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Razão Social não pode está vazio.";
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 15),
+                  child: TextFormField(
+                    decoration: textFormField("CEP"),
+                    controller: txtCep,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Razão Social não pode está vazio.";
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 15),
+                  child: TextFormField(
+                    decoration: textFormField("Escola"),
+                    controller: txtEscola,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Razão Social não pode está vazio.";
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 15),
+                  child: TextFormField(
+                    decoration: textFormField("Endereço escolar"),
+                    controller: txtEndescola,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Razão Social não pode está vazio.";
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 15),
+                  child: TextFormField(
+                    decoration: textFormField("Turno escolar"),
+                    controller: txtTurnoescolar,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return "Razão Social não pode está vazio.";
@@ -114,7 +351,7 @@ class _RegistreStudentState extends State<RegistreStudent> {
                       ),
                       onPressed: () async {
                         // Logica
-                        // cadastrarClienteAction(context);                      
+                        // cadastrarClienteAction(context);
                       },
                       child: const Center(
                         child: Text(
@@ -146,44 +383,44 @@ class _RegistreStudentState extends State<RegistreStudent> {
     );
   }
 
-  botaoEnviarClicado() {
-    String codigo = codigoController.text;
-    String cpfcnpj = cpfcnpjController.text;
-    String razaosocial = razaosocialController.text;
-    String fantazia = fantaziaController.text;
-    String contato = contatoController.text;
-    String email = emailController.text;
+  // botaoEnviarClicado() {
+  //   // String codigo = codigoController.text;
+  //   // String cpfcnpj = cpfcnpjController.text;
+  //   // String razaosocial = razaosocialController.text;
+  //   // String fantazia = fantaziaController.text;
+  //   // String contato = contatoController.text;
+  //   // String email = emailController.text;
 
-    if (_formKey.currentState!.validate()) {
-      if (isEntrando) {
-        _entrarUsuario(
-          codigo: codigo,
-          cpfcnpj: cpfcnpj,
-          razaosocial: razaosocial,
-          fantazia: fantazia,
-          contato: contato,
-          email: email,
-        );
-      } else {
-        return null;
-      }
-    }
-  }
+  //   if (_formKey.currentState!.validate()) {
+  //     if (isEntrando) {
+  //       _entrarUsuario(
+  //         codigo: codigo,
+  //         cpfcnpj: cpfcnpj,
+  //         razaosocial: razaosocial,
+  //         fantazia: fantazia,
+  //         contato: contato,
+  //         email: email,
+  //       );
+  //     } else {
+  //       return null;
+  //     }
+  //   }
+  // }
 
-  _entrarUsuario({
-    required String codigo,
-    required String cpfcnpj,
-    required String razaosocial,
-    required String fantazia,
-    required String contato,
-    required String email,
-  }) {
-    return _entrarUsuario(
-        codigo: codigo,
-        cpfcnpj: cpfcnpj,
-        razaosocial: razaosocial,
-        fantazia: fantazia,
-        contato: contato,
-        email: email);
-  }
+  // _entrarUsuario({
+  //   required String codigo,
+  //   required String cpfcnpj,
+  //   required String razaosocial,
+  //   required String fantazia,
+  //   required String contato,
+  //   required String email,
+  // }) {
+  //   return _entrarUsuario(
+  //       codigo: codigo,
+  //       cpfcnpj: cpfcnpj,
+  //       razaosocial: razaosocial,
+  //       fantazia: fantazia,
+  //       contato: contato,
+  //       email: email);
+  // }
 }

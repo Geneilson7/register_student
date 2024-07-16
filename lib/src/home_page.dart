@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:register_student/register/register_student.dart';
+import 'package:register_student/shared/models/student_model.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -9,15 +10,54 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  // final ClienteService _clienteService = ClienteService();
-  // late Future<List<Cliente>> _futureClientes;
   final TextEditingController _searchController = TextEditingController();
-  int? selectedClienteId;
+
+  List<Student> student = [
+    Student(
+      id: 1,
+      nome: 'Jhon Enzo',
+      cpf: '999.999.999-99',
+      rg: '12345678',
+      dtnascimento: '01/01/2024',
+      pcd: 'Não',
+      sexo: 'Masculino',
+      status: 'Ativo',
+      bairro: 'Centro',
+      endereco: 'Rua: teste',
+      municipio: 'Parauapebas',
+      responsavel: 'Francisco',
+      telefone: '(94) 91234-5678',
+      telresponsavel: '(94) 91234-5678',
+      cep: '68515-000',
+      escola: 'Faruk',
+      endescola: 'Rua teste',
+      turnoescolar: 'Manhã',
+    ),
+    Student(
+      id: 2,
+      nome: 'João',
+      cpf: '999.999.999-99',
+      rg: '12345678',
+      dtnascimento: '01/01/2024',
+      pcd: 'Não',
+      sexo: 'Masculino',
+      status: 'Ativo',
+      bairro: 'Centro',
+      endereco: 'Rua: teste',
+      municipio: 'Parauapebas',
+      responsavel: 'Francisco',
+      telefone: '(94) 91234-5678',
+      telresponsavel: '(94) 91234-5678',
+      cep: '68515-000',
+      escola: 'Faruk',
+      endescola: 'Rua teste',
+      turnoescolar: 'Manhã',
+    ),
+  ];
 
   @override
   void initState() {
     super.initState();
-    // _futureClientes = _clienteService.fetchClientes();
   }
 
   // List<Cliente> filterClientes(List<Cliente> clientes, String query) {
@@ -128,102 +168,108 @@ class _HomePageState extends State<HomePage> {
               primary: false,
               shrinkWrap: true,
               keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-              itemCount: 10,
+              itemCount: student.length,
               itemBuilder: (context, index) {
+                Student students = student[index];
                 // final user = users[index];
-                return GestureDetector(
-                  onTap: () {},
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 60,
-                      vertical: 5,
-                    ),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(25),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.5),
-                            spreadRadius: 0,
-                            blurRadius: 5,
-                            offset: const Offset(0, 3),
-                          ),
-                        ],
-                      ),
-                      child: Card(
-                        color: const Color(0xFFFFFFFF),
-                        elevation: 0,
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: ListTile(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                tileColor: const Color(0xFFFFFFFF),
-                                leading: Container(
-                                  width: 40,
-                                  height: 40,
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFF262c40),
-                                    borderRadius: BorderRadius.circular(40),
-                                  ),
-                                  child: const Center(
-                                    child: Text(
-                                      // user.id.toString().toUpperCase(), 
-                                      "1",
-                                      style:  TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                title: const Padding(
-                                  padding: EdgeInsets.only(left: 10.0),
-                                  child: Text(
-                                    // cliente.name.toUpperCase(),
-                                    "Pedro Oliveira",
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w700,
-                                      color: Color(0xFF1C1C1C),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            ElevatedButton(
-                              onPressed: () async {
-                                // setState(() {
-                                //   selectedClienteId = int.tryParse(cliente.id);
-                                // });
-                                // showDialog(
-                                //   context: context,
-                                //   builder: (_) {
-                                //     return ButtonDialogCliente(
-                                //       productId: selectedClienteId,
-                                //     );
-                                //   },
-                                // );
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.transparent,
-                                elevation: 0,
-                                padding: EdgeInsets.zero,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                              ),
-                              child: const Icon(
-                                Icons.more_vert,
-                                color: Color(0xFFD8DEF3),
-                                size: 30,
-                              ),
-                            ),
-                          ],
+                return Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 60,
+                    vertical: 5,
+                  ),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(25),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.5),
+                          spreadRadius: 0,
+                          blurRadius: 5,
+                          offset: const Offset(0, 3),
                         ),
+                      ],
+                    ),
+                    child: Card(
+                      color: const Color(0xFFFFFFFF),
+                      elevation: 0,
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: ListTile(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => RegistreStudent(student: students,),
+                                  ),
+                                );
+                              },
+                              tileColor: const Color(0xFFFFFFFF),
+                              leading: Container(
+                                width: 40,
+                                height: 40,
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF262c40),
+                                  borderRadius: BorderRadius.circular(40),
+                                ),
+                                child:  Center(
+                                  child: Text(
+                                    // user.id.toString().toUpperCase(),
+                                    students.id.toString(),
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              title: Padding(
+                                padding: const EdgeInsets.only(left: 10.0),
+                                child: Text(
+                                  // cliente.name.toUpperCase(),
+                                  students.nome,
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w700,
+                                    color: Color(0xFF1C1C1C),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          // ElevatedButton(
+                          //   onPressed: () async {
+                          // setState(() {
+                          //   selectedClienteId = int.tryParse(cliente.id);
+                          // });
+                          // showDialog(
+                          //   context: context,
+                          //   builder: (_) {
+                          //     return ButtonDialogCliente(
+                          //       productId: selectedClienteId,
+                          //     );
+                          //   },
+                          // );
+                          //   },
+                          //   style: ElevatedButton.styleFrom(
+                          //     backgroundColor: Colors.transparent,
+                          //     elevation: 0,
+                          //     padding: EdgeInsets.zero,
+                          //     shape: RoundedRectangleBorder(
+                          //       borderRadius: BorderRadius.circular(10),
+                          //     ),
+                          //   ),
+                          //   child: const Icon(
+                          //     Icons.more_vert,
+                          //     color: Color(0xFFD8DEF3),
+                          //     size: 30,
+                          //   ),
+                          // ),
+                        ],
                       ),
                     ),
                   ),
@@ -239,7 +285,7 @@ class _HomePageState extends State<HomePage> {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const RegistreStudent()),
+              MaterialPageRoute(builder: (context) => RegistreStudent()),
             );
           },
           backgroundColor: const Color(0xFF262c40),

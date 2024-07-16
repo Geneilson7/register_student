@@ -1,21 +1,22 @@
 class Student {
   int? id;
-  String? nome;
-  String? cpf;
-  String? rg;
-  String? dtnascimento;
-  String? pcd;
-  String? sexo;
-  String? status;
-  String? endereco;
-  String? municipio;
-  String? responsavel;
-  String? telefone;
-  String? telresponsavel;
-  String? cep;
-  String? escola;
-  String? endescola;
-  String? turnoescolar;
+  String nome;
+  String cpf;
+  String rg;
+  String dtnascimento;
+  String pcd;
+  String sexo;
+  String status;
+  String bairro;
+  String endereco;
+  String municipio;
+  String responsavel;
+  String telefone;
+  String telresponsavel;
+  String cep;
+  String escola;
+  String endescola;
+  String turnoescolar;
 
   Student({
     this.id,
@@ -26,6 +27,7 @@ class Student {
     required this.pcd,
     required this.sexo,
     required this.status,
+    required this.bairro,
     required this.endereco,
     required this.municipio,
     required this.responsavel,
@@ -47,6 +49,7 @@ class Student {
       pcd: map['pcd'],
       sexo: map['sexo'],
       status: map['status'],
+      bairro: map['bairro'],
       endereco: map['endereco'],
       municipio: map['municipio'],
       responsavel: map['responsavel'],
@@ -60,10 +63,31 @@ class Student {
   }
 
   static List<Student> fromSQLiteList(List<Map> listMap) {
-    List<Student> student =[];
-    for(Map item in listMap) {
+    List<Student> student = [];
+    for (Map item in listMap) {
       student.add(Student.fromSQLite(item));
     }
     return student;
+  }
+
+  factory Student.empty() {
+    return Student(
+        nome: '',
+        cpf: '',
+        rg: '',
+        dtnascimento: '',
+        pcd: '',
+        sexo: '',
+        status: '',
+        bairro: '',
+        endereco: '',
+        municipio: '',
+        responsavel: '',
+        telefone: '',
+        telresponsavel: '',
+        cep: '',
+        escola: '',
+        endescola: '',
+        turnoescolar: '');
   }
 }
