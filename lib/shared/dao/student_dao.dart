@@ -13,15 +13,22 @@ class StudentDao{
   Future<Student> adicionar(Student student) async {
     try {
       Database db = await _getDatabase();
-      db.rawInsert(ConnectionSQL.adicionarStudent());
+      int idRetornado = await db.rawInsert(ConnectionSQL.adicionarStudent(student));
+      student.id = idRetornado;
+      return student;
     } catch (error) {
       throw Exception();
     }
   }  
 
-  Future atualizar() async {
+  Future<bool> atualizar(Student student) async {
     try {
-      
+      Database db = await _getDatabase();
+      int linhasAfetadas = await db.rawUpdate(ConnectionSQL.atulizarStudent(student));
+      if (linhasAfetadas > 0) {
+        return true;
+      }
+      return false;
     } catch (error) {
       throw Exception();
     }
@@ -29,15 +36,23 @@ class StudentDao{
 
   Future selecionarTodos() async {
     try {
-      
+      Database db = await _getDatabase();
+      List<Map> linhas = await db.rawQuery(ConnectionSQL.selecionarTodosOsStudents());
+      List<Student> student = Student.fromSQLiteList(linhas);
+      return student;
     } catch (error) {
       throw Exception();
     }
   }
 
-  Future deletar() async {
+  Future<bool> deletar(Student student) async {
     try {
-      
+      Database db = await _getDatabase();
+      int linhasAfetadas = await db.rawDelete(ConnectionSQL.deleteStudent(student));
+      if (linhasAfetadas > 0) {
+        return true;        
+      }
+      return false;
     } catch (error) {
       throw Exception();
     }
