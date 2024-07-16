@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_print, use_build_context_synchronously, deprecated_member_use, must_be_immutable, use_key_in_widget_constructors
 import 'package:flutter/material.dart';
+import 'package:register_student/shared/dao/student_dao.dart';
 import 'package:register_student/shared/models/student_model.dart';
 import 'package:register_student/src/home_page.dart';
 import 'package:register_student/util/form.dart';
@@ -14,9 +15,10 @@ class RegistreStudent extends StatefulWidget {
 
 class _RegistreStudentState extends State<RegistreStudent> {
   final _formKey = GlobalKey<FormState>();
-  bool isEntrando = true;
 
   Student student = Student.empty();
+
+  StudentDao studentDao = StudentDao();
 
   TextEditingController txtNome = TextEditingController();
   TextEditingController txtCpfCnpj = TextEditingController();
@@ -55,11 +57,87 @@ class _RegistreStudentState extends State<RegistreStudent> {
       txtEscola.text = widget.student!.escola;
       txtEndescola.text = widget.student!.endescola;
       txtTurnoescolar.text = widget.student!.turnoescolar;
+      student = widget.student!;
     }
   }
 
+  void salvar() {
+    student.nome = txtNome.text;
+    student.cpf = txtCpfCnpj.text;
+    student.rg = txtRg.text;
+    student.dtnascimento = txtDtnascimento.text;
+    student.pcd = txtPcd.text;
+    student.sexo = txtSexo.text;
+    student.status = txtStatus.text;
+    student.bairro = txtBairro.text;
+    student.endereco = txtEndereco.text;
+    student.municipio = txtMunicipio.text;
+    student.responsavel = txtResponsavel.text;
+    student.telefone = txtTelefone.text;
+    student.telresponsavel = txtTelresponsavel.text;
+    student.cep = txtCep.text;
+    student.escola = txtEscola.text;
+    student.endescola = txtEndescola.text;
+    student.turnoescolar = txtTurnoescolar.text;
+    if (student.id == null) {
+      adicionarStudent();
+      return;
+    }
+    atualizarStudent();
+  }
+
+  void adicionarStudent() async {
+    try {
+      Student retorno = await studentDao.adicionar(student);
+      student.id = retorno.id;
+      mostrarMensagem('Aluno cadastrado com sucesso');
+      setState(() {});
+    } catch (error) {
+      print(error);
+      mostrarMensagem('Erro ao cadastrar');
+    }
+  }
+
+  void atualizarStudent() async {
+    try {
+      if (await studentDao.atualizar(student)) {
+        mostrarMensagem('Cadastro atualizado com sucesso');
+        return;
+      }
+      mostrarMensagem('Nenhum dados alterados');
+    } catch (error) {
+      print(error);
+      mostrarMensagem('Erro ao atualizar cadastro');
+    }
+  }
+
+  void deletar() async {
+    try {
+      if (student.id != null) {
+        if (await studentDao.deletar(student)) {
+          mostrarMensagem('Cadastro deletado com sucesso');
+          Navigator.pop(context);
+          return;
+        }
+        mostrarMensagem('Nenhum cadastro deletado');
+      }
+      mostrarMensagem('Não é possivel deletar cadastro não registrado');
+    } catch (error) {
+      print(error);
+      mostrarMensagem('Erro ao deletar cadastro');
+    }
+  }
+
+  void mostrarMensagem(mensagem) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(mensagem),
+      ),
+    );
+  }
+
   @override
-  void initState(){
+  void initState() {
     iniciarDadosStudent();
     super.initState();
   }
@@ -83,9 +161,9 @@ class _RegistreStudentState extends State<RegistreStudent> {
           icon: const Icon(Icons.arrow_back_ios),
           color: const Color(0xFF1F41BB),
         ),
-        title: const Text(
-          'Cadastro aluno',
-          style: TextStyle(
+        title: Text(
+          widget.student != null ? 'Cadastrar aluno' : 'Atulizar cadastro',
+          style: const TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.w700,
             color: Color(0xFF404046),
@@ -112,7 +190,7 @@ class _RegistreStudentState extends State<RegistreStudent> {
                     controller: txtNome,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return "Razão Social não pode está vazio.";
+                        return "Campo obrigatório.";
                       }
                       return null;
                     },
@@ -125,7 +203,7 @@ class _RegistreStudentState extends State<RegistreStudent> {
                     controller: txtCpfCnpj,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return "Razão Social não pode está vazio.";
+                        return "Campo obrigatório.";
                       }
                       return null;
                     },
@@ -138,7 +216,7 @@ class _RegistreStudentState extends State<RegistreStudent> {
                     controller: txtRg,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return "Razão Social não pode está vazio.";
+                        return "Campo obrigatório.";
                       }
                       return null;
                     },
@@ -151,7 +229,7 @@ class _RegistreStudentState extends State<RegistreStudent> {
                     controller: txtDtnascimento,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return "Razão Social não pode está vazio.";
+                        return "Campo obrigatório.";
                       }
                       return null;
                     },
@@ -161,10 +239,10 @@ class _RegistreStudentState extends State<RegistreStudent> {
                   padding: const EdgeInsets.only(bottom: 15),
                   child: TextFormField(
                     decoration: textFormField("PCD"),
-                    controller: txtDtnascimento,
+                    controller: txtPcd,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return "Razão Social não pode está vazio.";
+                        return "Campo obrigatório.";
                       }
                       return null;
                     },
@@ -177,7 +255,7 @@ class _RegistreStudentState extends State<RegistreStudent> {
                     controller: txtSexo,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return "Razão Social não pode está vazio.";
+                        return "Campo obrigatório.";
                       }
                       return null;
                     },
@@ -190,7 +268,7 @@ class _RegistreStudentState extends State<RegistreStudent> {
                     controller: txtStatus,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return "Razão Social não pode está vazio.";
+                        return "Campo obrigatório.";
                       }
                       return null;
                     },
@@ -203,7 +281,7 @@ class _RegistreStudentState extends State<RegistreStudent> {
                     controller: txtBairro,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return "Razão Social não pode está vazio.";
+                        return "Campo obrigatório.";
                       }
                       return null;
                     },
@@ -216,7 +294,7 @@ class _RegistreStudentState extends State<RegistreStudent> {
                     controller: txtEndereco,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return "Razão Social não pode está vazio.";
+                        return "Campo obrigatório.";
                       }
                       return null;
                     },
@@ -229,7 +307,7 @@ class _RegistreStudentState extends State<RegistreStudent> {
                     controller: txtMunicipio,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return "Razão Social não pode está vazio.";
+                        return "Campo obrigatório.";
                       }
                       return null;
                     },
@@ -242,7 +320,7 @@ class _RegistreStudentState extends State<RegistreStudent> {
                     controller: txtResponsavel,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return "Razão Social não pode está vazio.";
+                        return "Campo obrigatório.";
                       }
                       return null;
                     },
@@ -255,7 +333,7 @@ class _RegistreStudentState extends State<RegistreStudent> {
                     controller: txtTelefone,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return "Razão Social não pode está vazio.";
+                        return "Campo obrigatório.";
                       }
                       return null;
                     },
@@ -268,7 +346,7 @@ class _RegistreStudentState extends State<RegistreStudent> {
                     controller: txtTelresponsavel,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return "Razão Social não pode está vazio.";
+                        return "Campo obrigatório.";
                       }
                       return null;
                     },
@@ -281,7 +359,7 @@ class _RegistreStudentState extends State<RegistreStudent> {
                     controller: txtCep,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return "Razão Social não pode está vazio.";
+                        return "Campo obrigatório.";
                       }
                       return null;
                     },
@@ -294,7 +372,7 @@ class _RegistreStudentState extends State<RegistreStudent> {
                     controller: txtEscola,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return "Razão Social não pode está vazio.";
+                        return "Campo obrigatório.";
                       }
                       return null;
                     },
@@ -307,7 +385,7 @@ class _RegistreStudentState extends State<RegistreStudent> {
                     controller: txtEndescola,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return "Razão Social não pode está vazio.";
+                        return "Campo obrigatório.";
                       }
                       return null;
                     },
@@ -320,50 +398,98 @@ class _RegistreStudentState extends State<RegistreStudent> {
                     controller: txtTurnoescolar,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return "Razão Social não pode está vazio.";
+                        return "Campo obrigatório.";
                       }
                       return null;
                     },
                   ),
                 ),
                 const SizedBox(height: 10),
-                SizedBox(
-                  height: 50,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(11),
-                      boxShadow: [
-                        BoxShadow(
-                          color: const Color(0xFF1F41BB).withOpacity(0.2),
-                          spreadRadius: 0,
-                          blurRadius: 4,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF262c40),
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
+                Row(
+                  children: [
+                    SizedBox(
+                      height: 50,
+                      child: Container(
+                        decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(11),
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0xFF1F41BB).withOpacity(0.2),
+                              spreadRadius: 0,
+                              blurRadius: 4,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
                         ),
-                      ),
-                      onPressed: () async {
-                        // Logica
-                        // cadastrarClienteAction(context);
-                      },
-                      child: const Center(
-                        child: Text(
-                          'Concluir',
-                          style: TextStyle(
-                            fontSize: 19,
-                            fontWeight: FontWeight.w700,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF262c40),
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(11),
+                            ),
+                          ),
+                          onPressed: () async {
+                            // Logica
+                            if (_formKey.currentState!.validate()) {
+                              salvar();
+                            }
+                          },
+                          child: const Center(
+                            child: Text(
+                              'Salvar',
+                              style: TextStyle(
+                                fontSize: 19,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
+                    const SizedBox(width: 8.0),
+                    SizedBox(
+                      height: 50,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(11),
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0xFF1F41BB).withOpacity(0.2),
+                              spreadRadius: 0,
+                              blurRadius: 4,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                student.id == null ? Colors.grey : const Color.fromARGB(255, 204, 16, 16),
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(11),
+                            ),
+                          ),
+                          onPressed: () async {
+                            // Logica
+                            student.id == null
+                                ? print('Não é possivel deletar')
+                                : deletar();
+                          },
+                          child: const Center(
+                            child: Text(
+                              'Deletar',
+                              style: TextStyle(
+                                fontSize: 19,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
                 // Padding(
                 //     padding: EdgeInsets.only(top: widget.isEditMode ? 20 : 68)),
@@ -382,45 +508,4 @@ class _RegistreStudentState extends State<RegistreStudent> {
       ),
     );
   }
-
-  // botaoEnviarClicado() {
-  //   // String codigo = codigoController.text;
-  //   // String cpfcnpj = cpfcnpjController.text;
-  //   // String razaosocial = razaosocialController.text;
-  //   // String fantazia = fantaziaController.text;
-  //   // String contato = contatoController.text;
-  //   // String email = emailController.text;
-
-  //   if (_formKey.currentState!.validate()) {
-  //     if (isEntrando) {
-  //       _entrarUsuario(
-  //         codigo: codigo,
-  //         cpfcnpj: cpfcnpj,
-  //         razaosocial: razaosocial,
-  //         fantazia: fantazia,
-  //         contato: contato,
-  //         email: email,
-  //       );
-  //     } else {
-  //       return null;
-  //     }
-  //   }
-  // }
-
-  // _entrarUsuario({
-  //   required String codigo,
-  //   required String cpfcnpj,
-  //   required String razaosocial,
-  //   required String fantazia,
-  //   required String contato,
-  //   required String email,
-  // }) {
-  //   return _entrarUsuario(
-  //       codigo: codigo,
-  //       cpfcnpj: cpfcnpj,
-  //       razaosocial: razaosocial,
-  //       fantazia: fantazia,
-  //       contato: contato,
-  //       email: email);
-  // }
 }

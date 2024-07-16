@@ -11,6 +11,7 @@ class ConnectionSQL {
     `pcd` INTEGER,
     `sexo` INTEGER,
     `status` INTEGER,
+    `bairro` INTEGER,
     `endereco` INTEGER,
     `municipio` INTEGER,
     `responsavel` INTEGER,
@@ -19,7 +20,7 @@ class ConnectionSQL {
     `cep` INTEGER,
     `escola` INTEGER,
     `endescola` INTEGER,
-    `turnoescolar` INTEGER,    
+    `turnoescolar` INTEGER 
   );
   ''';
 
@@ -30,7 +31,7 @@ class ConnectionSQL {
   static String adicionarStudent(Student student) {
     return '''
       insert into student (nome, cpf, rg, dtnascimento, pcd, sexo, status, endereco, municipio, responsavel, telefone, telresponsavel, cep, escola, endescola, turnoescolar)
-      values ('${student.nome}','${student.cpf}','${student.rg}','${student.dtnascimento}','${student.pcd}','${student.sexo}','${student.status}','${student.endereco}','${student.municipio}','${student.responsavel}','${student.telefone}','${student.telresponsavel}','${student.cep}','${student.escola}','${student.turnoescolar}');
+      values ('${student.nome}','${student.cpf}','${student.rg}','${student.dtnascimento}','${student.pcd}','${student.sexo}','${student.status}','${student.bairro}','${student.endereco}','${student.municipio}','${student.responsavel}','${student.telefone}','${student.telresponsavel}','${student.cep}','${student.escola}','${student.turnoescolar}');
     ''';
   }
 
@@ -44,6 +45,7 @@ class ConnectionSQL {
       pcd = '${student.pcd}',
       sexo = '${student.sexo}',
       status = '${student.status}',
+      bairro = '${student.endereco}'
       endereco = '${student.endereco}',
       municipio = '${student.municipio}',
       responsavel = '${student.responsavel}',

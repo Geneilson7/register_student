@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:register_student/shared/dao/sql.dart';
 import 'package:register_student/shared/models/student_model.dart';
 import 'package:register_student/shared/services/connection_sqlite_service.dart';
@@ -17,6 +19,7 @@ class StudentDao{
       student.id = idRetornado;
       return student;
     } catch (error) {
+      print(error);
       throw Exception();
     }
   }  

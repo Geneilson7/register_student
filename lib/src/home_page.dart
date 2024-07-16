@@ -1,5 +1,8 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:register_student/register/register_student.dart';
+import 'package:register_student/shared/dao/student_dao.dart';
 import 'package:register_student/shared/models/student_model.dart';
 
 class HomePage extends StatefulWidget {
@@ -12,51 +15,28 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final TextEditingController _searchController = TextEditingController();
 
-  List<Student> student = [
-    Student(
-      id: 1,
-      nome: 'Jhon Enzo',
-      cpf: '999.999.999-99',
-      rg: '12345678',
-      dtnascimento: '01/01/2024',
-      pcd: 'Não',
-      sexo: 'Masculino',
-      status: 'Ativo',
-      bairro: 'Centro',
-      endereco: 'Rua: teste',
-      municipio: 'Parauapebas',
-      responsavel: 'Francisco',
-      telefone: '(94) 91234-5678',
-      telresponsavel: '(94) 91234-5678',
-      cep: '68515-000',
-      escola: 'Faruk',
-      endescola: 'Rua teste',
-      turnoescolar: 'Manhã',
-    ),
-    Student(
-      id: 2,
-      nome: 'João',
-      cpf: '999.999.999-99',
-      rg: '12345678',
-      dtnascimento: '01/01/2024',
-      pcd: 'Não',
-      sexo: 'Masculino',
-      status: 'Ativo',
-      bairro: 'Centro',
-      endereco: 'Rua: teste',
-      municipio: 'Parauapebas',
-      responsavel: 'Francisco',
-      telefone: '(94) 91234-5678',
-      telresponsavel: '(94) 91234-5678',
-      cep: '68515-000',
-      escola: 'Faruk',
-      endescola: 'Rua teste',
-      turnoescolar: 'Manhã',
-    ),
-  ];
+  List<Student> student = [];
+
+  StudentDao studentDao = StudentDao();
+
+  void selecionarTodosOsStudents() async {
+    try {
+      List<Student> retorno = await studentDao.selecionarTodos();
+      student.clear();
+      student.addAll(retorno);
+      setState(() {});
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Erro ao buscar aluno'),
+        ),
+      );
+    }
+  }
 
   @override
   void initState() {
+    selecionarTodosOsStudents();
     super.initState();
   }
 
@@ -199,13 +179,15 @@ class _HomePageState extends State<HomePage> {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(20),
                               ),
-                              onTap: () {
-                                Navigator.push(
+                              onTap: () async {
+                                await Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => RegistreStudent(student: students,),
+                                    builder: (context) => RegistreStudent(
+                                      student: students,
+                                    ),
                                   ),
-                                );
+                                ).then((value) => selecionarTodosOsStudents());
                               },
                               tileColor: const Color(0xFFFFFFFF),
                               leading: Container(
@@ -215,7 +197,7 @@ class _HomePageState extends State<HomePage> {
                                   color: const Color(0xFF262c40),
                                   borderRadius: BorderRadius.circular(40),
                                 ),
-                                child:  Center(
+                                child: Center(
                                   child: Text(
                                     // user.id.toString().toUpperCase(),
                                     students.id.toString(),
@@ -282,10 +264,14 @@ class _HomePageState extends State<HomePage> {
       floatingActionButton: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 50),
         child: FloatingActionButton(
-          onPressed: () {
+          onPressed: () async {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => RegistreStudent()),
+              MaterialPageRoute(
+                builder: (context) => RegistreStudent(),
+              ),
+            ).then(
+              (value) => selecionarTodosOsStudents(),
             );
           },
           backgroundColor: const Color(0xFF262c40),
