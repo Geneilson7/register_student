@@ -162,7 +162,7 @@ class _RegistreStudentState extends State<RegistreStudent> {
           color: const Color(0xFF1F41BB),
         ),
         title: Text(
-          widget.student != null ? 'Cadastrar aluno' : 'Atulizar cadastro',
+          widget.student != null ? 'Atulizar aluno' : 'Cadastrar cadastro',
           style: const TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.w700,
