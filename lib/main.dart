@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:register_student/src/home_page.dart';
+import 'package:register_student/register/home_page.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 void main() async {
+  sqfliteFfiInit();
+  databaseFactory = databaseFactoryFfi;
   runApp(const MyApp());
 }
 
