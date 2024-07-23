@@ -68,7 +68,9 @@ class DBHelper {
 
   Future<void> deleteAluno(int id) async {
     final db = await database;
-    await db.delete('alunos', where: 'id = ?', whereArgs: [id]);
+    await db.transaction((txn) async {
+      await txn.delete('alunos', where: 'id = ?', whereArgs: [id]);
+    });
   }
 
   Future<Map<String, dynamic>?> getAlunoById(int id) async {

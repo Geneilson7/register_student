@@ -6,6 +6,8 @@ import 'package:flutter/services.dart';
 import 'package:register_student/pages/home_page.dart';
 import 'package:register_student/services/db_helper.dart';
 import 'package:register_student/src/dropdown_pcd.dart';
+import 'package:register_student/src/dropdown_status.dart';
+import 'package:register_student/src/dropdown_turno.dart';
 import 'package:register_student/util/form.dart';
 
 class CadastrarAluno extends StatefulWidget {
@@ -23,21 +25,19 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
   final TextEditingController _cpfController = TextEditingController();
   final TextEditingController _rgController = TextEditingController();
   final TextEditingController _dtnascimentoController = TextEditingController();
-  // final TextEditingController _pcdController = TextEditingController();
   String? tipoValue = '';
   final TextEditingController _sexoController = TextEditingController();
-  final TextEditingController _statusController = TextEditingController();
+  String? tipoStatus = '';
   final TextEditingController _bairroController = TextEditingController();
   final TextEditingController _enderecoController = TextEditingController();
   final TextEditingController _municipioController = TextEditingController();
   final TextEditingController _responsavelController = TextEditingController();
   final TextEditingController _telefoneController = TextEditingController();
-  final TextEditingController _telresponsavelController =
-      TextEditingController();
+  final TextEditingController _telresponsavelController = TextEditingController();
   final TextEditingController _cepController = TextEditingController();
   final TextEditingController _escolaController = TextEditingController();
   final TextEditingController _endescolaController = TextEditingController();
-  final TextEditingController _turnoescolarController = TextEditingController();
+  String? tipoTurno = '';
 
   final _formKey = GlobalKey<FormState>();
 
@@ -56,7 +56,7 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
     _dtnascimentoController.text = aluno['dtnascimento'];
     tipoValue = aluno['pcd'];
     _sexoController.text = aluno['sexo'];
-    _statusController.text = aluno['status'];
+    tipoStatus = aluno['status'];
     _bairroController.text = aluno['bairro'];
     _enderecoController.text = aluno['endereco'];
     _municipioController.text = aluno['municipio'];
@@ -66,7 +66,8 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
     _cepController.text = aluno['cep'];
     _escolaController.text = aluno['escola'];
     _endescolaController.text = aluno['endescola'];
-    _turnoescolarController.text = aluno['turnoescolar'];
+    tipoTurno = aluno['turnoescolar'];
+    setState(() {});
   }
 
   void _loadAluno(int id) async {
@@ -85,7 +86,7 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
         'dtnascimento': _dtnascimentoController.text,
         'pcd': tipoValue,
         'sexo': _sexoController.text,
-        'status': _statusController.text,
+        'status': tipoStatus,
         'bairro': _bairroController.text,
         'endereco': _enderecoController.text,
         'municipio': _municipioController.text,
@@ -95,7 +96,7 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
         'cep': _cepController.text,
         'escola': _escolaController.text,
         'endescola': _endescolaController.text,
-        'turnoescolar': _turnoescolarController.text
+        'turnoescolar': tipoTurno,
       };
 
       if (widget.alunoId != null) {
@@ -257,11 +258,11 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                       flex: 1,
                       child: Pcd(
                         label: "PCD",
-                        selectedValue: tipoValue ?? '',
+                        selectedValue: tipoValue,
                         items: const ['Sim', 'Não'],
                         onChanged: (newValue) {
                           setState(() {
-                            tipoValue = newValue;
+                            tipoValue = newValue!;
                           });
                         },
                       ),
@@ -448,18 +449,15 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                     const SizedBox(width: 25),
                     Expanded(
                       flex: 1,
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 15),
-                        child: TextFormField(
-                          decoration: textFormField("Turno Escolar"),
-                          controller: _turnoescolarController,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return "Campo obrigatório.";
-                            }
-                            return null;
-                          },
-                        ),
+                      child: Turno(
+                        label: "Turno Escolar",
+                        selectedValue: tipoTurno,
+                        items: const ['Manhã', 'Tarde','Noite'],
+                        onChanged: (newValue) {
+                          setState(() {
+                            tipoTurno = newValue!;
+                          });
+                        },
                       ),
                     ),
                   ],
@@ -468,14 +466,14 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                   children: [
                     SizedBox(
                       width: 150,
-                      child: TextFormField(
-                        decoration: textFormField("Status"),
-                        controller: _statusController,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return "Campo obrigatório.";
-                          }
-                          return null;
+                      child: Status(
+                        label: "Status",
+                        selectedValue: tipoStatus,
+                        items: const ['Ativo', 'Inativo'],
+                        onChanged: (newValue) {
+                          setState(() {
+                            tipoStatus = newValue!;
+                          });
                         },
                       ),
                     ),

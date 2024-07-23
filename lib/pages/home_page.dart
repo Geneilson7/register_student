@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously, deprecated_member_use
+// ignore_for_file: use_build_context_synchronously, deprecated_member_use, avoid_print
 
 import 'package:flutter/material.dart';
 import 'package:register_student/services/db_helper.dart';
@@ -51,9 +51,16 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _deleteItem(int id) async {
+  try {
     await dbHelper.deleteAluno(id);
     _refreshItems();
+  } catch (e) {
+    print('Erro ao deletar aluno: $e');
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Erro ao deletar aluno: $e')),
+    );
   }
+}
 
   void _updateItem(int id) async {
     if (_nomeController.text.isEmpty) return;
