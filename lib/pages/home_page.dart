@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:register_student/services/db_helper.dart';
-import 'package:register_student/src/cadastrar_aluno.dart';
+import 'package:register_student/pages/cadastrar_aluno.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
