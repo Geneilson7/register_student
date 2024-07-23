@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class Pcd extends StatelessWidget {
+class Pcd extends StatefulWidget {
   final String label;
   final String? selectedValue;
   final List<String> items;
@@ -15,6 +15,11 @@ class Pcd extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  State<Pcd> createState() => _PcdState();
+}
+
+class _PcdState extends State<Pcd> {
+  @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 15),
@@ -27,14 +32,16 @@ class Pcd extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             DropdownButtonFormField<String>(
-              value: selectedValue!.isNotEmpty ? selectedValue : null,
-              onChanged: onChanged,
+              value: widget.selectedValue!.isNotEmpty
+                  ? widget.selectedValue
+                  : null,
+              onChanged: widget.onChanged,
               items: [
                 const DropdownMenuItem<String>(
                   value: null,
                   child: Text('Selecione'),
                 ),
-                ...items.map<DropdownMenuItem<String>>((String value) {
+                ...widget.items.map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
                     child: Text(value),
@@ -42,7 +49,7 @@ class Pcd extends StatelessWidget {
                 }),
               ],
               decoration: InputDecoration(
-                label: Text(label),
+                label: Text(widget.label),
                 fillColor: const Color(0xFFF1F4FF).withOpacity(0.9),
                 filled: true,
                 labelStyle: const TextStyle(

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class Status extends StatelessWidget {
+class Status extends StatefulWidget {
   final String label;
   final String? selectedValue;
   final List<String> items;
@@ -15,6 +15,11 @@ class Status extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  State<Status> createState() => _StatusState();
+}
+
+class _StatusState extends State<Status> {
+  @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 15),
@@ -27,14 +32,16 @@ class Status extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             DropdownButtonFormField<String>(
-              value: selectedValue!.isNotEmpty ? selectedValue : null,
-              onChanged: onChanged,
+              value: widget.selectedValue!.isNotEmpty
+                  ? widget.selectedValue
+                  : null,
+              onChanged: widget.onChanged,
               items: [
                 const DropdownMenuItem<String>(
                   value: null,
                   child: Text('Selecione'),
                 ),
-                ...items.map<DropdownMenuItem<String>>((String value) {
+                ...widget.items.map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
                     child: Text(value),
@@ -42,7 +49,7 @@ class Status extends StatelessWidget {
                 }),
               ],
               decoration: InputDecoration(
-                label: Text(label),
+                label: Text(widget.label),
                 fillColor: const Color(0xFFF1F4FF).withOpacity(0.9),
                 filled: true,
                 labelStyle: const TextStyle(
@@ -76,6 +83,12 @@ class Status extends StatelessWidget {
                   borderRadius: BorderRadius.circular(11),
                 ),
               ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return "Campo obrigatório.";
+                }
+                return null;
+              },
             ),
           ],
         ),
