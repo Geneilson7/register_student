@@ -128,19 +128,7 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        leading: IconButton(
-          onPressed: () {
-            Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(
-                builder: (context) => const HomePage(),
-              ),
-              (route) => false,
-            );
-          },
-          iconSize: 20,
-          icon: const Icon(Icons.arrow_back_ios),
-          color: const Color(0xFF1F41BB),
-        ),
+        automaticallyImplyLeading: false,
         title: Text(
           widget.alunoId != null ? 'Atualizar Aluno' : 'Cadastrar Aluno',
           style: const TextStyle(
@@ -487,7 +475,77 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 25,),
+                    const SizedBox(
+                      width: 25,
+                    ),
+                    Row(
+                      children: [
+                        SizedBox(
+                          width: 200,
+                          child: Status(
+                            label: "Grau Parentesco",
+                            selectedValue: tipoParentesco,
+                            items: const [
+                              'Pai',
+                              'Mãe',
+                              'Tio (a)',
+                              'Maior 18',
+                            ],
+                            onChanged: (newValue) {
+                              setState(() {
+                                tipoParentesco = newValue!;
+                              });
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 15),
+                        child: TextFormField(
+                          decoration: textFormField("Responsável"),
+                          controller: _responsavelController,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return "Campo obrigatório.";
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 25),
+                    Expanded(
+                      flex: 1,
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 15),
+                        child: TextFormField(
+                          decoration: textFormField("Telefone do Responsável"),
+                          keyboardType: TextInputType.number,
+                          controller: _telresponsavelController,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return "Campo obrigatório.";
+                            }
+                            return null;
+                          },
+                          inputFormatters: [
+                            // obrigatório
+                            FilteringTextInputFormatter.digitsOnly,
+                            TelefoneInputFormatter(),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 25,
+                    ),
                     Row(
                       children: [
                         SizedBox(
@@ -657,23 +715,13 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                                   actions: <Widget>[
                                     ElevatedButton(
                                       onPressed: () async {
-                                        Navigator.push(
-                                          context,
+                                        Navigator.of(context)
+                                            .pushAndRemoveUntil(
                                           MaterialPageRoute(
-                                            builder: (context) => WillPopScope(
-                                              onWillPop: () async {
-                                                Navigator.pushReplacement(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        const HomePage(),
-                                                  ),
-                                                );
-                                                return false;
-                                              },
-                                              child: const HomePage(),
-                                            ),
+                                            builder: (context) =>
+                                                const HomePage(),
                                           ),
+                                          (route) => false,
                                         );
                                       },
                                       style: ElevatedButton.styleFrom(
