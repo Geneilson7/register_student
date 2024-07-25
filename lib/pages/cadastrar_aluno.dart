@@ -34,8 +34,11 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
   final TextEditingController _enderecoController = TextEditingController();
   final TextEditingController _municipioController = TextEditingController();
   final TextEditingController _responsavelController = TextEditingController();
+  final TextEditingController _responsavel2Controller = TextEditingController();
   final TextEditingController _telefoneController = TextEditingController();
   final TextEditingController _telresponsavelController =
+      TextEditingController();
+  final TextEditingController _telresponsavel2Controller =
       TextEditingController();
   final TextEditingController _cepController = TextEditingController();
   final TextEditingController _escolaController = TextEditingController();
@@ -44,6 +47,7 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
   String? tipoTurnoTreino = '';
   String? tipoFaixa = '';
   String? tipoParentesco = '';
+  String? tipoParentesco2 = '';
 
   final _formKey = GlobalKey<FormState>();
 
@@ -67,12 +71,18 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
     _enderecoController.text = aluno['endereco'];
     _municipioController.text = aluno['municipio'];
     _responsavelController.text = aluno['responsavel'];
+    _responsavel2Controller.text = aluno['responsavel2'];
     _telefoneController.text = aluno['telefone'];
     _telresponsavelController.text = aluno['telresponsavel'];
+    _telresponsavel2Controller.text = aluno['telresponsavel2'];
     _cepController.text = aluno['cep'];
     _escolaController.text = aluno['escola'];
     _endescolaController.text = aluno['endescola'];
     tipoTurno = aluno['turnoescolar'];
+    tipoTurnoTreino = aluno['turnotreino'];
+    tipoFaixa = aluno['faixa'];
+    tipoParentesco = aluno['grau'];
+    tipoParentesco2 = aluno['grau2'];
     setState(() {});
   }
 
@@ -97,12 +107,18 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
         'endereco': _enderecoController.text,
         'municipio': _municipioController.text,
         'responsavel': _responsavelController.text,
+        'responsavel2': _responsavel2Controller.text,
         'telefone': _telefoneController.text,
         'telresponsavel': _telresponsavelController.text,
+        'telresponsavel2': _telresponsavel2Controller.text,
         'cep': _cepController.text,
         'escola': _escolaController.text,
         'endescola': _endescolaController.text,
         'turnoescolar': tipoTurno,
+        'turnotreino': tipoTurnoTreino,
+        'faixa': tipoFaixa,
+        'grau': tipoParentesco,
+        'grau2': tipoParentesco2,
       };
 
       if (widget.alunoId != null) {
@@ -510,7 +526,7 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                         padding: const EdgeInsets.only(bottom: 15),
                         child: TextFormField(
                           decoration: textFormField("Responsável"),
-                          controller: _responsavelController,
+                          controller: _responsavel2Controller,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return "Campo obrigatório.";
@@ -528,7 +544,7 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                         child: TextFormField(
                           decoration: textFormField("Telefone do Responsável"),
                           keyboardType: TextInputType.number,
-                          controller: _telresponsavelController,
+                          controller: _telresponsavel2Controller,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return "Campo obrigatório.";
@@ -552,7 +568,7 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                           width: 200,
                           child: Status(
                             label: "Grau Parentesco",
-                            selectedValue: tipoParentesco,
+                            selectedValue: tipoParentesco2,
                             items: const [
                               'Pai',
                               'Mãe',
@@ -561,7 +577,7 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                             ],
                             onChanged: (newValue) {
                               setState(() {
-                                tipoParentesco = newValue!;
+                                tipoParentesco2 = newValue!;
                               });
                             },
                           ),
