@@ -88,4 +88,22 @@ class DBHelper {
     );
     return result.isNotEmpty ? result.first : null;
   }
+
+  Future<int> countAlunos() async {
+    final db = await database;
+    final result = await db.rawQuery('SELECT COUNT(*) as count FROM alunos');
+    return Sqflite.firstIntValue(result) ?? 0;
+  }
+
+  Future<int> countAlunosAtivos() async {
+    final db = await database;
+    final result = await db.rawQuery('SELECT COUNT(*) as count FROM alunos WHERE status = ?', ['Ativo']);
+    return Sqflite.firstIntValue(result) ?? 0;
+  }
+
+  Future<int> countAlunosInativos() async {
+    final db = await database;
+    final result = await db.rawQuery('SELECT COUNT(*) as count FROM alunos WHERE status = ?', ['Inativo']);
+    return Sqflite.firstIntValue(result) ?? 0;
+  }
 }

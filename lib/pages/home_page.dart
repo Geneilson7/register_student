@@ -18,10 +18,17 @@ class _HomePageState extends State<HomePage> {
 
   final TextEditingController _searchController = TextEditingController();
 
+  int? _alunoCount = 0;
+  int? _ativoCount = 0;
+  int? _inativoCount = 0;
+
   @override
   void initState() {
     super.initState();
     _refreshItems();
+    _countAlunos();
+    _countAtivo();
+    _countInativo();
   }
 
   void _refreshItems() async {
@@ -40,6 +47,39 @@ class _HomePageState extends State<HomePage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Erro ao deletar aluno: $e')),
       );
+    }
+  }
+
+  Future<void> _countAlunos() async {
+    try {
+      final count = await dbHelper.countAlunos();
+      setState(() {
+        _alunoCount = count;
+      });
+    } catch (error) {
+      print(error);
+    }
+  }
+
+  Future<void> _countAtivo() async {
+    try {
+      final count = await dbHelper.countAlunosAtivos();
+      setState(() {
+        _ativoCount = count;
+      });
+    } catch (error) {
+      print(error);
+    }
+  }
+
+  Future<void> _countInativo() async {
+    try {
+      final count = await dbHelper.countAlunosInativos();
+      setState(() {
+        _inativoCount = count;
+      });
+    } catch (error) {
+      print(error);
     }
   }
 
@@ -62,7 +102,9 @@ class _HomePageState extends State<HomePage> {
               child: Column(
                 children: [
                   DrawerHeader(
-                    child: Image.asset('assets/image/logo.png',),                    
+                    child: Image.asset(
+                      'assets/image/logo.png',
+                    ),
                   ),
                   ListTile(
                     onTap: () {
@@ -110,10 +152,181 @@ class _HomePageState extends State<HomePage> {
                         ],
                       ),
                     ),
-                    const SizedBox(height: 10),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: Align(
+                        alignment: Alignment.bottomCenter,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.4),
+                                spreadRadius: 0,
+                                blurRadius: 7,
+                                offset: const Offset(0, 4),
+                              )
+                            ],
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 50, vertical: 20),
+                            child: Column(
+                              children: [
+                                const Text.rich(
+                                  TextSpan(
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                    ),
+                                    children: [
+                                      TextSpan(
+                                        text: 'Matriculados',
+                                        style: TextStyle(
+                                          color: Color(0xFF8A8A8A),
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Text(
+                                  '$_alunoCount',
+                                  style: const TextStyle(
+                                    color: Color(0xFF1F41BB),
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 10),
+                            child: Align(
+                              alignment: Alignment.bottomCenter,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(10),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey.withOpacity(0.4),
+                                      spreadRadius: 0,
+                                      blurRadius: 7,
+                                      offset: const Offset(0, 4),
+                                    )
+                                  ],
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 70, vertical: 20),
+                                  child: Column(
+                                    children: [
+                                      const Text.rich(
+                                        TextSpan(
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                          ),
+                                          children: [
+                                            TextSpan(
+                                              text: 'Ativos',
+                                              style: TextStyle(
+                                                color: Color(0xFF8A8A8A),
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      Text(
+                                        '$_ativoCount',
+                                        style: const TextStyle(
+                                          color: Color(0xFF1F41BB),
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 10),
+                            child: Align(
+                              alignment: Alignment.bottomCenter,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(10),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey.withOpacity(0.4),
+                                      spreadRadius: 0,
+                                      blurRadius: 7,
+                                      offset: const Offset(0, 4),
+                                    )
+                                  ],
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 70, vertical: 20),
+                                  child: Column(
+                                    children: [
+                                      const Text.rich(
+                                        TextSpan(
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                          ),
+                                          children: [
+                                            TextSpan(
+                                              text: 'Inativos',
+                                              style: TextStyle(
+                                                color: Color(0xFF8A8A8A),
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      Text(
+                                        '$_inativoCount',
+                                        style: const TextStyle(
+                                          color: Color(0xFF1F41BB),
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                     Padding(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 60, vertical: 10),
+                        horizontal: 60,
+                        vertical: 10,
+                      ),
                       child: Container(
                         decoration: BoxDecoration(
                           color: Colors.white,
