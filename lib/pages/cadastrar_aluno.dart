@@ -412,7 +412,7 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                           child: Status(
                             label: "Status",
                             selectedValue: tipoStatus,
-                            items: const ['Ativo', 'Inativo'],
+                            items: const ['Ativo', 'Inativo', 'Concluído'],
                             onChanged: (newValue) {
                               setState(() {
                                 tipoStatus = newValue!;
