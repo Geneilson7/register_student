@@ -142,7 +142,7 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: const Color(0xFFFFFFFF),
         elevation: 0,
         automaticallyImplyLeading: false,
         title: Text(
@@ -150,7 +150,7 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
           style: const TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.w700,
-            color: Color(0xFF404046),
+            color: Color(0xFF000000),
           ),
         ),
         centerTitle: true,
@@ -795,7 +795,6 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 50),
               ],
             ),
           ),

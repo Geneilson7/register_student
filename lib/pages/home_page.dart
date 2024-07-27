@@ -94,7 +94,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFD9D9D9),
+      backgroundColor: const Color(0xFF1d1e2b),
       body: SafeArea(
         child: Row(
           children: [
@@ -104,6 +104,7 @@ class _HomePageState extends State<HomePage> {
                   DrawerHeader(
                     child: Image.asset(
                       'assets/image/logo.png',
+                      color: const Color(0xFFFFFFFF),
                     ),
                   ),
                   ListTile(
@@ -118,12 +119,13 @@ class _HomePageState extends State<HomePage> {
                     leading: const Icon(
                       Icons.group,
                       size: 25,
-                      color: Color(0xFF000000),
+                      color: Colors.white54,
+                      // color: Color(0xFF000000),
                     ),
                     title: const Text(
-                      'Cadastrar Aluno',
+                      "Cadastrar Aluno",
                       style: TextStyle(
-                        color: Color(0xFF000000),
+                        color: Colors.white54,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -134,7 +136,14 @@ class _HomePageState extends State<HomePage> {
             Expanded(
               flex: 4,
               child: Container(
-                color: const Color(0xFFFFFFFF),
+                decoration: const BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage(
+                      'assets/image/background.jpg',
+                    ),
+                    fit: BoxFit.fill,
+                  ),
+                ),
                 child: Column(
                   children: [
                     const Padding(
@@ -147,6 +156,7 @@ class _HomePageState extends State<HomePage> {
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w700,
+                              color: Color(0xFFFFFFFF),
                             ),
                           ),
                         ],
