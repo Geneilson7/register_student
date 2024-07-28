@@ -105,6 +105,8 @@ class _HomePageState extends State<HomePage> {
                     child: Image.asset(
                       'assets/image/logo.png',
                       color: const Color(0xFFFFFFFF),
+                      width: 400,
+                      fit: BoxFit.contain,
                     ),
                   ),
                   ListTile(

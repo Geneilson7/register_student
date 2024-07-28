@@ -122,10 +122,8 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
       };
 
       if (widget.alunoId != null) {
-        // Atualizar aluno existente
         await dbHelper.updateAluno(widget.alunoId!, aluno);
       } else {
-        // Adicionar novo aluno
         await dbHelper.insertAluno(aluno);
       }
 
