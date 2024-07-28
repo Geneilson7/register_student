@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously, deprecated_member_use, avoid_print
 
 import 'package:flutter/material.dart';
+import 'package:register_student/pages/sobre.dart';
 import 'package:register_student/services/db_helper.dart';
 import 'package:register_student/pages/cadastrar_aluno.dart';
 
@@ -126,6 +127,29 @@ class _HomePageState extends State<HomePage> {
                     ),
                     title: const Text(
                       "Cadastrar Aluno",
+                      style: TextStyle(
+                        color: Colors.white54,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  ListTile(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const Sobre(),
+                        ),
+                      );
+                    },
+                    leading: const Icon(
+                      Icons.info,
+                      size: 25,
+                      color: Colors.white54,
+                      // color: Color(0xFF000000),
+                    ),
+                    title: const Text(
+                      "Sobre",
                       style: TextStyle(
                         color: Colors.white54,
                         fontWeight: FontWeight.w600,
