@@ -97,13 +97,23 @@ class DBHelper {
 
   Future<int> countAlunosAtivos() async {
     final db = await database;
-    final result = await db.rawQuery('SELECT COUNT(*) as count FROM alunos WHERE status = ?', ['Ativo']);
+    final result = await db.rawQuery(
+        'SELECT COUNT(*) as count FROM alunos WHERE status = ?', ['Ativo']);
     return Sqflite.firstIntValue(result) ?? 0;
   }
 
   Future<int> countAlunosInativos() async {
     final db = await database;
-    final result = await db.rawQuery('SELECT COUNT(*) as count FROM alunos WHERE status = ?', ['Inativo']);
+    final result = await db.rawQuery(
+        'SELECT COUNT(*) as count FROM alunos WHERE status = ?', ['Inativo']);
     return Sqflite.firstIntValue(result) ?? 0;
+  }
+
+  Future<List<Map<String, dynamic>>> searchAlunos(String query) async {
+    final db = await database;
+    final result = await db.rawQuery(
+        'SELECT * FROM alunos WHERE id LIKE ? OR nome LIKE ?',
+        ['%$query%', '%$query%']);
+    return result;
   }
 }

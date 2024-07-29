@@ -32,6 +32,14 @@ class _HomePageState extends State<HomePage> {
     _countInativo();
   }
 
+  Future<void> _performSearch(String query) async {
+    final dbHelper = DBHelper();
+    final searchResults = await dbHelper.searchAlunos(query);
+    setState(() {
+      _items = searchResults;
+    });
+  }
+
   void _refreshItems() async {
     final data = await dbHelper.getAlunos();
     setState(() {
@@ -360,9 +368,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 60,
-                        vertical: 10,
-                      ),
+                          horizontal: 60, vertical: 10),
                       child: Container(
                         decoration: BoxDecoration(
                           color: Colors.white,
@@ -379,7 +385,7 @@ class _HomePageState extends State<HomePage> {
                         child: TextFormField(
                           controller: _searchController,
                           onChanged: (value) {
-                            setState(() {});
+                            _performSearch(value);
                           },
                           decoration: InputDecoration(
                             filled: true,
@@ -395,7 +401,7 @@ class _HomePageState extends State<HomePage> {
                                 ? IconButton(
                                     onPressed: () {
                                       _searchController.clear();
-                                      setState(() {});
+                                      _performSearch('');
                                     },
                                     icon: const Icon(
                                       Icons.clear,
@@ -639,25 +645,6 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      // floatingActionButton: Padding(
-      //   padding: const EdgeInsets.symmetric(horizontal: 50),
-      //   child: FloatingActionButton(
-      //     onPressed: () async {
-      //       Navigator.push(
-      //         context,
-      //         MaterialPageRoute(
-      //           builder: (context) => const CadastrarAluno(),
-      //         ),
-      //       );
-      //       // .then(
-      //       //   (value) => selecionarTodosOsStudents(),
-      //       // );
-      //     },
-      //     backgroundColor: const Color(0xFF262c40),
-      //     foregroundColor: const Color(0xFFFFFFFF),
-      //     child: const Icon(Icons.add, size: 30),
-      //   ),
-      // ),
     );
   }
 }

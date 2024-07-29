@@ -110,9 +110,9 @@ class _SobreState extends State<Sobre> {
                       },
                       child: const Center(
                         child: Text(
-                          'Ciente',
+                          'Concordo',
                           style: TextStyle(
-                            fontSize: 19,
+                            fontSize: 16,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
