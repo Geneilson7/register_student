@@ -94,44 +94,50 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
   }
 
   void _saveItem() async {
-    if (_formKey.currentState!.validate()) {
-      final aluno = {
-        'nome': _nomeController.text,
-        'cpf': _cpfController.text,
-        'rg': _rgController.text,
-        'dtnascimento': _dtnascimentoController.text,
-        'pcd': tipoValue,
-        'sexo': _sexoController.text,
-        'status': tipoStatus,
-        'bairro': _bairroController.text,
-        'endereco': _enderecoController.text,
-        'municipio': _municipioController.text,
-        'responsavel': _responsavelController.text,
-        'responsavel2': _responsavel2Controller.text,
-        'telefone': _telefoneController.text,
-        'telresponsavel': _telresponsavelController.text,
-        'telresponsavel2': _telresponsavel2Controller.text,
-        'cep': _cepController.text,
-        'escola': _escolaController.text,
-        'endescola': _endescolaController.text,
-        'turnoescolar': tipoTurno,
-        'turnotreino': tipoTurnoTreino,
-        'faixa': tipoFaixa,
-        'grau': tipoParentesco,
-        'grau2': tipoParentesco2,
-      };
+    try {
+      if (_formKey.currentState!.validate()) {
+        final aluno = {
+          'nome': _nomeController.text,
+          'cpf': _cpfController.text,
+          'rg': _rgController.text,
+          'dtnascimento': _dtnascimentoController.text,
+          'pcd': tipoValue,
+          'sexo': _sexoController.text,
+          'status': tipoStatus,
+          'bairro': _bairroController.text,
+          'endereco': _enderecoController.text,
+          'municipio': _municipioController.text,
+          'responsavel': _responsavelController.text,
+          'responsavel2': _responsavel2Controller.text,
+          'telefone': _telefoneController.text,
+          'telresponsavel': _telresponsavelController.text,
+          'telresponsavel2': _telresponsavel2Controller.text,
+          'cep': _cepController.text,
+          'escola': _escolaController.text,
+          'endescola': _endescolaController.text,
+          'turnoescolar': tipoTurno,
+          'turnotreino': tipoTurnoTreino,
+          'faixa': tipoFaixa,
+          'grau': tipoParentesco,
+          'grau2': tipoParentesco2,
+        };
 
-      if (widget.alunoId != null) {
-        await dbHelper.updateAluno(widget.alunoId!, aluno);
-      } else {
-        await dbHelper.insertAluno(aluno);
+        if (widget.alunoId != null) {
+          await dbHelper.updateAluno(widget.alunoId!, aluno);
+        } else {
+          await dbHelper.insertAluno(aluno);
+        }
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const HomePage(),
+          ),
+        );
       }
-
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const HomePage(),
-        ),
+    } catch (error) {
+      ScaffoldMessenger(
+        child: Text("$error"),
       );
     }
   }

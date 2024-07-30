@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
@@ -19,9 +21,10 @@ class DBHelper {
 
   Future<Database> _initDatabase() async {
     String path = join(await getDatabasesPath(), 'aluno.db');
+    print('Database path (inside _initDatabase): $path');
     return await openDatabase(
       path,
-      version: 1,
+      version: 2,
       onCreate: _onCreate,
     );
   }
