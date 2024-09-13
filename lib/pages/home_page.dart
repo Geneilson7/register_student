@@ -170,14 +170,15 @@ class _HomePageState extends State<HomePage> {
             Expanded(
               flex: 4,
               child: Container(
-                decoration: const BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage(
-                      'assets/image/background.jpg',
-                    ),
-                    fit: BoxFit.fill,
-                  ),
-                ),
+                // decoration: const BoxDecoration(
+                //   image: DecorationImage(
+                //     image: AssetImage(
+                //       'assets/image/background.jpg',
+                //     ),
+                //     fit: BoxFit.fill,
+                //   ),
+                // ),
+                color: const Color(0xffffffff),
                 child: Column(
                   children: [
                     const Padding(
@@ -190,7 +191,7 @@ class _HomePageState extends State<HomePage> {
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w700,
-                              color: Color(0xFFFFFFFF),
+                              color: Color(0xFF000000),
                             ),
                           ),
                         ],
@@ -425,219 +426,462 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                     ),
-                    Expanded(
-                      child: ListView.builder(
-                        primary: false,
-                        shrinkWrap: true,
-                        keyboardDismissBehavior:
-                            ScrollViewKeyboardDismissBehavior.onDrag,
-                        itemCount: _items.length,
-                        itemBuilder: (context, index) {
-                          // final user = users[index];
-
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 60,
-                              vertical: 5,
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 15,
+                      ),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              spreadRadius: 2,
+                              blurRadius: 7,
+                              offset: const Offset(0, 4),
                             ),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(25),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.grey.withOpacity(0.5),
-                                    spreadRadius: 0,
-                                    blurRadius: 5,
-                                    offset: const Offset(0, 3),
+                          ],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            DataTable(
+                              columns: const [
+                                DataColumn(
+                                  label: Text(
+                                    'ID',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
                                   ),
-                                ],
-                              ),
-                              child: Card(
-                                color: _getStatusColor(_items[index]['status']),
-                                elevation: 0,
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      child: ListTile(
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(20),
-                                        ),
-                                        onTap: () async {
-                                          await Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  CadastrarAluno(
-                                                alunoId: _items[index]['id'],
-                                              ),
-                                            ),
-                                          ).then((value) => _refreshItems());
-                                        },
-                                        tileColor: _getStatusColor(
-                                            _items[index]['status']),
-                                        leading: Container(
-                                          width: 40,
-                                          height: 40,
-                                          decoration: BoxDecoration(
-                                            color: const Color(0xFF262c40),
-                                            borderRadius:
-                                                BorderRadius.circular(40),
-                                          ),
-                                          child: Center(
-                                            child: Text(
-                                              // user.id.toString().toUpperCase(),
-                                              _items[index]['id']
-                                                  .toString()
-                                                  .toUpperCase(),
-                                              style: const TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        title: Padding(
-                                          padding:
-                                              const EdgeInsets.only(left: 10.0),
-                                          child: Text(
-                                            // cliente.name.toUpperCase(),
-                                            _items[index]['nome']
-                                                .toString()
-                                                .toUpperCase(),
-                                            style: const TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w700,
-                                              color: Color(0xFF1C1C1C),
-                                            ),
-                                          ),
-                                        ),
-                                        trailing: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            IconButton(
-                                              icon: const Icon(
-                                                Icons.delete,
-                                                color: Colors.red,
-                                              ),
-                                              onPressed: () {
-                                                showDialog(
-                                                  context: context,
-                                                  builder: (_) {
-                                                    return AlertDialog(
-                                                      title: const Text(
-                                                        'Confirmação',
-                                                        style: TextStyle(
-                                                          fontSize: 18,
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                          color:
-                                                              Color(0xFF000000),
-                                                        ),
-                                                      ),
-                                                      content: const Text(
-                                                          'Deseja realmente concluir a exclusão?'),
-                                                      actions: <Widget>[
-                                                        ElevatedButton(
-                                                          onPressed: () async {
-                                                            _deleteItem(
-                                                                _items[index]
-                                                                    ['id']);
+                                ),
+                                DataColumn(
+                                  label: Text(
+                                    'Nome',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ),
+                                DataColumn(
+                                  label: Text(
+                                    'Status',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ),
+                                DataColumn(
+                                  label: Text(
+                                    'Turno',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ),
+                                DataColumn(
+                                  label: Text(
+                                    'Ações',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                              rows: _items.asMap().entries.map((entry) {
+                                final index = entry.key;
+                                final item = entry.value;
 
-                                                            Navigator.push(
-                                                              context,
-                                                              MaterialPageRoute(
-                                                                builder:
-                                                                    (context) =>
-                                                                        WillPopScope(
-                                                                  onWillPop:
-                                                                      () async {
-                                                                    Navigator
-                                                                        .pushReplacement(
-                                                                      context,
-                                                                      MaterialPageRoute(
-                                                                        builder:
-                                                                            (context) =>
-                                                                                const HomePage(),
-                                                                      ),
-                                                                    );
-                                                                    return false;
-                                                                  },
-                                                                  child:
-                                                                      const HomePage(),
-                                                                ),
-                                                              ),
-                                                            );
-                                                          },
-                                                          style: ElevatedButton
-                                                              .styleFrom(
-                                                            shape:
-                                                                RoundedRectangleBorder(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          13),
-                                                            ),
-                                                            elevation: 3,
-                                                            backgroundColor:
-                                                                const Color(
-                                                                    0xFFda2828),
-                                                          ),
-                                                          child: const Text(
-                                                            'Sim',
-                                                            style: TextStyle(
-                                                              color: Color(
-                                                                  0xFFFFFFFF),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        ElevatedButton(
-                                                          onPressed: () {
-                                                            Navigator.of(
-                                                                    context)
-                                                                .pop();
-                                                          },
-                                                          style: ElevatedButton
-                                                              .styleFrom(
-                                                            shape:
-                                                                RoundedRectangleBorder(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          13),
-                                                            ),
-                                                            elevation: 3,
-                                                            backgroundColor:
-                                                                const Color(
-                                                                    0xFF008000),
-                                                          ),
-                                                          child: const Text(
-                                                            'Não',
-                                                            style: TextStyle(
-                                                              color: Color(
-                                                                  0xFFFFFFFF),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    );
-                                                  },
-                                                );
-                                              },
-                                            ),
-                                          ],
+                                return DataRow(
+                                  color:
+                                      MaterialStateProperty.resolveWith<Color?>(
+                                    (Set<MaterialState> states) {
+                                      // Obtem a cor baseada no status
+                                      Color? statusColor =
+                                          _getStatusColor(item['status']);
+
+                                      // Se o status tiver uma cor específica, use-a. Caso contrário, use cores alternadas para as linhas.
+                                      if (statusColor !=
+                                          const Color(0xFFFFFFFF)) {
+                                        return statusColor;
+                                      }
+
+                                      return index.isEven
+                                          ? Colors.grey[200]
+                                          : Colors.white;
+                                    },
+                                  ),
+                                  cells: [
+                                    DataCell(
+                                      Text(
+                                        item['id'].toString().toUpperCase(),
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                      onTap: () async {
+                                        await Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                CadastrarAluno(
+                                                    alunoId: item['id']),
+                                          ),
+                                        ).then((value) => _refreshItems());
+                                      },
+                                    ),
+                                    DataCell(
+                                      Text(
+                                        item['nome'].toString().toUpperCase(),
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w700,
+                                          color: Color(0xFF1C1C1C),
                                         ),
                                       ),
                                     ),
+                                    DataCell(
+                                      Text(
+                                        item['status'].toString().toUpperCase(),
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w700,
+                                          color: Color(0xFF1C1C1C),
+                                        ),
+                                      ),
+                                    ),
+                                    DataCell(
+                                      Text(
+                                        item['turnotreino']
+                                            .toString()
+                                            .toUpperCase(),
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w700,
+                                          color: Color(0xFF1C1C1C),
+                                        ),
+                                      ),
+                                    ),
+                                    DataCell(
+                                      IconButton(
+                                        icon: const Icon(
+                                          Icons.delete,
+                                          color: Colors.red,
+                                        ),
+                                        onPressed: () {
+                                          showDialog(
+                                            context: context,
+                                            builder: (_) {
+                                              return AlertDialog(
+                                                title: const Text(
+                                                  'Confirmação',
+                                                  style: TextStyle(
+                                                    fontSize: 18,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Color(0xFF000000),
+                                                  ),
+                                                ),
+                                                content: const Text(
+                                                    'Deseja realmente concluir a exclusão?'),
+                                                actions: <Widget>[
+                                                  ElevatedButton(
+                                                    onPressed: () async {
+                                                      _deleteItem(item['id']);
+                                                      Navigator.pushReplacement(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              const HomePage(),
+                                                        ),
+                                                      );
+                                                    },
+                                                    style: ElevatedButton
+                                                        .styleFrom(
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(13),
+                                                      ),
+                                                      elevation: 3,
+                                                      backgroundColor:
+                                                          const Color(
+                                                              0xFFda2828),
+                                                    ),
+                                                    child: const Text(
+                                                      'Sim',
+                                                      style: TextStyle(
+                                                          color: Color(
+                                                              0xFFFFFFFF)),
+                                                    ),
+                                                  ),
+                                                  ElevatedButton(
+                                                    onPressed: () {
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    },
+                                                    style: ElevatedButton
+                                                        .styleFrom(
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(13),
+                                                      ),
+                                                      elevation: 3,
+                                                      backgroundColor:
+                                                          const Color(
+                                                              0xFF008000),
+                                                    ),
+                                                    child: const Text(
+                                                      'Não',
+                                                      style: TextStyle(
+                                                          color: Color(
+                                                              0xFFFFFFFF)),
+                                                    ),
+                                                  ),
+                                                ],
+                                              );
+                                            },
+                                          );
+                                        },
+                                      ),
+                                    ),
                                   ],
-                                ),
-                              ),
+                                );
+                              }).toList(),
                             ),
-                          );
-                        },
+                          ],
+                        ),
                       ),
                     ),
+
+                    // Expanded(
+                    //   child: ListView.builder(
+                    //     primary: false,
+                    //     shrinkWrap: true,
+                    //     keyboardDismissBehavior:
+                    //         ScrollViewKeyboardDismissBehavior.onDrag,
+                    //     itemCount: _items.length,
+                    //     itemBuilder: (context, index) {
+                    //       // final user = users[index];
+
+                    //       return Padding(
+                    //         padding: const EdgeInsets.symmetric(
+                    //           horizontal: 60,
+                    //           vertical: 5,
+                    //         ),
+                    //         child: Container(
+                    //           decoration: BoxDecoration(
+                    //             borderRadius: BorderRadius.circular(25),
+                    //             boxShadow: [
+                    //               BoxShadow(
+                    //                 color: Colors.grey.withOpacity(0.5),
+                    //                 spreadRadius: 0,
+                    //                 blurRadius: 5,
+                    //                 offset: const Offset(0, 3),
+                    //               ),
+                    //             ],
+                    //           ),
+                    //           child: Card(
+                    //             color: _getStatusColor(_items[index]['status']),
+                    //             elevation: 0,
+                    //             child: Row(
+                    //               children: [
+                    //                 Expanded(
+                    //                   child: ListTile(
+                    //                     shape: RoundedRectangleBorder(
+                    //                       borderRadius:
+                    //                           BorderRadius.circular(20),
+                    //                     ),
+                    //                     onTap: () async {
+                    //                       await Navigator.push(
+                    //                         context,
+                    //                         MaterialPageRoute(
+                    //                           builder: (context) =>
+                    //                               CadastrarAluno(
+                    //                             alunoId: _items[index]['id'],
+                    //                           ),
+                    //                         ),
+                    //                       ).then((value) => _refreshItems());
+                    //                     },
+                    //                     tileColor: _getStatusColor(
+                    //                         _items[index]['status']),
+                    //                     leading: Container(
+                    //                       width: 40,
+                    //                       height: 40,
+                    //                       decoration: BoxDecoration(
+                    //                         color: const Color(0xFF262c40),
+                    //                         borderRadius:
+                    //                             BorderRadius.circular(40),
+                    //                       ),
+                    //                       child: Center(
+                    //                         child: Text(
+                    //                           // user.id.toString().toUpperCase(),
+                    //                           _items[index]['id']
+                    //                               .toString()
+                    //                               .toUpperCase(),
+                    //                           style: const TextStyle(
+                    //                             color: Colors.white,
+                    //                             fontWeight: FontWeight.bold,
+                    //                             fontSize: 16,
+                    //                           ),
+                    //                         ),
+                    //                       ),
+                    //                     ),
+                    //                     title: Padding(
+                    //                       padding:
+                    //                           const EdgeInsets.only(left: 10.0),
+                    //                       child: Text(
+                    //                         // cliente.name.toUpperCase(),
+                    //                         _items[index]['nome']
+                    //                             .toString()
+                    //                             .toUpperCase(),
+                    //                         style: const TextStyle(
+                    //                           fontSize: 16,
+                    //                           fontWeight: FontWeight.w700,
+                    //                           color: Color(0xFF1C1C1C),
+                    //                         ),
+                    //                       ),
+                    //                     ),
+                    //                     trailing: Row(
+                    //                       mainAxisSize: MainAxisSize.min,
+                    //                       children: [
+                    //                         IconButton(
+                    //                           icon: const Icon(
+                    //                             Icons.delete,
+                    //                             color: Colors.red,
+                    //                           ),
+                    //                           onPressed: () {
+                    //                             showDialog(
+                    //                               context: context,
+                    //                               builder: (_) {
+                    //                                 return AlertDialog(
+                    //                                   title: const Text(
+                    //                                     'Confirmação',
+                    //                                     style: TextStyle(
+                    //                                       fontSize: 18,
+                    //                                       fontWeight:
+                    //                                           FontWeight.w500,
+                    //                                       color:
+                    //                                           Color(0xFF000000),
+                    //                                     ),
+                    //                                   ),
+                    //                                   content: const Text(
+                    //                                       'Deseja realmente concluir a exclusão?'),
+                    //                                   actions: <Widget>[
+                    //                                     ElevatedButton(
+                    //                                       onPressed: () async {
+                    //                                         _deleteItem(
+                    //                                             _items[index]
+                    //                                                 ['id']);
+
+                    //                                         Navigator.push(
+                    //                                           context,
+                    //                                           MaterialPageRoute(
+                    //                                             builder:
+                    //                                                 (context) =>
+                    //                                                     WillPopScope(
+                    //                                               onWillPop:
+                    //                                                   () async {
+                    //                                                 Navigator
+                    //                                                     .pushReplacement(
+                    //                                                   context,
+                    //                                                   MaterialPageRoute(
+                    //                                                     builder:
+                    //                                                         (context) =>
+                    //                                                             const HomePage(),
+                    //                                                   ),
+                    //                                                 );
+                    //                                                 return false;
+                    //                                               },
+                    //                                               child:
+                    //                                                   const HomePage(),
+                    //                                             ),
+                    //                                           ),
+                    //                                         );
+                    //                                       },
+                    //                                       style: ElevatedButton
+                    //                                           .styleFrom(
+                    //                                         shape:
+                    //                                             RoundedRectangleBorder(
+                    //                                           borderRadius:
+                    //                                               BorderRadius
+                    //                                                   .circular(
+                    //                                                       13),
+                    //                                         ),
+                    //                                         elevation: 3,
+                    //                                         backgroundColor:
+                    //                                             const Color(
+                    //                                                 0xFFda2828),
+                    //                                       ),
+                    //                                       child: const Text(
+                    //                                         'Sim',
+                    //                                         style: TextStyle(
+                    //                                           color: Color(
+                    //                                               0xFFFFFFFF),
+                    //                                         ),
+                    //                                       ),
+                    //                                     ),
+                    //                                     ElevatedButton(
+                    //                                       onPressed: () {
+                    //                                         Navigator.of(
+                    //                                                 context)
+                    //                                             .pop();
+                    //                                       },
+                    //                                       style: ElevatedButton
+                    //                                           .styleFrom(
+                    //                                         shape:
+                    //                                             RoundedRectangleBorder(
+                    //                                           borderRadius:
+                    //                                               BorderRadius
+                    //                                                   .circular(
+                    //                                                       13),
+                    //                                         ),
+                    //                                         elevation: 3,
+                    //                                         backgroundColor:
+                    //                                             const Color(
+                    //                                                 0xFF008000),
+                    //                                       ),
+                    //                                       child: const Text(
+                    //                                         'Não',
+                    //                                         style: TextStyle(
+                    //                                           color: Color(
+                    //                                               0xFFFFFFFF),
+                    //                                         ),
+                    //                                       ),
+                    //                                     ),
+                    //                                   ],
+                    //                                 );
+                    //                               },
+                    //                             );
+                    //                           },
+                    //                         ),
+                    //                       ],
+                    //                     ),
+                    //                   ),
+                    //                 ),
+                    //               ],
+                    //             ),
+                    //           ),
+                    //         ),
+                    //       );
+                    //     },
+                    //   ),
+                    // ),
                   ],
                 ),
               ),
