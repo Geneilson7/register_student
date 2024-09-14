@@ -14,10 +14,12 @@ import 'package:register_student/src/dropdown_status.dart';
 import 'package:register_student/src/dropdown_turno_escolar.dart';
 import 'package:register_student/src/dropdown_turno_treino.dart';
 import 'package:register_student/util/form.dart';
+// import 'package:pdf/pdf.dart';
+// import 'package:pdf/widgets.dart' as pw;
+// import 'package:printing/printing.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
-import 'package:register_student/util/view_pdf.dart';
 
 class CadastrarAluno extends StatefulWidget {
   final int? alunoId; // Alterado para int? para aceitar o ID do aluno
@@ -149,11 +151,11 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
     }
   }
 
-  Future<void> _generateAndPreviewPDF() async {
-    final pdf = pw.Document();
-
-    pdf.addPage(
+  void _displayPdf() {
+    final doc = pw.Document();
+    doc.addPage(
       pw.Page(
+        pageFormat: PdfPageFormat.a4,
         build: (pw.Context context) {
           return pw.Column(
             crossAxisAlignment: pw.CrossAxisAlignment.start,
@@ -189,8 +191,8 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
               pw.SizedBox(height: 5),
               pw.Text('Município: ${_municipioController.text}'),
               pw.Text('CEP: ${_cepController.text}'),
-              pw.Text('Bairro: ${_enderecoController.text}'),
-              pw.Text('Endereço: ${_enderecoController.text}}'),
+              pw.Text('Bairro: ${_bairroController.text}'),
+              pw.Text('Endereço: ${_enderecoController.text}'),
 
               pw.SizedBox(height: 15),
 
@@ -235,29 +237,15 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
       ),
     );
 
-    // final dir = await getApplicationDocumentsDirectory();
-    // final String path =
-    //     '${dir.path}/$_nomeController.pdf'; // Nome do arquivo PDF
-    // final File file = File(path);
-
-    // // Salvar o PDF localmente
-    // await file.writeAsBytes(await pdf.save());
-
-    // Sanitizar o nome do arquivo para evitar erros no sistema de arquivos
-    // Salvando o PDF em um arquivo temporário
-    String sanitizedFileName = _nomeController.text
-        .replaceAll(RegExp(r'[^\w\s]+'), ''); // Remove caracteres especiais
-    final dir = await getApplicationDocumentsDirectory();
-    final String path = '${dir.path}/$sanitizedFileName.pdf';
-    final File file = File(path);
-    await file.writeAsBytes(await pdf.save());
-
-    // Navegar para a tela de visualização do PDF
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => PDFViewerScreen(path),
-      ),
-    );
+    /// open Preview Screen
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => PreviewScreen(
+            doc: doc,
+            pdfFileName: "${_nomeController.text}.pdf",
+          ),
+        ));
   }
 
   @override
@@ -837,12 +825,12 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                           ),
                           onPressed: () {
                             if (_formKey.currentState!.validate()) {
-                              _generateAndPreviewPDF();
+                              _displayPdf();
                             }
                           },
                           child: const Center(
                             child: Text(
-                              'Imprimir',
+                              'Viewer',
                               style: TextStyle(
                                 fontSize: 19,
                                 fontWeight: FontWeight.w700,
@@ -962,6 +950,38 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class PreviewScreen extends StatelessWidget {
+  final pw.Document doc;
+  final String pdfFileName;
+
+  const PreviewScreen({
+    Key? key,
+    required this.doc,
+    required this.pdfFileName,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          onPressed: () => Navigator.pop(context),
+          icon: Icon(Icons.arrow_back_outlined),
+        ),
+        centerTitle: true,
+        title: Text("Preview"),
+      ),
+      body: PdfPreview(
+        build: (format) => doc.save(),
+        allowSharing: true,
+        allowPrinting: true,
+        initialPageFormat: PdfPageFormat.a4,
+        pdfFileName: pdfFileName,
       ),
     );
   }

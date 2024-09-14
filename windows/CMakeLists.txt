@@ -8,7 +8,7 @@ set(BINARY_NAME "register_student")
 
 # Explicitly opt in to modern CMake behaviors to avoid warnings with recent
 # versions of CMake.
-cmake_policy(VERSION 3.14)
+cmake_policy(VERSION 3.14...3.25)
 
 # Define build configuration option.
 get_property(IS_MULTICONFIG GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
@@ -28,6 +28,11 @@ set(CMAKE_EXE_LINKER_FLAGS_PROFILE "${CMAKE_EXE_LINKER_FLAGS_RELEASE}")
 set(CMAKE_SHARED_LINKER_FLAGS_PROFILE "${CMAKE_SHARED_LINKER_FLAGS_RELEASE}")
 set(CMAKE_C_FLAGS_PROFILE "${CMAKE_C_FLAGS_RELEASE}")
 set(CMAKE_CXX_FLAGS_PROFILE "${CMAKE_CXX_FLAGS_RELEASE}")
+set(PDFIUM_LIB_PATH "path/to/pdfium/lib")
+set(PDFIUM_INCLUDE_PATH "path/to/pdfium/include")
+link_directories(${PDFIUM_LIB_PATH})
+include_directories(${PDFIUM_INCLUDE_PATH})
+
 
 # Use Unicode for all projects.
 add_definitions(-DUNICODE -D_UNICODE)
