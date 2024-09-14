@@ -8,7 +8,7 @@ set(BINARY_NAME "register_student")
 
 # Explicitly opt in to modern CMake behaviors to avoid warnings with recent
 # versions of CMake.
-cmake_policy(VERSION 3.14...3.25)
+cmake_policy(VERSION 3.14)
 
 # Define build configuration option.
 get_property(IS_MULTICONFIG GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
@@ -107,5 +107,5 @@ install(FILES "${AOT_LIBRARY}" DESTINATION "${INSTALL_BUNDLE_DATA_DIR}"
   CONFIGURATIONS Profile;Release
   COMPONENT Runtime)
 
-set(PDFIUM_VERSION "4929" CACHE STRING "" FORCE)
-set(PDFIUM_ARCH "x64" CACHE STRING "" FORCE)
+# set(PDFIUM_VERSION "4929" CACHE STRING "" FORCE)
+# set(PDFIUM_ARCH "x64" CACHE STRING "" FORCE)
