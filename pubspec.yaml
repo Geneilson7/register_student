@@ -27,12 +27,16 @@ dependencies:
   brasil_fields: ^1.14.1  
   cupertino_icons: ^1.0.2  
   dropdown_button2: ^2.3.9
-  path_provider: ^2.0.11
+  path_provider: ^2.1.4
   path: ^1.8.0
   sqflite: ^2.3.2
   sqflite_common: ^2.0.0+4
   sqflite_common_ffi: ^2.3.2+1
   quickalert: ^1.1.0
+  pdf: ^3.11.1
+  printing: ^5.13.2
+  flutter_pdfview: ^1.3.2
+  pdfx: ^2.7.0
 
 dev_dependencies:
   flutter_test:
@@ -47,11 +51,11 @@ flutter:
     - assets/image/background.jpg
 
   # fonts:
-  #   - family: Schyler
+  #   - family: Roboto
   #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
-  #       - asset: fonts/Schyler-Italic.ttf
-  #         style: italic
+  #       - asset: assets/fonts/Roboto-Regular.ttf
+  #       - asset: assets/fonts/Roboto-Bold.ttf
+  #         weight: 700
   #   - family: Trajan Pro
   #     fonts:
   #       - asset: fonts/TrajanPro.ttf

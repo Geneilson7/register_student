@@ -146,6 +146,29 @@ class _HomePageState extends State<HomePage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
+                          builder: (context) => const CadastrarAluno(),
+                        ),
+                      );
+                    },
+                    leading: const Icon(
+                      Icons.group,
+                      size: 25,
+                      color: Colors.white54,
+                      // color: Color(0xFF000000),
+                    ),
+                    title: const Text(
+                      "Cadastrar Faixa",
+                      style: TextStyle(
+                        color: Colors.white54,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  ListTile(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
                           builder: (context) => const Sobre(),
                         ),
                       );
@@ -176,9 +199,10 @@ class _HomePageState extends State<HomePage> {
                 //       'assets/image/background.jpg',
                 //     ),
                 //     fit: BoxFit.fill,
+                //     opacity: 10,
                 //   ),
                 // ),
-                color: const Color(0xffffffff),
+                color: const Color(0xffecf0f4),
                 child: Column(
                   children: [
                     const Padding(
@@ -201,167 +225,35 @@ class _HomePageState extends State<HomePage> {
                       height: 10,
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(bottom: 10),
-                      child: Align(
-                        alignment: Alignment.bottomCenter,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(10),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.4),
-                                spreadRadius: 0,
-                                blurRadius: 7,
-                                offset: const Offset(0, 4),
-                              )
-                            ],
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 50, vertical: 20),
-                            child: Column(
-                              children: [
-                                const Text.rich(
-                                  TextSpan(
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                    ),
-                                    children: [
-                                      TextSpan(
-                                        text: 'Matriculados',
-                                        style: TextStyle(
-                                          color: Color(0xFF8A8A8A),
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Text(
-                                  '$_alunoCount',
-                                  style: const TextStyle(
-                                    color: Color(0xFF1F41BB),
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Padding(
                       padding: const EdgeInsets.only(top: 10),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 10),
-                            child: Align(
-                              alignment: Alignment.bottomCenter,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(10),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.grey.withOpacity(0.4),
-                                      spreadRadius: 0,
-                                      blurRadius: 7,
-                                      offset: const Offset(0, 4),
-                                    )
-                                  ],
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 70, vertical: 20),
-                                  child: Column(
-                                    children: [
-                                      const Text.rich(
-                                        TextSpan(
-                                          style: TextStyle(
-                                            fontSize: 20,
-                                          ),
-                                          children: [
-                                            TextSpan(
-                                              text: 'Ativos',
-                                              style: TextStyle(
-                                                color: Color(0xFF8A8A8A),
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      Text(
-                                        '$_ativoCount',
-                                        style: const TextStyle(
-                                          color: Color(0xFF1F41BB),
-                                          fontSize: 24,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
+                          Expanded(
+                            child: CustomButton(
+                              text: 'Matriculados',
+                              icon: Icons.group,
+                              iconColor: Colors.blueAccent,
+                              backgroundColor: const Color(0xFF2E374B),
+                              value: '$_alunoCount',
                             ),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 10),
-                            child: Align(
-                              alignment: Alignment.bottomCenter,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(10),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.grey.withOpacity(0.4),
-                                      spreadRadius: 0,
-                                      blurRadius: 7,
-                                      offset: const Offset(0, 4),
-                                    )
-                                  ],
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 70, vertical: 20),
-                                  child: Column(
-                                    children: [
-                                      const Text.rich(
-                                        TextSpan(
-                                          style: TextStyle(
-                                            fontSize: 20,
-                                          ),
-                                          children: [
-                                            TextSpan(
-                                              text: 'Inativos',
-                                              style: TextStyle(
-                                                color: Color(0xFF8A8A8A),
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      Text(
-                                        '$_inativoCount',
-                                        style: const TextStyle(
-                                          color: Color(0xFF1F41BB),
-                                          fontSize: 24,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
+                          Expanded(
+                            child: CustomButton(
+                              text: 'Ativos',
+                              icon: Icons.check_circle,
+                              iconColor: Colors.green,
+                              backgroundColor: const Color(0xFF2E374B),
+                              value: '$_ativoCount',
+                            ),
+                          ),
+                          Expanded(
+                            child: CustomButton(
+                              text: 'Inativos',
+                              icon: Icons.cancel,
+                              iconColor: Colors.red,
+                              backgroundColor: const Color(0xFF2E374B),
+                              value: '$_inativoCount',
                             ),
                           ),
                         ],
@@ -369,7 +261,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 60, vertical: 10),
+                          horizontal: 15, vertical: 10),
                       child: Container(
                         decoration: BoxDecoration(
                           color: Colors.white,
@@ -427,9 +319,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 15,
-                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 15),
                       child: Container(
                         decoration: BoxDecoration(
                           color: Colors.white,
@@ -446,223 +336,255 @@ class _HomePageState extends State<HomePage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            DataTable(
-                              columns: const [
-                                DataColumn(
-                                  label: Text(
-                                    'ID',
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
-                                    ),
-                                  ),
-                                ),
-                                DataColumn(
-                                  label: Text(
-                                    'Nome',
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
-                                    ),
-                                  ),
-                                ),
-                                DataColumn(
-                                  label: Text(
-                                    'Status',
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
-                                    ),
-                                  ),
-                                ),
-                                DataColumn(
-                                  label: Text(
-                                    'Turno',
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
-                                    ),
-                                  ),
-                                ),
-                                DataColumn(
-                                  label: Text(
-                                    'Ações',
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                              rows: _items.asMap().entries.map((entry) {
-                                final index = entry.key;
-                                final item = entry.value;
-
-                                return DataRow(
-                                  color:
-                                      MaterialStateProperty.resolveWith<Color?>(
-                                    (Set<MaterialState> states) {
-                                      // Obtem a cor baseada no status
-                                      Color? statusColor =
-                                          _getStatusColor(item['status']);
-
-                                      // Se o status tiver uma cor específica, use-a. Caso contrário, use cores alternadas para as linhas.
-                                      if (statusColor !=
-                                          const Color(0xFFFFFFFF)) {
-                                        return statusColor;
-                                      }
-
-                                      return index.isEven
-                                          ? Colors.grey[200]
-                                          : Colors.white;
-                                    },
-                                  ),
-                                  cells: [
-                                    DataCell(
-                                      Text(
-                                        item['id'].toString().toUpperCase(),
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black,
-                                          fontSize: 16,
-                                        ),
+                            SingleChildScrollView(
+                              child: DataTable(
+                                columns: const [
+                                  DataColumn(
+                                    label: Text(
+                                      'ID',
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
                                       ),
-                                      onTap: () async {
-                                        await Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                CadastrarAluno(
-                                                    alunoId: item['id']),
-                                          ),
-                                        ).then((value) => _refreshItems());
+                                    ),
+                                  ),
+                                  DataColumn(
+                                    label: Text(
+                                      'Nome',
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ),
+                                  DataColumn(
+                                    label: Text(
+                                      'Turno',
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ),
+                                  DataColumn(
+                                    label: Text(
+                                      'Status',
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ),
+                                  DataColumn(
+                                    label: Text(
+                                      'Ações',
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                                rows: _items.asMap().entries.map((entry) {
+                                  final index = entry.key;
+                                  final item = entry.value;
+
+                                  return DataRow(
+                                    color: MaterialStateProperty.resolveWith<
+                                        Color?>(
+                                      (Set<MaterialState> states) {
+                                        Color? statusColor =
+                                            _getStatusColor(item['status']);
+                                        if (statusColor !=
+                                            const Color(0xFFFFFFFF)) {
+                                          return statusColor;
+                                        }
+                                        return index.isEven
+                                            ? Colors.grey[200]
+                                            : Colors.white;
                                       },
                                     ),
-                                    DataCell(
-                                      Text(
-                                        item['nome'].toString().toUpperCase(),
-                                        style: const TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w700,
-                                          color: Color(0xFF1C1C1C),
+                                    cells: [
+                                      DataCell(
+                                        Text(
+                                          item['id'].toString().toUpperCase(),
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black,
+                                            fontSize: 16,
+                                          ),
                                         ),
-                                      ),
-                                    ),
-                                    DataCell(
-                                      Text(
-                                        item['status'].toString().toUpperCase(),
-                                        style: const TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w700,
-                                          color: Color(0xFF1C1C1C),
-                                        ),
-                                      ),
-                                    ),
-                                    DataCell(
-                                      Text(
-                                        item['turnotreino']
-                                            .toString()
-                                            .toUpperCase(),
-                                        style: const TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w700,
-                                          color: Color(0xFF1C1C1C),
-                                        ),
-                                      ),
-                                    ),
-                                    DataCell(
-                                      IconButton(
-                                        icon: const Icon(
-                                          Icons.delete,
-                                          color: Colors.red,
-                                        ),
-                                        onPressed: () {
-                                          showDialog(
-                                            context: context,
-                                            builder: (_) {
-                                              return AlertDialog(
-                                                title: const Text(
-                                                  'Confirmação',
-                                                  style: TextStyle(
-                                                    fontSize: 18,
-                                                    fontWeight: FontWeight.w500,
-                                                    color: Color(0xFF000000),
-                                                  ),
-                                                ),
-                                                content: const Text(
-                                                    'Deseja realmente concluir a exclusão?'),
-                                                actions: <Widget>[
-                                                  ElevatedButton(
-                                                    onPressed: () async {
-                                                      _deleteItem(item['id']);
-                                                      Navigator.pushReplacement(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              const HomePage(),
-                                                        ),
-                                                      );
-                                                    },
-                                                    style: ElevatedButton
-                                                        .styleFrom(
-                                                      shape:
-                                                          RoundedRectangleBorder(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(13),
-                                                      ),
-                                                      elevation: 3,
-                                                      backgroundColor:
-                                                          const Color(
-                                                              0xFFda2828),
-                                                    ),
-                                                    child: const Text(
-                                                      'Sim',
-                                                      style: TextStyle(
-                                                          color: Color(
-                                                              0xFFFFFFFF)),
-                                                    ),
-                                                  ),
-                                                  ElevatedButton(
-                                                    onPressed: () {
-                                                      Navigator.of(context)
-                                                          .pop();
-                                                    },
-                                                    style: ElevatedButton
-                                                        .styleFrom(
-                                                      shape:
-                                                          RoundedRectangleBorder(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(13),
-                                                      ),
-                                                      elevation: 3,
-                                                      backgroundColor:
-                                                          const Color(
-                                                              0xFF008000),
-                                                    ),
-                                                    child: const Text(
-                                                      'Não',
-                                                      style: TextStyle(
-                                                          color: Color(
-                                                              0xFFFFFFFF)),
-                                                    ),
-                                                  ),
-                                                ],
-                                              );
-                                            },
-                                          );
+                                        onTap: () async {
+                                          await Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  CadastrarAluno(
+                                                      alunoId: item['id']),
+                                            ),
+                                          ).then((value) => _refreshItems());
                                         },
                                       ),
-                                    ),
-                                  ],
-                                );
-                              }).toList(),
+                                      DataCell(
+                                        Text(
+                                          item['nome'].toString().toUpperCase(),
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w700,
+                                            color: Color(0xFF1C1C1C),
+                                          ),
+                                        ),
+                                        onTap: () async {
+                                          await Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  CadastrarAluno(
+                                                      alunoId: item['id']),
+                                            ),
+                                          ).then((value) => _refreshItems());
+                                        },
+                                      ),
+                                      DataCell(
+                                        Text(
+                                          item['turnotreino']
+                                              .toString()
+                                              .toUpperCase(),
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w700,
+                                            color: Color(0xFF1C1C1C),
+                                          ),
+                                        ),
+                                        onTap: () async {
+                                          await Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  CadastrarAluno(
+                                                      alunoId: item['id']),
+                                            ),
+                                          ).then((value) => _refreshItems());
+                                        },
+                                      ),
+                                      DataCell(
+                                        Text(
+                                          item['status']
+                                              .toString()
+                                              .toUpperCase(),
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w700,
+                                            color: Color(0xFF1C1C1C),
+                                          ),
+                                        ),
+                                        onTap: () async {
+                                          await Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  CadastrarAluno(
+                                                      alunoId: item['id']),
+                                            ),
+                                          ).then((value) => _refreshItems());
+                                        },
+                                      ),
+                                      DataCell(
+                                        IconButton(
+                                          icon: const Icon(
+                                            Icons.delete,
+                                            color: Colors.red,
+                                          ),
+                                          onPressed: () {
+                                            showDialog(
+                                              context: context,
+                                              builder: (_) {
+                                                return AlertDialog(
+                                                  title: const Text(
+                                                    'Confirmação',
+                                                    style: TextStyle(
+                                                      fontSize: 18,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      color: Color(0xFF000000),
+                                                    ),
+                                                  ),
+                                                  content: const Text(
+                                                      'Deseja realmente concluir a exclusão?'),
+                                                  actions: <Widget>[
+                                                    ElevatedButton(
+                                                      onPressed: () async {
+                                                        _deleteItem(item['id']);
+                                                        Navigator
+                                                            .pushReplacement(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                            builder: (context) =>
+                                                                const HomePage(),
+                                                          ),
+                                                        );
+                                                      },
+                                                      style: ElevatedButton
+                                                          .styleFrom(
+                                                        shape:
+                                                            RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(13),
+                                                        ),
+                                                        elevation: 3,
+                                                        backgroundColor:
+                                                            const Color(
+                                                                0xFFda2828),
+                                                      ),
+                                                      child: const Text(
+                                                        'Sim',
+                                                        style: TextStyle(
+                                                            color: Color(
+                                                                0xFFFFFFFF)),
+                                                      ),
+                                                    ),
+                                                    ElevatedButton(
+                                                      onPressed: () {
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                      },
+                                                      style: ElevatedButton
+                                                          .styleFrom(
+                                                        shape:
+                                                            RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(13),
+                                                        ),
+                                                        elevation: 3,
+                                                        backgroundColor:
+                                                            const Color(
+                                                                0xFF008000),
+                                                      ),
+                                                      child: const Text(
+                                                        'Não',
+                                                        style: TextStyle(
+                                                            color: Color(
+                                                                0xFFFFFFFF)),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                );
+                                              },
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                }).toList(),
+                              ),
                             ),
                           ],
                         ),
@@ -888,6 +810,82 @@ class _HomePageState extends State<HomePage> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class CustomButton extends StatelessWidget {
+  final String text;
+  final IconData icon;
+  final Color iconColor;
+  final Color backgroundColor;
+  final String value;
+
+  const CustomButton({
+    super.key,
+    required this.text,
+    required this.icon,
+    required this.iconColor,
+    required this.backgroundColor,
+    required this.value,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.all(8),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.3),
+            spreadRadius: 2,
+            blurRadius: 4,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  value,
+                  style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  text,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    color: Colors.grey,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: backgroundColor,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(
+              icon,
+              color: iconColor,
+              size: 35,
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -1,8 +1,11 @@
 // ignore_for_file: use_build_context_synchronously, deprecated_member_use
 
+import 'dart:io';
+
 import 'package:brasil_fields/brasil_fields.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:register_student/pages/home_page.dart';
 import 'package:register_student/services/db_helper.dart';
 import 'package:register_student/src/dropdown_faixa.dart';
@@ -11,6 +14,10 @@ import 'package:register_student/src/dropdown_status.dart';
 import 'package:register_student/src/dropdown_turno_escolar.dart';
 import 'package:register_student/src/dropdown_turno_treino.dart';
 import 'package:register_student/util/form.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:printing/printing.dart';
+import 'package:register_student/util/view_pdf.dart';
 
 class CadastrarAluno extends StatefulWidget {
   final int? alunoId; // Alterado para int? para aceitar o ID do aluno
@@ -140,6 +147,117 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
         child: Text("$error"),
       );
     }
+  }
+
+  Future<void> _generateAndPreviewPDF() async {
+    final pdf = pw.Document();
+
+    pdf.addPage(
+      pw.Page(
+        build: (pw.Context context) {
+          return pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              // Título Principal
+              pw.Center(
+                child: pw.Text(
+                  'FICHA CADASTRAL',
+                  style: pw.TextStyle(
+                      fontSize: 18, fontWeight: pw.FontWeight.bold),
+                ),
+              ),
+              pw.SizedBox(height: 20),
+
+              // Seção: Dados do Proprietário
+              pw.Text(
+                'DADOS DO ALUNO:',
+                style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+              ),
+              pw.SizedBox(height: 5),
+              pw.Text('Aluno: ${_nomeController.text}'),
+              pw.Text('CPF: ${_cpfController.text}'),
+              pw.Text('RG: ${_sexoController.text}'),
+              pw.Text('Data nascimento: ${_dtnascimentoController.text}'),
+              pw.Text('PDC: $tipoValue'),
+
+              pw.SizedBox(height: 15),
+
+              pw.Text(
+                'ENDEREÇO:',
+                style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+              ),
+              pw.SizedBox(height: 5),
+              pw.Text('Município: ${_municipioController.text}'),
+              pw.Text('CEP: ${_cepController.text}'),
+              pw.Text('Bairro: ${_enderecoController.text}'),
+              pw.Text('Endereço: ${_enderecoController.text}}'),
+
+              pw.SizedBox(height: 15),
+
+              pw.Text(
+                'STATUS TREINO:',
+                style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+              ),
+              pw.SizedBox(height: 5),
+              pw.Text('Faixa: $tipoFaixa'),
+              pw.Text('Status: $tipoStatus'),
+              pw.Text('Turno Treino: $tipoTurnoTreino'),
+              pw.SizedBox(height: 15),
+
+              pw.Text(
+                'RESPONSÁVEL:',
+                style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+              ),
+              pw.SizedBox(height: 5),
+              pw.Text('Responsável 1: $tipoParentesco'),
+              pw.Text(
+                  'Telefone Responsável: ${_telresponsavelController.text}'),
+              pw.Text('Grau Parentesco: $tipoParentesco'),
+              pw.SizedBox(height: 5),
+              pw.Text('Responsável 2: $tipoParentesco2'),
+              pw.Text(
+                  'Telefone Responsável: ${_telresponsavel2Controller.text}'),
+              pw.Text('Grau Parentesco: $tipoParentesco2'),
+
+              pw.SizedBox(height: 15),
+
+              pw.Text(
+                'DADOS ESCOLAR:',
+                style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+              ),
+              pw.SizedBox(height: 5),
+              pw.Text('Escola: ${_escolaController.text}'),
+              pw.Text('Endereço: ${_endescolaController.text}'),
+              pw.Text('Turno: $tipoTurno'),
+            ],
+          );
+        },
+      ),
+    );
+
+    // final dir = await getApplicationDocumentsDirectory();
+    // final String path =
+    //     '${dir.path}/$_nomeController.pdf'; // Nome do arquivo PDF
+    // final File file = File(path);
+
+    // // Salvar o PDF localmente
+    // await file.writeAsBytes(await pdf.save());
+
+    // Sanitizar o nome do arquivo para evitar erros no sistema de arquivos
+    // Salvando o PDF em um arquivo temporário
+    String sanitizedFileName = _nomeController.text
+        .replaceAll(RegExp(r'[^\w\s]+'), ''); // Remove caracteres especiais
+    final dir = await getApplicationDocumentsDirectory();
+    final String path = '${dir.path}/$sanitizedFileName.pdf';
+    final File file = File(path);
+    await file.writeAsBytes(await pdf.save());
+
+    // Navegar para a tela de visualização do PDF
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => PDFViewerScreen(path),
+      ),
+    );
   }
 
   @override
@@ -684,6 +802,47 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                           child: const Center(
                             child: Text(
                               'Salvar',
+                              style: TextStyle(
+                                fontSize: 19,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 25),
+                    SizedBox(
+                      height: 50,
+                      width: 150,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(11),
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0xFF1F41BB).withOpacity(0.2),
+                              spreadRadius: 0,
+                              blurRadius: 4,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF1F41BB),
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(11),
+                            ),
+                          ),
+                          onPressed: () {
+                            if (_formKey.currentState!.validate()) {
+                              _generateAndPreviewPDF();
+                            }
+                          },
+                          child: const Center(
+                            child: Text(
+                              'Imprimir',
                               style: TextStyle(
                                 fontSize: 19,
                                 fontWeight: FontWeight.w700,

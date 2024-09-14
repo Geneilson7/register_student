@@ -1,5 +1,3 @@
-// ignore_for_file: avoid_print
-
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
@@ -26,6 +24,7 @@ class DBHelper {
       path,
       version: 2,
       onCreate: _onCreate,
+      onUpgrade: _onUpgrade, // Atualização do banco de dados
     );
   }
 
@@ -40,7 +39,7 @@ class DBHelper {
         pcd TEXT,
         sexo TEXT,
         status TEXT,
-        faixa TEXT,
+        faixa_id INTEGER,  -- Relaciona com a tabela de faixas
         turnotreino TEXT,
         bairro TEXT,
         endereco TEXT,
@@ -50,14 +49,41 @@ class DBHelper {
         telefone TEXT,
         telresponsavel TEXT,
         telresponsavel2 TEXT,
-        grau,
-        grau2,
+        grau TEXT,
+        grau2 TEXT,
         cep TEXT,
         escola TEXT,
         endescola TEXT,
-        turnoescolar TEXT
+        turnoescolar TEXT,
+        FOREIGN KEY (faixa_id) REFERENCES faixas(id)  -- Define chave estrangeira
       )
     ''');
+
+    await db.execute('''
+      CREATE TABLE faixas (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        descricao TEXT
+      )
+    ''');
+  }
+
+  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      await db.execute('''
+        CREATE TABLE faixas (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          descricao TEXT
+        )
+      ''');
+
+      await db.execute('''
+        ALTER TABLE alunos ADD COLUMN faixa_id INTEGER;
+      ''');
+
+      await db.execute('''
+        ALTER TABLE alunos ADD FOREIGN KEY (faixa_id) REFERENCES faixas(id);
+      ''');
+    }
   }
 
   Future<void> insertAluno(Map<String, dynamic> aluno) async {
@@ -65,14 +91,24 @@ class DBHelper {
     await db.insert('alunos', aluno);
   }
 
-  Future<List<Map<String, dynamic>>> getAlunos() async {
+  Future<void> insertFaixa(Map<String, dynamic> faixa) async {
     final db = await database;
-    return await db.query('alunos');
+    await db.insert('faixas', faixa);
+  }
+
+  Future<List<Map<String, dynamic>>> getFaixas() async {
+    final db = await database;
+    return await db.query('faixas');
   }
 
   Future<void> updateAluno(int id, Map<String, dynamic> aluno) async {
     final db = await database;
     await db.update('alunos', aluno, where: 'id = ?', whereArgs: [id]);
+  }
+
+  Future<List<Map<String, dynamic>>> getAlunos() async {
+    final db = await database;
+    return await db.query('alunos');
   }
 
   Future<void> deleteAluno(int id) async {
