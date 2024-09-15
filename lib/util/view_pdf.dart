@@ -1,6 +1,7 @@
 // ignore_for_file: depend_on_referenced_packages
 
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
@@ -26,12 +27,12 @@ class PreviewScreen extends StatelessWidget {
           iconSize: 20,
         ),
         centerTitle: true,
-        title: const Text(
+        title: Text(
           "Ficha Cadastral",
-          style: TextStyle(
+          style: GoogleFonts.poppins(
             fontSize: 20,
             fontWeight: FontWeight.w700,
-            color: Color(0xFF000000),
+            color: const Color(0xFF000000),
           ),
         ),
       ),

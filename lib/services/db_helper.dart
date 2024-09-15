@@ -39,7 +39,7 @@ class DBHelper {
         pcd TEXT,
         sexo TEXT,
         status TEXT,
-        faixa_id INTEGER,  -- Relaciona com a tabela de faixas
+        faixa_id INTEGER, 
         turnotreino TEXT,
         bairro TEXT,
         endereco TEXT,
@@ -55,10 +55,11 @@ class DBHelper {
         escola TEXT,
         endescola TEXT,
         turnoescolar TEXT,
-        FOREIGN KEY (faixa_id) REFERENCES faixas(id)  -- Define chave estrangeira
+        FOREIGN KEY (faixa_id) REFERENCES faixas(id)
       )
     ''');
-
+  // Define chave estrangeira
+  // Relaciona com a tabela de faixas
     await db.execute('''
       CREATE TABLE faixas (
         id INTEGER PRIMARY KEY AUTOINCREMENT,

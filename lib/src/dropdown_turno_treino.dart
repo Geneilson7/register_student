@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class TurnoTreino extends StatefulWidget {
   final String label;
@@ -52,10 +53,10 @@ class _TurnoTreinoState extends State<TurnoTreino> {
                 label: Text(widget.label),
                 fillColor: const Color(0xFFF1F4FF).withOpacity(0.9),
                 filled: true,
-                labelStyle: const TextStyle(
+                labelStyle:  GoogleFonts.poppins(
                     fontWeight: FontWeight.w500,
                     fontSize: 16,
-                    color: Color(0xFF626262)),
+                    color: const Color(0xFF626262)),
                 isDense: true,
                 border: OutlineInputBorder(
                   borderSide:

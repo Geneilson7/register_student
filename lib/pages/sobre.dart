@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class Sobre extends StatefulWidget {
   const Sobre({super.key});
@@ -15,12 +16,12 @@ class _SobreState extends State<Sobre> {
         backgroundColor: const Color(0xFFFFFFFF),
         elevation: 0,
         automaticallyImplyLeading: false,
-        title: const Text(
+        title: Text(
           'Sobre',
-          style: TextStyle(
+          style: GoogleFonts.poppins(
             fontSize: 20,
             fontWeight: FontWeight.w700,
-            color: Color(0xFF000000),
+            color: const Color(0xFF000000),
           ),
         ),
         centerTitle: true,
@@ -40,19 +41,19 @@ class _SobreState extends State<Sobre> {
                   borderRadius: BorderRadius.circular(8.0),
                   side: const BorderSide(color: Color(0xFF1F41BB), width: 0.3),
                 ),
-                child: const Padding(
-                  padding: EdgeInsets.all(20),
+                child: Padding(
+                  padding: const EdgeInsets.all(20),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         'Sobre o Software',
-                        style: TextStyle(
+                        style: GoogleFonts.poppins(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      SizedBox(height: 16),
+                      const SizedBox(height: 16),
                       Text(
                         'Bem-vindo ao GENTECH Jiu-Jitsu!\n\n'
                         'Este software foi desenvolvido para atender especificamente às necessidades dos nossos usuários, oferecendo uma solução eficaz e personalizada. Nosso compromisso é fornecer uma ferramenta confiável, segura e fácil de usar, que otimize suas atividades e melhore a sua experiência.\n\n'
@@ -66,7 +67,7 @@ class _SobreState extends State<Sobre> {
                         'Contato\n\n'
                         'Se você tiver dúvidas ou precisar de suporte, entre em contato conosco através do e-mail: gentechsoftwareoficial@gmail.com\n\n'
                         'Obrigado por escolher o GENTECH Jiu-Jitsu. Estamos empenhados em proporcionar a melhor experiência possível e apreciamos sua compreensão e cooperação em relação aos nossos termos de uso.',
-                        style: TextStyle(
+                        style: GoogleFonts.poppins(
                           fontSize: 18,
                           fontWeight: FontWeight.w400,
                         ),
@@ -84,7 +85,7 @@ class _SobreState extends State<Sobre> {
               children: [
                 SizedBox(
                   height: 50,
-                  width: 120,
+                  width: 150,
                   child: Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(11),
@@ -108,10 +109,10 @@ class _SobreState extends State<Sobre> {
                       onPressed: () {
                         Navigator.pop(context);
                       },
-                      child: const Center(
+                      child: Center(
                         child: Text(
                           'Concordo',
-                          style: TextStyle(
+                          style: GoogleFonts.poppins(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
                           ),

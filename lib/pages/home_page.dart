@@ -24,6 +24,9 @@ class _HomePageState extends State<HomePage> {
   int? _ativoCount = 0;
   int? _inativoCount = 0;
 
+  int? _selectedIndex;
+  final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
+
   @override
   void initState() {
     super.initState();
@@ -93,6 +96,56 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+    // Utilize o Navigator interno para definir a tela inicial
+    _navigatorKey.currentState?.pushReplacement(
+      MaterialPageRoute(builder: (context) => _getSelectedScreen(index)),
+    );
+  }
+
+  Widget _getSelectedScreen(int? selectedIndex) {
+    switch (selectedIndex) {
+      case 0:
+        return CadastrarAluno(showButton: false);
+      case 1:
+        return const Sobre();
+      default:
+        return Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const SizedBox(
+                  height: 50,
+                ),
+                Text(
+                  'Home',
+                  style: GoogleFonts.poppins(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                    color: const Color(0xFF404046),
+                  ),
+                ),
+              ],
+            ),
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 150),
+                child: Image.asset(
+                  'assets/image/background.jpg',
+                  height: 500,
+                  width: 500,
+                ),
+              ),
+            ),
+          ],
+        );
+    }
+  }
+
   Color _getStatusColor(String status) {
     if (status == "Ativo") {
       return const Color(0xFFFFFFFF);
@@ -114,32 +167,10 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   const SizedBox(height: 20),
                   ListTile(
-                    leading: const CircleAvatar(
-                      radius: 20,
-                      backgroundImage: AssetImage(
-                        'assets/image/logo.png',
-                      ),
-                    ),
-                    title: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Olá 👋',
-                          style: GoogleFonts.poppins(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
-                            color: const Color(0xFF404046),
-                          ),
-                        ),
-                        Text(
-                          'VendaDireta',
-                          style: GoogleFonts.poppins(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: const Color(0xFF404046),
-                          ),
-                        ),
-                      ],
+                    title: Image.asset(
+                      'assets/image/logo.png',
+                      height: 100,
+                      width: 100,
                     ),
                   ),
                   Divider(thickness: 1, color: Colors.grey[300]),
@@ -165,13 +196,7 @@ class _HomePageState extends State<HomePage> {
                             buildSubListTile(
                               "Cadastrar Aluno",
                               () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        const CadastrarAluno(showButton: false),
-                                  ),
-                                );
+                                _onItemTapped(0);
                               },
                             ),
                             buildSubListTile(
@@ -184,12 +209,7 @@ class _HomePageState extends State<HomePage> {
                           Icons.info,
                           "Sobre",
                           () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const Sobre(),
-                              ),
-                            );
+                            _onItemTapped(1);
                           },
                         ),
                       ],
@@ -202,7 +222,7 @@ class _HomePageState extends State<HomePage> {
               //     DrawerHeader(
               //       child: Image.asset(
               //         'assets/image/logo.png',
-              //         color: const Color(0xFFFFFFFF),
+              //         color:  Color(0xFFFFFFFF),
               //         width: 400,
               //         fit: BoxFit.contain,
               //       ),
@@ -212,19 +232,19 @@ class _HomePageState extends State<HomePage> {
               //         Navigator.push(
               //           context,
               //           MaterialPageRoute(
-              //             builder: (context) => const CadastrarAluno(),
+              //             builder: (context) =>  CadastrarAluno(),
               //           ),
               //         );
               //       },
-              //       leading: const Icon(
+              //       leading:  Icon(
               //         Icons.group,
               //         size: 25,
               //         color: Colors.white54,
               //         // color: Color(0xFF000000),
               //       ),
-              //       title: const Text(
+              //       title:  Text(
               //         "Cadastrar Aluno",
-              //         style: TextStyle(
+              //         style: GoogleFonts.poppins(
               //           color: Colors.white54,
               //           fontWeight: FontWeight.w600,
               //         ),
@@ -235,19 +255,19 @@ class _HomePageState extends State<HomePage> {
               //         Navigator.push(
               //           context,
               //           MaterialPageRoute(
-              //             builder: (context) => const CadastrarAluno(),
+              //             builder: (context) =>  CadastrarAluno(),
               //           ),
               //         );
               //       },
-              //       leading: const Icon(
+              //       leading:  Icon(
               //         Icons.group,
               //         size: 25,
               //         color: Colors.white54,
               //         // color: Color(0xFF000000),
               //       ),
-              //       title: const Text(
+              //       title:  Text(
               //         "Cadastrar Faixa",
-              //         style: TextStyle(
+              //         style: GoogleFonts.poppins(
               //           color: Colors.white54,
               //           fontWeight: FontWeight.w600,
               //         ),
@@ -258,19 +278,19 @@ class _HomePageState extends State<HomePage> {
               //         Navigator.push(
               //           context,
               //           MaterialPageRoute(
-              //             builder: (context) => const Sobre(),
+              //             builder: (context) =>  Sobre(),
               //           ),
               //         );
               //       },
-              //       leading: const Icon(
+              //       leading:  Icon(
               //         Icons.info,
               //         size: 25,
               //         color: Colors.white54,
               //         // color: Color(0xFF000000),
               //       ),
-              //       title: const Text(
+              //       title:  Text(
               //         "Sobre",
-              //         style: TextStyle(
+              //         style: GoogleFonts.poppins(
               //           color: Colors.white54,
               //           fontWeight: FontWeight.w600,
               //         ),
@@ -282,621 +302,637 @@ class _HomePageState extends State<HomePage> {
             Expanded(
               flex: 4,
               child: Container(
-                // decoration: const BoxDecoration(
-                //   image: DecorationImage(
-                //     image: AssetImage(
-                //       'assets/image/background.jpg',
-                //     ),
-                //     fit: BoxFit.fill,
-                //     opacity: 10,
-                //   ),
-                // ),
-                color: const Color(0xffecf0f4),
-                child: Column(
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.only(top: 20),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "Home",
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w700,
-                              color: Color(0xFF000000),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 10),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Expanded(
-                            child: CustomButton(
-                              text: 'Matriculados',
-                              icon: Icons.group,
-                              iconColor: Colors.blueAccent,
-                              backgroundColor: const Color(0xFF2E374B),
-                              value: '$_alunoCount',
-                            ),
-                          ),
-                          Expanded(
-                            child: CustomButton(
-                              text: 'Ativos',
-                              icon: Icons.check_circle,
-                              iconColor: Colors.green,
-                              backgroundColor: const Color(0xFF2E374B),
-                              value: '$_ativoCount',
-                            ),
-                          ),
-                          Expanded(
-                            child: CustomButton(
-                              text: 'Inativos',
-                              icon: Icons.cancel,
-                              iconColor: Colors.red,
-                              backgroundColor: const Color(0xFF2E374B),
-                              value: '$_inativoCount',
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 15, vertical: 10),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.5),
-                              spreadRadius: 0,
-                              blurRadius: 7,
-                              offset: const Offset(0, 3),
-                            ),
-                          ],
-                        ),
-                        child: TextFormField(
-                          controller: _searchController,
-                          onChanged: (value) {
-                            _performSearch(value);
-                          },
-                          decoration: InputDecoration(
-                            filled: true,
-                            fillColor: Colors.transparent,
-                            isDense: true,
-                            hintText: 'Pesquisar',
-                            hintStyle: const TextStyle(
-                              color: Color(0xFF15133D),
-                              fontSize: 14,
-                              fontStyle: FontStyle.italic,
-                            ),
-                            suffixIcon: _searchController.text.isNotEmpty
-                                ? IconButton(
-                                    onPressed: () {
-                                      _searchController.clear();
-                                      _performSearch('');
-                                    },
-                                    icon: const Icon(
-                                      Icons.clear,
-                                      color: Colors.black,
-                                      size: 21,
-                                    ),
-                                  )
-                                : const Icon(
-                                    Icons.search,
-                                    color: Colors.black,
-                                    size: 21,
-                                  ),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: const BorderSide(
-                                width: 0,
-                                style: BorderStyle.none,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 15),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.5),
-                              spreadRadius: 2,
-                              blurRadius: 7,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            SingleChildScrollView(
-                              child: DataTable(
-                                columns: const [
-                                  DataColumn(
-                                    label: Text(
-                                      'ID',
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                                  ),
-                                  DataColumn(
-                                    label: Text(
-                                      'Nome',
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                                  ),
-                                  DataColumn(
-                                    label: Text(
-                                      'Turno',
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                                  ),
-                                  DataColumn(
-                                    label: Text(
-                                      'Status',
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                                  ),
-                                  DataColumn(
-                                    label: Text(
-                                      'Ações',
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                                rows: _items.asMap().entries.map((entry) {
-                                  final index = entry.key;
-                                  final item = entry.value;
-
-                                  return DataRow(
-                                    color: MaterialStateProperty.resolveWith<
-                                        Color?>(
-                                      (Set<MaterialState> states) {
-                                        Color? statusColor =
-                                            _getStatusColor(item['status']);
-                                        if (statusColor !=
-                                            const Color(0xFFFFFFFF)) {
-                                          return statusColor;
-                                        }
-                                        return index.isEven
-                                            ? Colors.grey[200]
-                                            : Colors.white;
-                                      },
-                                    ),
-                                    cells: [
-                                      DataCell(
-                                        Text(
-                                          item['id'].toString().toUpperCase(),
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black,
-                                            fontSize: 16,
-                                          ),
-                                        ),
-                                        onTap: () async {
-                                          await Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  CadastrarAluno(
-                                                      alunoId: item['id']),
-                                            ),
-                                          ).then((value) => _refreshItems());
-                                        },
-                                      ),
-                                      DataCell(
-                                        Text(
-                                          item['nome'].toString().toUpperCase(),
-                                          style: const TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w700,
-                                            color: Color(0xFF1C1C1C),
-                                          ),
-                                        ),
-                                        onTap: () async {
-                                          await Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  CadastrarAluno(
-                                                      alunoId: item['id']),
-                                            ),
-                                          ).then((value) => _refreshItems());
-                                        },
-                                      ),
-                                      DataCell(
-                                        Text(
-                                          item['turnotreino']
-                                              .toString()
-                                              .toUpperCase(),
-                                          style: const TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w700,
-                                            color: Color(0xFF1C1C1C),
-                                          ),
-                                        ),
-                                        onTap: () async {
-                                          await Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  CadastrarAluno(
-                                                      alunoId: item['id']),
-                                            ),
-                                          ).then((value) => _refreshItems());
-                                        },
-                                      ),
-                                      DataCell(
-                                        Text(
-                                          item['status']
-                                              .toString()
-                                              .toUpperCase(),
-                                          style: const TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w700,
-                                            color: Color(0xFF1C1C1C),
-                                          ),
-                                        ),
-                                        onTap: () async {
-                                          await Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  CadastrarAluno(
-                                                      alunoId: item['id']),
-                                            ),
-                                          ).then((value) => _refreshItems());
-                                        },
-                                      ),
-                                      DataCell(
-                                        IconButton(
-                                          icon: const Icon(
-                                            Icons.delete,
-                                            color: Colors.red,
-                                          ),
-                                          onPressed: () {
-                                            showDialog(
-                                              context: context,
-                                              builder: (_) {
-                                                return AlertDialog(
-                                                  title: const Text(
-                                                    'Confirmação',
-                                                    style: TextStyle(
-                                                      fontSize: 18,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                      color: Color(0xFF000000),
-                                                    ),
-                                                  ),
-                                                  content: const Text(
-                                                      'Deseja realmente concluir a exclusão?'),
-                                                  actions: <Widget>[
-                                                    ElevatedButton(
-                                                      onPressed: () async {
-                                                        _deleteItem(item['id']);
-                                                        Navigator
-                                                            .pushReplacement(
-                                                          context,
-                                                          MaterialPageRoute(
-                                                            builder: (context) =>
-                                                                const HomePage(),
-                                                          ),
-                                                        );
-                                                      },
-                                                      style: ElevatedButton
-                                                          .styleFrom(
-                                                        shape:
-                                                            RoundedRectangleBorder(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(13),
-                                                        ),
-                                                        elevation: 3,
-                                                        backgroundColor:
-                                                            const Color(
-                                                                0xFFda2828),
-                                                      ),
-                                                      child: const Text(
-                                                        'Sim',
-                                                        style: TextStyle(
-                                                            color: Color(
-                                                                0xFFFFFFFF)),
-                                                      ),
-                                                    ),
-                                                    ElevatedButton(
-                                                      onPressed: () {
-                                                        Navigator.of(context)
-                                                            .pop();
-                                                      },
-                                                      style: ElevatedButton
-                                                          .styleFrom(
-                                                        shape:
-                                                            RoundedRectangleBorder(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(13),
-                                                        ),
-                                                        elevation: 3,
-                                                        backgroundColor:
-                                                            const Color(
-                                                                0xFF008000),
-                                                      ),
-                                                      child: const Text(
-                                                        'Não',
-                                                        style: TextStyle(
-                                                            color: Color(
-                                                                0xFFFFFFFF)),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                );
-                                              },
-                                            );
-                                          },
-                                        ),
-                                      ),
-                                    ],
-                                  );
-                                }).toList(),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-
-                    // Expanded(
-                    //   child: ListView.builder(
-                    //     primary: false,
-                    //     shrinkWrap: true,
-                    //     keyboardDismissBehavior:
-                    //         ScrollViewKeyboardDismissBehavior.onDrag,
-                    //     itemCount: _items.length,
-                    //     itemBuilder: (context, index) {
-                    //       // final user = users[index];
-
-                    //       return Padding(
-                    //         padding: const EdgeInsets.symmetric(
-                    //           horizontal: 60,
-                    //           vertical: 5,
-                    //         ),
-                    //         child: Container(
-                    //           decoration: BoxDecoration(
-                    //             borderRadius: BorderRadius.circular(25),
-                    //             boxShadow: [
-                    //               BoxShadow(
-                    //                 color: Colors.grey.withOpacity(0.5),
-                    //                 spreadRadius: 0,
-                    //                 blurRadius: 5,
-                    //                 offset: const Offset(0, 3),
-                    //               ),
-                    //             ],
-                    //           ),
-                    //           child: Card(
-                    //             color: _getStatusColor(_items[index]['status']),
-                    //             elevation: 0,
-                    //             child: Row(
-                    //               children: [
-                    //                 Expanded(
-                    //                   child: ListTile(
-                    //                     shape: RoundedRectangleBorder(
-                    //                       borderRadius:
-                    //                           BorderRadius.circular(20),
-                    //                     ),
-                    //                     onTap: () async {
-                    //                       await Navigator.push(
-                    //                         context,
-                    //                         MaterialPageRoute(
-                    //                           builder: (context) =>
-                    //                               CadastrarAluno(
-                    //                             alunoId: _items[index]['id'],
-                    //                           ),
-                    //                         ),
-                    //                       ).then((value) => _refreshItems());
-                    //                     },
-                    //                     tileColor: _getStatusColor(
-                    //                         _items[index]['status']),
-                    //                     leading: Container(
-                    //                       width: 40,
-                    //                       height: 40,
-                    //                       decoration: BoxDecoration(
-                    //                         color: const Color(0xFF262c40),
-                    //                         borderRadius:
-                    //                             BorderRadius.circular(40),
-                    //                       ),
-                    //                       child: Center(
-                    //                         child: Text(
-                    //                           // user.id.toString().toUpperCase(),
-                    //                           _items[index]['id']
-                    //                               .toString()
-                    //                               .toUpperCase(),
-                    //                           style: const TextStyle(
-                    //                             color: Colors.white,
-                    //                             fontWeight: FontWeight.bold,
-                    //                             fontSize: 16,
-                    //                           ),
-                    //                         ),
-                    //                       ),
-                    //                     ),
-                    //                     title: Padding(
-                    //                       padding:
-                    //                           const EdgeInsets.only(left: 10.0),
-                    //                       child: Text(
-                    //                         // cliente.name.toUpperCase(),
-                    //                         _items[index]['nome']
-                    //                             .toString()
-                    //                             .toUpperCase(),
-                    //                         style: const TextStyle(
-                    //                           fontSize: 16,
-                    //                           fontWeight: FontWeight.w700,
-                    //                           color: Color(0xFF1C1C1C),
-                    //                         ),
-                    //                       ),
-                    //                     ),
-                    //                     trailing: Row(
-                    //                       mainAxisSize: MainAxisSize.min,
-                    //                       children: [
-                    //                         IconButton(
-                    //                           icon: const Icon(
-                    //                             Icons.delete,
-                    //                             color: Colors.red,
-                    //                           ),
-                    //                           onPressed: () {
-                    //                             showDialog(
-                    //                               context: context,
-                    //                               builder: (_) {
-                    //                                 return AlertDialog(
-                    //                                   title: const Text(
-                    //                                     'Confirmação',
-                    //                                     style: TextStyle(
-                    //                                       fontSize: 18,
-                    //                                       fontWeight:
-                    //                                           FontWeight.w500,
-                    //                                       color:
-                    //                                           Color(0xFF000000),
-                    //                                     ),
-                    //                                   ),
-                    //                                   content: const Text(
-                    //                                       'Deseja realmente concluir a exclusão?'),
-                    //                                   actions: <Widget>[
-                    //                                     ElevatedButton(
-                    //                                       onPressed: () async {
-                    //                                         _deleteItem(
-                    //                                             _items[index]
-                    //                                                 ['id']);
-
-                    //                                         Navigator.push(
-                    //                                           context,
-                    //                                           MaterialPageRoute(
-                    //                                             builder:
-                    //                                                 (context) =>
-                    //                                                     WillPopScope(
-                    //                                               onWillPop:
-                    //                                                   () async {
-                    //                                                 Navigator
-                    //                                                     .pushReplacement(
-                    //                                                   context,
-                    //                                                   MaterialPageRoute(
-                    //                                                     builder:
-                    //                                                         (context) =>
-                    //                                                             const HomePage(),
-                    //                                                   ),
-                    //                                                 );
-                    //                                                 return false;
-                    //                                               },
-                    //                                               child:
-                    //                                                   const HomePage(),
-                    //                                             ),
-                    //                                           ),
-                    //                                         );
-                    //                                       },
-                    //                                       style: ElevatedButton
-                    //                                           .styleFrom(
-                    //                                         shape:
-                    //                                             RoundedRectangleBorder(
-                    //                                           borderRadius:
-                    //                                               BorderRadius
-                    //                                                   .circular(
-                    //                                                       13),
-                    //                                         ),
-                    //                                         elevation: 3,
-                    //                                         backgroundColor:
-                    //                                             const Color(
-                    //                                                 0xFFda2828),
-                    //                                       ),
-                    //                                       child: const Text(
-                    //                                         'Sim',
-                    //                                         style: TextStyle(
-                    //                                           color: Color(
-                    //                                               0xFFFFFFFF),
-                    //                                         ),
-                    //                                       ),
-                    //                                     ),
-                    //                                     ElevatedButton(
-                    //                                       onPressed: () {
-                    //                                         Navigator.of(
-                    //                                                 context)
-                    //                                             .pop();
-                    //                                       },
-                    //                                       style: ElevatedButton
-                    //                                           .styleFrom(
-                    //                                         shape:
-                    //                                             RoundedRectangleBorder(
-                    //                                           borderRadius:
-                    //                                               BorderRadius
-                    //                                                   .circular(
-                    //                                                       13),
-                    //                                         ),
-                    //                                         elevation: 3,
-                    //                                         backgroundColor:
-                    //                                             const Color(
-                    //                                                 0xFF008000),
-                    //                                       ),
-                    //                                       child: const Text(
-                    //                                         'Não',
-                    //                                         style: TextStyle(
-                    //                                           color: Color(
-                    //                                               0xFFFFFFFF),
-                    //                                         ),
-                    //                                       ),
-                    //                                     ),
-                    //                                   ],
-                    //                                 );
-                    //                               },
-                    //                             );
-                    //                           },
-                    //                         ),
-                    //                       ],
-                    //                     ),
-                    //                   ),
-                    //                 ),
-                    //               ],
-                    //             ),
-                    //           ),
-                    //         ),
-                    //       );
-                    //     },
-                    //   ),
-                    // ),
-                  ],
+                color: const Color(0xFFF1F3F6),
+                child: Navigator(
+                  key: _navigatorKey,
+                  onGenerateRoute: (settings) {
+                    return MaterialPageRoute(
+                      builder: (context) => _getSelectedScreen(_selectedIndex),
+                    );
+                  },
                 ),
               ),
             ),
+            // Expanded(
+            //   flex: 4,
+            //   child: Container(
+            //     // decoration:  BoxDecoration(
+            //     //   image: DecorationImage(
+            //     //     image: AssetImage(
+            //     //       'assets/image/background.jpg',
+            //     //     ),
+            //     //     fit: BoxFit.fill,
+            //     //     opacity: 10,
+            //     //   ),
+            //     // ),
+            //     color: const Color(0xffecf0f4),
+            //     child: Column(
+            //       children: [
+            //         Padding(
+            //           padding: const EdgeInsets.only(top: 20),
+            //           child: Row(
+            //             mainAxisAlignment: MainAxisAlignment.center,
+            //             children: [
+            //               Text(
+            //                 "Home",
+            //                 style: GoogleFonts.poppins(
+            //                   fontSize: 20,
+            //                   fontWeight: FontWeight.w700,
+            //                   color: const Color(0xFF000000),
+            //                 ),
+            //               ),
+            //             ],
+            //           ),
+            //         ),
+            //         const SizedBox(
+            //           height: 10,
+            //         ),
+            //         Padding(
+            //           padding: const EdgeInsets.only(top: 10),
+            //           child: Row(
+            //             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            //             children: [
+            //               Expanded(
+            //                 child: CustomButton(
+            //                   text: 'Matriculados',
+            //                   icon: Icons.group,
+            //                   iconColor: Colors.blueAccent,
+            //                   backgroundColor: const Color(0xFF2E374B),
+            //                   value: '$_alunoCount',
+            //                 ),
+            //               ),
+            //               Expanded(
+            //                 child: CustomButton(
+            //                   text: 'Ativos',
+            //                   icon: Icons.check_circle,
+            //                   iconColor: Colors.green,
+            //                   backgroundColor: const Color(0xFF2E374B),
+            //                   value: '$_ativoCount',
+            //                 ),
+            //               ),
+            //               Expanded(
+            //                 child: CustomButton(
+            //                   text: 'Inativos',
+            //                   icon: Icons.cancel,
+            //                   iconColor: Colors.red,
+            //                   backgroundColor: const Color(0xFF2E374B),
+            //                   value: '$_inativoCount',
+            //                 ),
+            //               ),
+            //             ],
+            //           ),
+            //         ),
+            //         Padding(
+            //           padding: const EdgeInsets.symmetric(
+            //               horizontal: 15, vertical: 10),
+            //           child: Container(
+            //             decoration: BoxDecoration(
+            //               color: Colors.white,
+            //               borderRadius: BorderRadius.circular(10),
+            //               boxShadow: [
+            //                 BoxShadow(
+            //                   color: Colors.grey.withOpacity(0.5),
+            //                   spreadRadius: 0,
+            //                   blurRadius: 7,
+            //                   offset: const Offset(0, 3),
+            //                 ),
+            //               ],
+            //             ),
+            //             child: TextFormField(
+            //               controller: _searchController,
+            //               onChanged: (value) {
+            //                 _performSearch(value);
+            //               },
+            //               decoration: InputDecoration(
+            //                 filled: true,
+            //                 fillColor: Colors.transparent,
+            //                 isDense: true,
+            //                 hintText: 'Pesquisar',
+            //                 hintStyle: GoogleFonts.poppins(
+            //                   color: const Color(0xFF15133D),
+            //                   fontSize: 14,
+            //                   fontStyle: FontStyle.italic,
+            //                 ),
+            //                 suffixIcon: _searchController.text.isNotEmpty
+            //                     ? IconButton(
+            //                         onPressed: () {
+            //                           _searchController.clear();
+            //                           _performSearch('');
+            //                         },
+            //                         icon: const Icon(
+            //                           Icons.clear,
+            //                           color: Colors.black,
+            //                           size: 21,
+            //                         ),
+            //                       )
+            //                     : const Icon(
+            //                         Icons.search,
+            //                         color: Colors.black,
+            //                         size: 21,
+            //                       ),
+            //                 border: OutlineInputBorder(
+            //                   borderRadius: BorderRadius.circular(10),
+            //                   borderSide: const BorderSide(
+            //                     width: 0,
+            //                     style: BorderStyle.none,
+            //                   ),
+            //                 ),
+            //               ),
+            //             ),
+            //           ),
+            //         ),
+            //         Padding(
+            //           padding: const EdgeInsets.symmetric(horizontal: 15),
+            //           child: Container(
+            //             decoration: BoxDecoration(
+            //               color: Colors.white,
+            //               borderRadius: BorderRadius.circular(10),
+            //               boxShadow: [
+            //                 BoxShadow(
+            //                   color: Colors.grey.withOpacity(0.5),
+            //                   spreadRadius: 2,
+            //                   blurRadius: 7,
+            //                   offset: const Offset(0, 4),
+            //                 ),
+            //               ],
+            //             ),
+            //             child: Column(
+            //               crossAxisAlignment: CrossAxisAlignment.stretch,
+            //               children: [
+            //                 SingleChildScrollView(
+            //                   child: DataTable(
+            //                     columns: [
+            //                       DataColumn(
+            //                         label: Text(
+            //                           'Código',
+            //                           style: GoogleFonts.poppins(
+            //                             color: Colors.black,
+            //                             fontWeight: FontWeight.bold,
+            //                             fontSize: 16,
+            //                           ),
+            //                         ),
+            //                       ),
+            //                       DataColumn(
+            //                         label: Text(
+            //                           'Nome',
+            //                           style: GoogleFonts.poppins(
+            //                             color: Colors.black,
+            //                             fontWeight: FontWeight.bold,
+            //                             fontSize: 16,
+            //                           ),
+            //                         ),
+            //                       ),
+            //                       DataColumn(
+            //                         label: Text(
+            //                           'Turno',
+            //                           style: GoogleFonts.poppins(
+            //                             color: Colors.black,
+            //                             fontWeight: FontWeight.bold,
+            //                             fontSize: 16,
+            //                           ),
+            //                         ),
+            //                       ),
+            //                       DataColumn(
+            //                         label: Text(
+            //                           'Status',
+            //                           style: GoogleFonts.poppins(
+            //                             color: Colors.black,
+            //                             fontWeight: FontWeight.bold,
+            //                             fontSize: 16,
+            //                           ),
+            //                         ),
+            //                       ),
+            //                       DataColumn(
+            //                         label: Text(
+            //                           'Ações',
+            //                           style: GoogleFonts.poppins(
+            //                             color: Colors.black,
+            //                             fontWeight: FontWeight.bold,
+            //                             fontSize: 16,
+            //                           ),
+            //                         ),
+            //                       ),
+            //                     ],
+            //                     rows: _items.asMap().entries.map((entry) {
+            //                       final index = entry.key;
+            //                       final item = entry.value;
+
+            //                       return DataRow(
+            //                         color: MaterialStateProperty.resolveWith<
+            //                             Color?>(
+            //                           (Set<MaterialState> states) {
+            //                             Color? statusColor =
+            //                                 _getStatusColor(item['status']);
+            //                             if (statusColor !=
+            //                                 const Color(0xFFFFFFFF)) {
+            //                               return statusColor;
+            //                             }
+            //                             return index.isEven
+            //                                 ? Colors.grey[200]
+            //                                 : Colors.white;
+            //                           },
+            //                         ),
+            //                         cells: [
+            //                           DataCell(
+            //                             Text(
+            //                               item['id'].toString().toUpperCase(),
+            //                               style: GoogleFonts.poppins(
+            //                                 fontWeight: FontWeight.bold,
+            //                                 color: Colors.black,
+            //                                 fontSize: 16,
+            //                               ),
+            //                             ),
+            //                             onTap: () async {
+            //                               await Navigator.push(
+            //                                 context,
+            //                                 MaterialPageRoute(
+            //                                   builder: (context) =>
+            //                                       CadastrarAluno(
+            //                                           alunoId: item['id']),
+            //                                 ),
+            //                               ).then((value) => _refreshItems());
+            //                             },
+            //                           ),
+            //                           DataCell(
+            //                             Text(
+            //                               item['nome'].toString().toUpperCase(),
+            //                               style: GoogleFonts.poppins(
+            //                                 fontSize: 16,
+            //                                 fontWeight: FontWeight.w700,
+            //                                 color: const Color(0xFF1C1C1C),
+            //                               ),
+            //                             ),
+            //                             onTap: () async {
+            //                               await Navigator.push(
+            //                                 context,
+            //                                 MaterialPageRoute(
+            //                                   builder: (context) =>
+            //                                       CadastrarAluno(
+            //                                           alunoId: item['id']),
+            //                                 ),
+            //                               ).then((value) => _refreshItems());
+            //                             },
+            //                           ),
+            //                           DataCell(
+            //                             Text(
+            //                               item['turnotreino']
+            //                                   .toString()
+            //                                   .toUpperCase(),
+            //                               style: GoogleFonts.poppins(
+            //                                 fontSize: 16,
+            //                                 fontWeight: FontWeight.w700,
+            //                                 color: const Color(0xFF1C1C1C),
+            //                               ),
+            //                             ),
+            //                             onTap: () async {
+            //                               await Navigator.push(
+            //                                 context,
+            //                                 MaterialPageRoute(
+            //                                   builder: (context) =>
+            //                                       CadastrarAluno(
+            //                                           alunoId: item['id']),
+            //                                 ),
+            //                               ).then((value) => _refreshItems());
+            //                             },
+            //                           ),
+            //                           DataCell(
+            //                             Text(
+            //                               item['status']
+            //                                   .toString()
+            //                                   .toUpperCase(),
+            //                               style: GoogleFonts.poppins(
+            //                                 fontSize: 16,
+            //                                 fontWeight: FontWeight.w700,
+            //                                 color: const Color(0xFF1C1C1C),
+            //                               ),
+            //                             ),
+            //                             onTap: () async {
+            //                               await Navigator.push(
+            //                                 context,
+            //                                 MaterialPageRoute(
+            //                                   builder: (context) =>
+            //                                       CadastrarAluno(
+            //                                           alunoId: item['id']),
+            //                                 ),
+            //                               ).then((value) => _refreshItems());
+            //                             },
+            //                           ),
+            //                           DataCell(
+            //                             IconButton(
+            //                               icon: const Icon(
+            //                                 Icons.delete,
+            //                                 color: Colors.red,
+            //                               ),
+            //                               onPressed: () {
+            //                                 showDialog(
+            //                                   context: context,
+            //                                   builder: (_) {
+            //                                     return AlertDialog(
+            //                                       title: Text(
+            //                                         'Confirmação',
+            //                                         style: GoogleFonts.poppins(
+            //                                           fontSize: 18,
+            //                                           fontWeight:
+            //                                               FontWeight.w500,
+            //                                           color: const Color(
+            //                                               0xFF000000),
+            //                                         ),
+            //                                       ),
+            //                                       content: const Text(
+            //                                           'Deseja realmente concluir a exclusão?'),
+            //                                       actions: <Widget>[
+            //                                         ElevatedButton(
+            //                                           onPressed: () async {
+            //                                             _deleteItem(item['id']);
+            //                                             Navigator
+            //                                                 .pushReplacement(
+            //                                               context,
+            //                                               MaterialPageRoute(
+            //                                                 builder:
+            //                                                     (context) =>
+            //                                                         HomePage(),
+            //                                               ),
+            //                                             );
+            //                                           },
+            //                                           style: ElevatedButton
+            //                                               .styleFrom(
+            //                                             shape:
+            //                                                 RoundedRectangleBorder(
+            //                                               borderRadius:
+            //                                                   BorderRadius
+            //                                                       .circular(13),
+            //                                             ),
+            //                                             elevation: 3,
+            //                                             backgroundColor:
+            //                                                 const Color(
+            //                                                     0xFFda2828),
+            //                                           ),
+            //                                           child: Text(
+            //                                             'Sim',
+            //                                             style: GoogleFonts.poppins(
+            //                                                 color: const Color(
+            //                                                     0xFFFFFFFF)),
+            //                                           ),
+            //                                         ),
+            //                                         ElevatedButton(
+            //                                           onPressed: () {
+            //                                             Navigator.of(context)
+            //                                                 .pop();
+            //                                           },
+            //                                           style: ElevatedButton
+            //                                               .styleFrom(
+            //                                             shape:
+            //                                                 RoundedRectangleBorder(
+            //                                               borderRadius:
+            //                                                   BorderRadius
+            //                                                       .circular(13),
+            //                                             ),
+            //                                             elevation: 3,
+            //                                             backgroundColor:
+            //                                                 const Color(
+            //                                                     0xFF008000),
+            //                                           ),
+            //                                           child: Text(
+            //                                             'Não',
+            //                                             style: GoogleFonts.poppins(
+            //                                                 color: const Color(
+            //                                                     0xFFFFFFFF)),
+            //                                           ),
+            //                                         ),
+            //                                       ],
+            //                                     );
+            //                                   },
+            //                                 );
+            //                               },
+            //                             ),
+            //                           ),
+            //                         ],
+            //                       );
+            //                     }).toList(),
+            //                   ),
+            //                 ),
+            //               ],
+            //             ),
+            //           ),
+            //         ),
+
+            //         // Expanded(
+            //         //   child: ListView.builder(
+            //         //     primary: false,
+            //         //     shrinkWrap: true,
+            //         //     keyboardDismissBehavior:
+            //         //         ScrollViewKeyboardDismissBehavior.onDrag,
+            //         //     itemCount: _items.length,
+            //         //     itemBuilder: (context, index) {
+            //         //       // final user = users[index];
+
+            //         //       return Padding(
+            //         //         padding:  EdgeInsets.symmetric(
+            //         //           horizontal: 60,
+            //         //           vertical: 5,
+            //         //         ),
+            //         //         child: Container(
+            //         //           decoration: BoxDecoration(
+            //         //             borderRadius: BorderRadius.circular(25),
+            //         //             boxShadow: [
+            //         //               BoxShadow(
+            //         //                 color: Colors.grey.withOpacity(0.5),
+            //         //                 spreadRadius: 0,
+            //         //                 blurRadius: 5,
+            //         //                 offset:  Offset(0, 3),
+            //         //               ),
+            //         //             ],
+            //         //           ),
+            //         //           child: Card(
+            //         //             color: _getStatusColor(_items[index]['status']),
+            //         //             elevation: 0,
+            //         //             child: Row(
+            //         //               children: [
+            //         //                 Expanded(
+            //         //                   child: ListTile(
+            //         //                     shape: RoundedRectangleBorder(
+            //         //                       borderRadius:
+            //         //                           BorderRadius.circular(20),
+            //         //                     ),
+            //         //                     onTap: () async {
+            //         //                       await Navigator.push(
+            //         //                         context,
+            //         //                         MaterialPageRoute(
+            //         //                           builder: (context) =>
+            //         //                               CadastrarAluno(
+            //         //                             alunoId: _items[index]['id'],
+            //         //                           ),
+            //         //                         ),
+            //         //                       ).then((value) => _refreshItems());
+            //         //                     },
+            //         //                     tileColor: _getStatusColor(
+            //         //                         _items[index]['status']),
+            //         //                     leading: Container(
+            //         //                       width: 40,
+            //         //                       height: 40,
+            //         //                       decoration: BoxDecoration(
+            //         //                         color:  Color(0xFF262c40),
+            //         //                         borderRadius:
+            //         //                             BorderRadius.circular(40),
+            //         //                       ),
+            //         //                       child: Center(
+            //         //                         child: Text(
+            //         //                           // user.id.toString().toUpperCase(),
+            //         //                           _items[index]['id']
+            //         //                               .toString()
+            //         //                               .toUpperCase(),
+            //         //                           style:  GoogleFonts.poppins(
+            //         //                             color: Colors.white,
+            //         //                             fontWeight: FontWeight.bold,
+            //         //                             fontSize: 16,
+            //         //                           ),
+            //         //                         ),
+            //         //                       ),
+            //         //                     ),
+            //         //                     title: Padding(
+            //         //                       padding:
+            //         //                            EdgeInsets.only(left: 10.0),
+            //         //                       child: Text(
+            //         //                         // cliente.name.toUpperCase(),
+            //         //                         _items[index]['nome']
+            //         //                             .toString()
+            //         //                             .toUpperCase(),
+            //         //                         style:  GoogleFonts.poppins(
+            //         //                           fontSize: 16,
+            //         //                           fontWeight: FontWeight.w700,
+            //         //                           color: Color(0xFF1C1C1C),
+            //         //                         ),
+            //         //                       ),
+            //         //                     ),
+            //         //                     trailing: Row(
+            //         //                       mainAxisSize: MainAxisSize.min,
+            //         //                       children: [
+            //         //                         IconButton(
+            //         //                           icon:  Icon(
+            //         //                             Icons.delete,
+            //         //                             color: Colors.red,
+            //         //                           ),
+            //         //                           onPressed: () {
+            //         //                             showDialog(
+            //         //                               context: context,
+            //         //                               builder: (_) {
+            //         //                                 return AlertDialog(
+            //         //                                   title:  Text(
+            //         //                                     'Confirmação',
+            //         //                                     style: GoogleFonts.poppins(
+            //         //                                       fontSize: 18,
+            //         //                                       fontWeight:
+            //         //                                           FontWeight.w500,
+            //         //                                       color:
+            //         //                                           Color(0xFF000000),
+            //         //                                     ),
+            //         //                                   ),
+            //         //                                   content:  Text(
+            //         //                                       'Deseja realmente concluir a exclusão?'),
+            //         //                                   actions: <Widget>[
+            //         //                                     ElevatedButton(
+            //         //                                       onPressed: () async {
+            //         //                                         _deleteItem(
+            //         //                                             _items[index]
+            //         //                                                 ['id']);
+
+            //         //                                         Navigator.push(
+            //         //                                           context,
+            //         //                                           MaterialPageRoute(
+            //         //                                             builder:
+            //         //                                                 (context) =>
+            //         //                                                     WillPopScope(
+            //         //                                               onWillPop:
+            //         //                                                   () async {
+            //         //                                                 Navigator
+            //         //                                                     .pushReplacement(
+            //         //                                                   context,
+            //         //                                                   MaterialPageRoute(
+            //         //                                                     builder:
+            //         //                                                         (context) =>
+            //         //                                                              HomePage(),
+            //         //                                                   ),
+            //         //                                                 );
+            //         //                                                 return false;
+            //         //                                               },
+            //         //                                               child:
+            //         //                                                    HomePage(),
+            //         //                                             ),
+            //         //                                           ),
+            //         //                                         );
+            //         //                                       },
+            //         //                                       style: ElevatedButton
+            //         //                                           .styleFrom(
+            //         //                                         shape:
+            //         //                                             RoundedRectangleBorder(
+            //         //                                           borderRadius:
+            //         //                                               BorderRadius
+            //         //                                                   .circular(
+            //         //                                                       13),
+            //         //                                         ),
+            //         //                                         elevation: 3,
+            //         //                                         backgroundColor:
+            //         //                                              Color(
+            //         //                                                 0xFFda2828),
+            //         //                                       ),
+            //         //                                       child:  Text(
+            //         //                                         'Sim',
+            //         //                                         style: GoogleFonts.poppins(
+            //         //                                           color: Color(
+            //         //                                               0xFFFFFFFF),
+            //         //                                         ),
+            //         //                                       ),
+            //         //                                     ),
+            //         //                                     ElevatedButton(
+            //         //                                       onPressed: () {
+            //         //                                         Navigator.of(
+            //         //                                                 context)
+            //         //                                             .pop();
+            //         //                                       },
+            //         //                                       style: ElevatedButton
+            //         //                                           .styleFrom(
+            //         //                                         shape:
+            //         //                                             RoundedRectangleBorder(
+            //         //                                           borderRadius:
+            //         //                                               BorderRadius
+            //         //                                                   .circular(
+            //         //                                                       13),
+            //         //                                         ),
+            //         //                                         elevation: 3,
+            //         //                                         backgroundColor:
+            //         //                                              Color(
+            //         //                                                 0xFF008000),
+            //         //                                       ),
+            //         //                                       child:  Text(
+            //         //                                         'Não',
+            //         //                                         style: GoogleFonts.poppins(
+            //         //                                           color: Color(
+            //         //                                               0xFFFFFFFF),
+            //         //                                         ),
+            //         //                                       ),
+            //         //                                     ),
+            //         //                                   ],
+            //         //                                 );
+            //         //                               },
+            //         //                             );
+            //         //                           },
+            //         //                         ),
+            //         //                       ],
+            //         //                     ),
+            //         //                   ),
+            //         //                 ),
+            //         //               ],
+            //         //             ),
+            //         //           ),
+            //         //         ),
+            //         //       );
+            //         //     },
+            //         //   ),
+            //         // ),
+            //       ],
+            //     ),
+            //   ),
+            // ),
           ],
         ),
       ),
@@ -947,7 +983,7 @@ class CustomButton extends StatelessWidget {
   final Color backgroundColor;
   final String value;
 
-  const CustomButton({
+  CustomButton({
     super.key,
     required this.text,
     required this.icon,
@@ -981,7 +1017,7 @@ class CustomButton extends StatelessWidget {
               children: [
                 Text(
                   value,
-                  style: const TextStyle(
+                  style: GoogleFonts.poppins(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                     color: Colors.black,
@@ -990,7 +1026,7 @@ class CustomButton extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   text,
-                  style: const TextStyle(
+                  style: GoogleFonts.poppins(
                     fontSize: 16,
                     color: Colors.grey,
                   ),

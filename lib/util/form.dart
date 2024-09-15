@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 InputDecoration textFormField(String label) {
   return InputDecoration(
     label: Text(label),
     fillColor: const Color(0xFFF1F4FF).withOpacity(0.9),
     filled: true,
-    labelStyle: const TextStyle(
-        fontWeight: FontWeight.w500,
-        fontSize: 16,
-        color: Color(0xFF626262)),
+    labelStyle: GoogleFonts.poppins(
+      fontWeight: FontWeight.w500,
+      fontSize: 16,
+      color: const Color(0xFF626262),
+    ),
     isDense: true,
     border: OutlineInputBorder(
       borderSide: const BorderSide(color: Color(0xFF262c40), width: 2.0),
