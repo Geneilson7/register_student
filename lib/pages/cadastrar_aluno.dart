@@ -1,5 +1,7 @@
 // ignore_for_file: use_build_context_synchronously, deprecated_member_use, depend_on_referenced_packages
 
+import 'dart:io';
+
 import 'package:brasil_fields/brasil_fields.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -151,84 +153,90 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
 
   void _displayPdf() {
     final doc = pw.Document();
+    // final imageBytes = File('assets/image/logo.png').readAsBytesSync();
+    // final image = pw.MemoryImage(imageBytes);
+
     doc.addPage(
       pw.Page(
         pageFormat: PdfPageFormat.a4,
         build: (pw.Context context) {
           return pw.Column(
-            crossAxisAlignment: pw.CrossAxisAlignment.start,
             children: [
-              // Título Principal
-              pw.Center(
-                child: pw.Text(
-                  'FICHA CADASTRAL',
-                  style: pw.TextStyle(
-                      fontSize: 18, fontWeight: pw.FontWeight.bold),
-                ),
+              pw.Row(
+                // mainAxisAlignment: pw.MainAxisAlignment.center,
+                children: [
+                  pw.Expanded(
+                    child: pw.Text(
+                      'FICHA CADASTRAL',
+                      textAlign: pw.TextAlign.center,
+                      style: pw.TextStyle(
+                        fontSize: 20,
+                        fontWeight: pw.FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  // pw.Padding(
+                  //   padding: const pw.EdgeInsets.only(right: 0),
+                  //   child: pw.Container(
+                  //     width: 80,
+                  //     height: 80,
+                  //     child: pw.Image(image),
+                  //     color: PdfColor.fromHex('eaf1f8'),
+                  //   ),
+                  // ),
+                ],
               ),
+
               pw.SizedBox(height: 20),
 
-              // Seção: Dados do Proprietário
-              pw.Text(
-                'DADOS DO ALUNO:',
-                style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
-              ),
+              // Seção: Dados do Aluno
+              _buildSectionTitle('DADOS DO ALUNO'),
+              _buildLabeledField('Nome do Aluno: ', _nomeController.text),
+              _buildLabeledField('CPF: ', _cpfController.text),
+              _buildLabeledField('RG: ', _rgController.text),
+              _buildLabeledField(
+                  'Data Nascimento: ', _dtnascimentoController.text),
+              _buildLabeledField('Sexo: ', _sexoController.text),
+              _buildLabeledField('PDC: ', tipoValue!),
+
+              pw.SizedBox(height: 10),
+
+              // Seção: Endereço
+              _buildSectionTitle('ENDEREÇO'),
+              _buildLabeledField('CEP: ', _cepController.text),
+              _buildLabeledField('Município: ', _municipioController.text),
+              _buildLabeledField('Bairro: ', _bairroController.text),
+              _buildLabeledField('Endereço: ', _enderecoController.text),
+
+              pw.SizedBox(height: 10),
+
+              // Seção: Status Treino
+              _buildSectionTitle('STATUS TREINO'),
+              _buildLabeledField('Faixa: ', tipoFaixa!),
+              _buildLabeledField('Situação: ', tipoStatus!),
+              _buildLabeledField('Turno Treino: ', tipoTurnoTreino!),
+
+              pw.SizedBox(height: 10),
+
+              // Seção: Responsável
+              _buildSectionTitle('RESPONSÁVEL'),
+              _buildLabeledField('Responsável 1: ', tipoParentesco!),
+              _buildLabeledField(
+                  'Telefone Responsável: ', _telresponsavelController.text),
+              _buildLabeledField('Grau Parentesco: ', tipoParentesco!),
               pw.SizedBox(height: 5),
-              pw.Text('Aluno: ${_nomeController.text}'),
-              pw.Text('CPF: ${_cpfController.text}'),
-              pw.Text('RG: ${_sexoController.text}'),
-              pw.Text('Data nascimento: ${_dtnascimentoController.text}'),
-              pw.Text('PDC: $tipoValue'),
+              _buildLabeledField('Responsável 2: ', tipoParentesco2!),
+              _buildLabeledField(
+                  'Telefone Responsável: ', _telresponsavel2Controller.text),
+              _buildLabeledField('Grau Parentesco: ', tipoParentesco2!),
 
-              pw.SizedBox(height: 15),
+              pw.SizedBox(height: 10),
 
-              pw.Text(
-                'ENDEREÇO:',
-                style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
-              ),
-              pw.SizedBox(height: 5),
-              pw.Text('Município: ${_municipioController.text}'),
-              pw.Text('CEP: ${_cepController.text}'),
-              pw.Text('Bairro: ${_bairroController.text}'),
-              pw.Text('Endereço: ${_enderecoController.text}'),
-
-              pw.SizedBox(height: 15),
-
-              pw.Text(
-                'STATUS TREINO:',
-                style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
-              ),
-              pw.SizedBox(height: 5),
-              pw.Text('Faixa: $tipoFaixa'),
-              pw.Text('Status: $tipoStatus'),
-              pw.Text('Turno Treino: $tipoTurnoTreino'),
-              pw.SizedBox(height: 15),
-
-              pw.Text(
-                'RESPONSÁVEL:',
-                style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
-              ),
-              pw.SizedBox(height: 5),
-              pw.Text('Responsável 1: $tipoParentesco'),
-              pw.Text(
-                  'Telefone Responsável: ${_telresponsavelController.text}'),
-              pw.Text('Grau Parentesco: $tipoParentesco'),
-              pw.SizedBox(height: 5),
-              pw.Text('Responsável 2: $tipoParentesco2'),
-              pw.Text(
-                  'Telefone Responsável: ${_telresponsavel2Controller.text}'),
-              pw.Text('Grau Parentesco: $tipoParentesco2'),
-
-              pw.SizedBox(height: 15),
-
-              pw.Text(
-                'DADOS ESCOLAR:',
-                style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
-              ),
-              pw.SizedBox(height: 5),
-              pw.Text('Escola: ${_escolaController.text}'),
-              pw.Text('Endereço: ${_endescolaController.text}'),
-              pw.Text('Turno: $tipoTurno'),
+              // Seção: Dados Escolares
+              _buildSectionTitle('DADOS ESCOLAR'),
+              _buildLabeledField('Escola: ', _escolaController.text),
+              _buildLabeledField('Endereço: ', _endescolaController.text),
+              _buildLabeledField('Turno: ', tipoTurno!),
             ],
           );
         },
@@ -953,34 +961,40 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
   }
 }
 
-// class PreviewScreen extends StatelessWidget {
-//   final pw.Document doc;
-//   final String pdfFileName;
+// Função para criar título de seção com estilo
+pw.Widget _buildSectionTitle(String title) {
+  return pw.Padding(
+    padding: const pw.EdgeInsets.symmetric(vertical: 5),
+    child: pw.Container(
+      color: PdfColor.fromHex('eaf1f8'),
+      width: double.infinity,
+      child: pw.Center(
+        child: pw.Text(
+          title,
+          textAlign: pw.TextAlign.center,
+          style: pw.TextStyle(
+            fontWeight: pw.FontWeight.bold,
+            fontSize: 14,
+          ),
+        ),
+      ),
+    ),
+  );
+}
 
-//   const PreviewScreen({
-//     Key? key,
-//     required this.doc,
-//     required this.pdfFileName,
-//   }) : super(key: key);
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         leading: IconButton(
-//           onPressed: () => Navigator.pop(context),
-//           icon: const Icon(Icons.arrow_back_outlined),
-//         ),
-//         centerTitle: true,
-//         title: const Text("Preview"),
-//       ),
-//       body: PdfPreview(
-//         build: (format) => doc.save(),
-//         allowSharing: true,
-//         allowPrinting: true,
-//         initialPageFormat: PdfPageFormat.a4,
-//         pdfFileName: pdfFileName,
-//       ),
-//     );
-//   }
-// }
+// Função para criar campos com rótulos e valores
+pw.Widget _buildLabeledField(String label, String value) {
+  return pw.Row(
+    children: [
+      pw.Text(
+        label,
+        style: pw.TextStyle(
+          fontWeight: pw.FontWeight.bold,
+        ),
+      ),
+      pw.Text(
+        value.isNotEmpty ? value : '',
+      ),
+    ],
+  );
+}
