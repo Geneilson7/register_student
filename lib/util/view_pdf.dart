@@ -1,56 +1,47 @@
-// import 'package:flutter/material.dart';
-// import 'package:flutter_pdfview/flutter_pdfview.dart';
-// import 'dart:io';
+// ignore_for_file: depend_on_referenced_packages
 
-// import 'package:path_provider/path_provider.dart';
+import 'package:flutter/material.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:printing/printing.dart';
 
-// class PDFViewerScreen extends StatelessWidget {
-//   final String pdfPath;
+class PreviewScreen extends StatelessWidget {
+  final pw.Document doc;
+  final String pdfFileName;
 
-//   PDFViewerScreen(this.pdfPath);
+  const PreviewScreen({
+    Key? key,
+    required this.doc,
+    required this.pdfFileName,
+  }) : super(key: key);
 
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Text('Visualizar PDF'),
-//         actions: [
-//           // Botão de Enviar PDF
-//           IconButton(
-//             icon: Icon(Icons.send),
-//             onPressed: () {
-//               // Função de enviar o PDF por e-mail ou outro método
-//               _sendPDF(pdfPath);
-//             },
-//           ),
-//           // Botão de Salvar PDF
-//           IconButton(
-//             icon: Icon(Icons.save),
-//             onPressed: () {
-//               // Função de salvar o PDF em uma localização permanente
-//               _savePDF(pdfPath);
-//             },
-//           ),
-//         ],
-//       ),
-//       body: PDFView(
-//         filePath: pdfPath,
-//       ),
-//     );
-//   }
-
-//   void _sendPDF(String pdfPath) {
-//     // Função para enviar o PDF (pode ser via e-mail, compartilhar, etc.)
-//     // Exemplo com o pacote share_plus:
-//     // Share.shareFiles([pdfPath], text: 'Aqui está o PDF do aluno');
-//   }
-
-//   void _savePDF(String pdfPath) async {
-//     // Função para salvar o PDF em uma pasta do sistema
-//     final dir = await getExternalStorageDirectory();
-//     final String newPath = '${dir!.path}/saved_pdf.pdf';
-//     final File file = File(pdfPath);
-//     final File savedFile = await file.copy(newPath);
-//     print('PDF salvo em: $newPath');
-//   }
-// }
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: const Color(0xffffffff),
+        leading: IconButton(
+          onPressed: () => Navigator.pop(context),
+          icon: const Icon(Icons.arrow_back_ios),
+          iconSize: 20,
+        ),
+        centerTitle: true,
+        title: const Text(
+          "Ficha Cadastral",
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.w700,
+            color: Color(0xFF000000),
+          ),
+        ),
+      ),
+      body: PdfPreview(
+        build: (format) => doc.save(),
+        allowSharing: true,
+        allowPrinting: true,
+        initialPageFormat: PdfPageFormat.a4,
+        pdfFileName: pdfFileName,
+      ),
+    );
+  }
+}

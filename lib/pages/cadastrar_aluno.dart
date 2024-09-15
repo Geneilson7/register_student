@@ -1,11 +1,8 @@
-// ignore_for_file: use_build_context_synchronously, deprecated_member_use
-
-import 'dart:io';
+// ignore_for_file: use_build_context_synchronously, deprecated_member_use, depend_on_referenced_packages
 
 import 'package:brasil_fields/brasil_fields.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:register_student/pages/home_page.dart';
 import 'package:register_student/services/db_helper.dart';
 import 'package:register_student/src/dropdown_faixa.dart';
@@ -20,6 +17,7 @@ import 'package:register_student/util/form.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
+import 'package:register_student/util/view_pdf.dart';
 
 class CadastrarAluno extends StatefulWidget {
   final int? alunoId; // Alterado para int? para aceitar o ID do aluno
@@ -761,48 +759,11 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                 ),
                 const SizedBox(height: 50),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     SizedBox(
                       height: 50,
-                      width: 150,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(11),
-                          boxShadow: [
-                            BoxShadow(
-                              color: const Color(0xFF1F41BB).withOpacity(0.2),
-                              spreadRadius: 0,
-                              blurRadius: 4,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF262c40),
-                            foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(11),
-                            ),
-                          ),
-                          onPressed: _saveItem,
-                          child: const Center(
-                            child: Text(
-                              'Salvar',
-                              style: TextStyle(
-                                fontSize: 19,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 25),
-                    SizedBox(
-                      height: 50,
-                      width: 150,
+                      width: 200,
                       child: Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(11),
@@ -830,7 +791,44 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                           },
                           child: const Center(
                             child: Text(
-                              'Viewer',
+                              'Ficha Cadastral',
+                              style: TextStyle(
+                                fontSize: 19,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const Spacer(),
+                    SizedBox(
+                      height: 50,
+                      width: 150,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(11),
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0xFF1F41BB).withOpacity(0.2),
+                              spreadRadius: 0,
+                              blurRadius: 4,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF262c40),
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(11),
+                            ),
+                          ),
+                          onPressed: _saveItem,
+                          child: const Center(
+                            child: Text(
+                              'Salvar',
                               style: TextStyle(
                                 fontSize: 19,
                                 fontWeight: FontWeight.w700,
@@ -955,34 +953,34 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
   }
 }
 
-class PreviewScreen extends StatelessWidget {
-  final pw.Document doc;
-  final String pdfFileName;
+// class PreviewScreen extends StatelessWidget {
+//   final pw.Document doc;
+//   final String pdfFileName;
 
-  const PreviewScreen({
-    Key? key,
-    required this.doc,
-    required this.pdfFileName,
-  }) : super(key: key);
+//   const PreviewScreen({
+//     Key? key,
+//     required this.doc,
+//     required this.pdfFileName,
+//   }) : super(key: key);
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          onPressed: () => Navigator.pop(context),
-          icon: Icon(Icons.arrow_back_outlined),
-        ),
-        centerTitle: true,
-        title: Text("Preview"),
-      ),
-      body: PdfPreview(
-        build: (format) => doc.save(),
-        allowSharing: true,
-        allowPrinting: true,
-        initialPageFormat: PdfPageFormat.a4,
-        pdfFileName: pdfFileName,
-      ),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         leading: IconButton(
+//           onPressed: () => Navigator.pop(context),
+//           icon: const Icon(Icons.arrow_back_outlined),
+//         ),
+//         centerTitle: true,
+//         title: const Text("Preview"),
+//       ),
+//       body: PdfPreview(
+//         build: (format) => doc.save(),
+//         allowSharing: true,
+//         allowPrinting: true,
+//         initialPageFormat: PdfPageFormat.a4,
+//         pdfFileName: pdfFileName,
+//       ),
+//     );
+//   }
+// }
