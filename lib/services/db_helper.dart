@@ -58,8 +58,8 @@ class DBHelper {
         FOREIGN KEY (faixa_id) REFERENCES faixas(id)
       )
     ''');
-  // Define chave estrangeira
-  // Relaciona com a tabela de faixas
+    // Define chave estrangeira
+    // Relaciona com a tabela de faixas
     await db.execute('''
       CREATE TABLE faixas (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -90,21 +90,6 @@ class DBHelper {
   Future<void> insertAluno(Map<String, dynamic> aluno) async {
     final db = await database;
     await db.insert('alunos', aluno);
-  }
-
-  Future<void> insertFaixa(Map<String, dynamic> faixa) async {
-    final db = await database;
-    await db.insert('faixas', faixa);
-  }
-
-  Future<List<Map<String, dynamic>>> getFaixas() async {
-    final db = await database;
-    return await db.query('faixas');
-  }
-
-  Future<void> updateAluno(int id, Map<String, dynamic> aluno) async {
-    final db = await database;
-    await db.update('alunos', aluno, where: 'id = ?', whereArgs: [id]);
   }
 
   Future<List<Map<String, dynamic>>> getAlunos() async {
@@ -153,6 +138,44 @@ class DBHelper {
     final db = await database;
     final result = await db.rawQuery(
         'SELECT * FROM alunos WHERE id LIKE ? OR nome LIKE ?',
+        ['%$query%', '%$query%']);
+    return result;
+  }
+
+  Future<void> updateAluno(int id, Map<String, dynamic> aluno) async {
+    final db = await database;
+    await db.update('alunos', aluno, where: 'id = ?', whereArgs: [id]);
+  }
+
+  Future<void> insertFaixa(Map<String, dynamic> faixa) async {
+    final db = await database;
+    await db.insert('faixas', faixa);
+  }
+
+  Future<void> updateFaixa(int id, Map<String, dynamic> aluno) async {
+    final db = await database;
+    await db.update('faixas', aluno, where: 'id = ?', whereArgs: [id]);
+  }
+
+  Future<List<Map<String, dynamic>>> getFaixas() async {
+    final db = await database;
+    return await db.query('faixas');
+  }
+
+  Future<Map<String, dynamic>?> getFaixasById(int id) async {
+    final db = await database;
+    final List<Map<String, dynamic>> result = await db.query(
+      'faixas',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+    return result.isNotEmpty ? result.first : null;
+  }
+
+  Future<List<Map<String, dynamic>>> searchFaixas(String query) async {
+    final db = await database;
+    final result = await db.rawQuery(
+        'SELECT * FROM faixas WHERE id LIKE ? OR descricao LIKE ?',
         ['%$query%', '%$query%']);
     return result;
   }

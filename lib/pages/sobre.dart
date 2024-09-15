@@ -107,7 +107,7 @@ class _SobreState extends State<Sobre> {
                         ),
                       ),
                       onPressed: () {
-                        Navigator.pop(context);
+                        Navigator.of(context).pop();
                       },
                       child: Center(
                         child: Text(

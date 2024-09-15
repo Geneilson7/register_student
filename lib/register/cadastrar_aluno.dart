@@ -140,7 +140,7 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => HomePage(),
+            builder: (context) => const HomePage(),
           ),
         );
       }
@@ -258,7 +258,7 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xFFFFFFFF),
+        backgroundColor: const Color(0xFFFFFFFF),
         elevation: 0,
         automaticallyImplyLeading: false,
         title: Text(
@@ -266,7 +266,7 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
           style: GoogleFonts.poppins(
             fontSize: 20,
             fontWeight: FontWeight.w700,
-            color: Color(0xFF000000),
+            color: const Color(0xFF000000),
           ),
         ),
         centerTitle: true,
@@ -274,7 +274,7 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
       ),
       body: SingleChildScrollView(
         child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 60, vertical: 5),
+          padding: const EdgeInsets.symmetric(horizontal: 60, vertical: 5),
           child: Form(
             key: _formKey,
             child: Column(
@@ -284,7 +284,7 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                     Expanded(
                       flex: 2,
                       child: Padding(
-                        padding: EdgeInsets.only(bottom: 15),
+                        padding: const EdgeInsets.only(bottom: 15),
                         child: TextFormField(
                           decoration: textFormField("Nome"),
                           controller: _nomeController,
@@ -297,11 +297,11 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                         ),
                       ),
                     ),
-                    SizedBox(width: 25),
+                    const SizedBox(width: 25),
                     Expanded(
                       flex: 1,
                       child: Padding(
-                        padding: EdgeInsets.only(bottom: 15),
+                        padding: const EdgeInsets.only(bottom: 15),
                         child: TextFormField(
                           decoration: textFormField("CPF"),
                           keyboardType: TextInputType.number,
@@ -326,7 +326,7 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                     Expanded(
                       flex: 1,
                       child: Padding(
-                        padding: EdgeInsets.only(bottom: 15),
+                        padding: const EdgeInsets.only(bottom: 15),
                         child: TextFormField(
                           decoration: textFormField("RG"),
                           keyboardType: TextInputType.number,
@@ -340,11 +340,11 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                         ),
                       ),
                     ),
-                    SizedBox(width: 25),
+                    const SizedBox(width: 25),
                     Expanded(
                       flex: 1,
                       child: Padding(
-                        padding: EdgeInsets.only(bottom: 15),
+                        padding: const EdgeInsets.only(bottom: 15),
                         child: TextFormField(
                           decoration: textFormField("Data de Nascimento"),
                           keyboardType: TextInputType.number,
@@ -362,11 +362,11 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                         ),
                       ),
                     ),
-                    SizedBox(width: 25),
+                    const SizedBox(width: 25),
                     Expanded(
                       flex: 1,
                       child: Padding(
-                        padding: EdgeInsets.only(bottom: 15),
+                        padding: const EdgeInsets.only(bottom: 15),
                         child: TextFormField(
                           decoration: textFormField("Sexo"),
                           controller: _sexoController,
@@ -379,13 +379,13 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                         ),
                       ),
                     ),
-                    SizedBox(width: 25),
+                    const SizedBox(width: 25),
                     Expanded(
                       flex: 1,
                       child: Pcd(
                         label: "PCD",
                         selectedValue: tipoValue,
-                        items: ['Sim', 'Não'],
+                        items: const ['Sim', 'Não'],
                         onChanged: (newValue) {
                           setState(() {
                             tipoValue = newValue!;
@@ -400,7 +400,7 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                     Expanded(
                       flex: 1,
                       child: Padding(
-                        padding: EdgeInsets.only(bottom: 15),
+                        padding: const EdgeInsets.only(bottom: 15),
                         child: TextFormField(
                           decoration: textFormField("CEP"),
                           controller: _cepController,
@@ -418,11 +418,11 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                         ),
                       ),
                     ),
-                    SizedBox(width: 25),
+                    const SizedBox(width: 25),
                     Expanded(
                       flex: 1,
                       child: Padding(
-                        padding: EdgeInsets.only(bottom: 15),
+                        padding: const EdgeInsets.only(bottom: 15),
                         child: TextFormField(
                           decoration: textFormField("Município"),
                           controller: _municipioController,
@@ -435,11 +435,11 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                         ),
                       ),
                     ),
-                    SizedBox(width: 25),
+                    const SizedBox(width: 25),
                     Expanded(
                       flex: 1,
                       child: Padding(
-                        padding: EdgeInsets.only(bottom: 15),
+                        padding: const EdgeInsets.only(bottom: 15),
                         child: TextFormField(
                           decoration: textFormField("Bairro"),
                           controller: _bairroController,
@@ -452,11 +452,11 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                         ),
                       ),
                     ),
-                    SizedBox(width: 25),
+                    const SizedBox(width: 25),
                     Expanded(
                       flex: 1,
                       child: Padding(
-                        padding: EdgeInsets.only(bottom: 15),
+                        padding: const EdgeInsets.only(bottom: 15),
                         child: TextFormField(
                           decoration: textFormField("Endereço"),
                           controller: _enderecoController,
@@ -476,7 +476,7 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                     Expanded(
                       flex: 1,
                       child: Padding(
-                        padding: EdgeInsets.only(bottom: 15),
+                        padding: const EdgeInsets.only(bottom: 15),
                         child: TextFormField(
                           decoration: textFormField("Telefone"),
                           keyboardType: TextInputType.number,
@@ -495,13 +495,13 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                         ),
                       ),
                     ),
-                    SizedBox(width: 25),
+                    const SizedBox(width: 25),
                     Expanded(
                       flex: 1,
                       child: Faixa(
                         label: "Faixa",
                         selectedValue: tipoFaixa,
-                        items: [
+                        items: const [
                           'Branca',
                           'Amarela',
                           'Laraja',
@@ -520,7 +520,7 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                         },
                       ),
                     ),
-                    SizedBox(width: 25),
+                    const SizedBox(width: 25),
                     Row(
                       children: [
                         SizedBox(
@@ -528,7 +528,7 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                           child: Status(
                             label: "Status",
                             selectedValue: tipoStatus,
-                            items: ['Ativo', 'Inativo', 'Concluído'],
+                            items: const ['Ativo', 'Inativo', 'Concluído'],
                             onChanged: (newValue) {
                               setState(() {
                                 tipoStatus = newValue!;
@@ -536,13 +536,13 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                             },
                           ),
                         ),
-                        SizedBox(width: 25),
+                        const SizedBox(width: 25),
                         SizedBox(
                           width: 200,
                           child: TurnoTreino(
                             label: "Turno Treino",
                             selectedValue: tipoTurnoTreino,
-                            items: ['Manhã', 'Tarde', 'Noite'],
+                            items: const ['Manhã', 'Tarde', 'Noite'],
                             onChanged: (newValue) {
                               setState(() {
                                 tipoTurnoTreino = newValue!;
@@ -565,13 +565,13 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                     ),
                   ],
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 Row(
                   children: [
                     Expanded(
                       flex: 1,
                       child: Padding(
-                        padding: EdgeInsets.only(bottom: 15),
+                        padding: const EdgeInsets.only(bottom: 15),
                         child: TextFormField(
                           decoration: textFormField("Responsável"),
                           controller: _responsavelController,
@@ -584,11 +584,11 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                         ),
                       ),
                     ),
-                    SizedBox(width: 25),
+                    const SizedBox(width: 25),
                     Expanded(
                       flex: 1,
                       child: Padding(
-                        padding: EdgeInsets.only(bottom: 15),
+                        padding: const EdgeInsets.only(bottom: 15),
                         child: TextFormField(
                           decoration: textFormField("Telefone do Responsável"),
                           keyboardType: TextInputType.number,
@@ -607,7 +607,7 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                         ),
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 25,
                     ),
                     Row(
@@ -617,7 +617,7 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                           child: Status(
                             label: "Grau Parentesco",
                             selectedValue: tipoParentesco,
-                            items: [
+                            items: const [
                               'Pai',
                               'Mãe',
                               'Tio (a)',
@@ -639,7 +639,7 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                     Expanded(
                       flex: 1,
                       child: Padding(
-                        padding: EdgeInsets.only(bottom: 15),
+                        padding: const EdgeInsets.only(bottom: 15),
                         child: TextFormField(
                           decoration: textFormField("Responsável"),
                           controller: _responsavel2Controller,
@@ -652,11 +652,11 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                         ),
                       ),
                     ),
-                    SizedBox(width: 25),
+                    const SizedBox(width: 25),
                     Expanded(
                       flex: 1,
                       child: Padding(
-                        padding: EdgeInsets.only(bottom: 15),
+                        padding: const EdgeInsets.only(bottom: 15),
                         child: TextFormField(
                           decoration: textFormField("Telefone do Responsável"),
                           keyboardType: TextInputType.number,
@@ -675,7 +675,7 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                         ),
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 25,
                     ),
                     Row(
@@ -685,7 +685,7 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                           child: Status(
                             label: "Grau Parentesco",
                             selectedValue: tipoParentesco2,
-                            items: [
+                            items: const [
                               'Pai',
                               'Mãe',
                               'Tio (a)',
@@ -713,13 +713,13 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                     ),
                   ],
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 Row(
                   children: [
                     Expanded(
                       flex: 1,
                       child: Padding(
-                        padding: EdgeInsets.only(bottom: 15),
+                        padding: const EdgeInsets.only(bottom: 15),
                         child: TextFormField(
                           decoration: textFormField("Escola"),
                           controller: _escolaController,
@@ -732,11 +732,11 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                         ),
                       ),
                     ),
-                    SizedBox(width: 25),
+                    const SizedBox(width: 25),
                     Expanded(
                       flex: 1,
                       child: Padding(
-                        padding: EdgeInsets.only(bottom: 15),
+                        padding: const EdgeInsets.only(bottom: 15),
                         child: TextFormField(
                           decoration: textFormField("Endereço da Escola"),
                           controller: _endescolaController,
@@ -749,13 +749,13 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                         ),
                       ),
                     ),
-                    SizedBox(width: 25),
+                    const SizedBox(width: 25),
                     Expanded(
                       flex: 1,
                       child: Turno(
                         label: "Turno Escolar",
                         selectedValue: tipoTurno,
-                        items: ['Manhã', 'Tarde', 'Noite'],
+                        items: const ['Manhã', 'Tarde', 'Noite'],
                         onChanged: (newValue) {
                           setState(() {
                             tipoTurno = newValue!;
@@ -765,7 +765,7 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                     ),
                   ],
                 ),
-                SizedBox(height: 50),
+                const SizedBox(height: 50),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
@@ -778,16 +778,16 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                             borderRadius: BorderRadius.circular(11),
                             boxShadow: [
                               BoxShadow(
-                                color: Color(0xFF1F41BB).withOpacity(0.2),
+                                color: const Color(0xFF1F41BB).withOpacity(0.2),
                                 spreadRadius: 0,
                                 blurRadius: 4,
-                                offset: Offset(0, 4),
+                                offset: const Offset(0, 4),
                               ),
                             ],
                           ),
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Color(0xFF1F41BB),
+                              backgroundColor: const Color(0xFF1F41BB),
                               foregroundColor: Colors.white,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(11),
@@ -810,7 +810,7 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                           ),
                         ),
                       ),
-                    Spacer(),
+                    const Spacer(),
                     SizedBox(
                       height: 50,
                       width: 150,
@@ -819,16 +819,16 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                           borderRadius: BorderRadius.circular(11),
                           boxShadow: [
                             BoxShadow(
-                              color: Color(0xFF1F41BB).withOpacity(0.2),
+                              color: const Color(0xFF1F41BB).withOpacity(0.2),
                               spreadRadius: 0,
                               blurRadius: 4,
-                              offset: Offset(0, 4),
+                              offset: const Offset(0, 4),
                             ),
                           ],
                         ),
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xFF262c40),
+                            backgroundColor: const Color(0xFF262c40),
                             foregroundColor: Colors.white,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(11),
@@ -847,7 +847,7 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                         ),
                       ),
                     ),
-                    SizedBox(width: 25),
+                    const SizedBox(width: 25),
                     SizedBox(
                       height: 50,
                       width: 150,
@@ -856,10 +856,10 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                           borderRadius: BorderRadius.circular(11),
                           boxShadow: [
                             BoxShadow(
-                              color: Color(0xFF1F41BB).withOpacity(0.2),
+                              color: const Color(0xFF1F41BB).withOpacity(0.2),
                               spreadRadius: 0,
                               blurRadius: 4,
-                              offset: Offset(0, 4),
+                              offset: const Offset(0, 4),
                             ),
                           ],
                         ),
@@ -881,18 +881,19 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                                     style: GoogleFonts.poppins(
                                       fontSize: 18,
                                       fontWeight: FontWeight.w500,
-                                      color: Color(0xFF000000),
+                                      color: const Color(0xFF000000),
                                     ),
                                   ),
-                                  content:
-                                      Text('Deseja realmente sair da página?'),
+                                  content: const Text(
+                                      'Deseja realmente sair da página?'),
                                   actions: <Widget>[
                                     ElevatedButton(
                                       onPressed: () async {
                                         Navigator.of(context)
                                             .pushAndRemoveUntil(
                                           MaterialPageRoute(
-                                            builder: (context) => HomePage(),
+                                            builder: (context) =>
+                                                const HomePage(),
                                           ),
                                           (route) => false,
                                         );
@@ -903,18 +904,25 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                                               BorderRadius.circular(13),
                                         ),
                                         elevation: 3,
-                                        backgroundColor: Color(0xFFda2828),
+                                        backgroundColor:
+                                            const Color(0xFFda2828),
                                       ),
                                       child: Text(
                                         'Sim',
                                         style: GoogleFonts.poppins(
-                                          color: Color(0xFFFFFFFF),
+                                          color: const Color(0xFFFFFFFF),
                                         ),
                                       ),
                                     ),
                                     ElevatedButton(
                                       onPressed: () {
-                                        Navigator.of(context).pop();
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                const HomePage(),
+                                          ),
+                                        );
                                       },
                                       style: ElevatedButton.styleFrom(
                                         shape: RoundedRectangleBorder(
@@ -922,12 +930,13 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                                               BorderRadius.circular(13),
                                         ),
                                         elevation: 3,
-                                        backgroundColor: Color(0xFF008000),
+                                        backgroundColor:
+                                            const Color(0xFF008000),
                                       ),
                                       child: Text(
                                         'Não',
                                         style: GoogleFonts.poppins(
-                                          color: Color(0xFFFFFFFF),
+                                          color: const Color(0xFFFFFFFF),
                                         ),
                                       ),
                                     ),
@@ -962,7 +971,7 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
 // Função para criar título de seção com estilo
 pw.Widget _buildSectionTitle(String title) {
   return pw.Padding(
-    padding: pw.EdgeInsets.symmetric(vertical: 5),
+    padding: const pw.EdgeInsets.symmetric(vertical: 5),
     child: pw.Container(
       color: PdfColor.fromHex('eaf1f8'),
       width: double.infinity,
