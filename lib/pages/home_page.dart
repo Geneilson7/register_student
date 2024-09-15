@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously, deprecated_member_use, avoid_print
 
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:register_student/pages/sobre.dart';
 import 'package:register_student/services/db_helper.dart';
 import 'package:register_student/pages/cadastrar_aluno.dart';
@@ -109,86 +110,174 @@ class _HomePageState extends State<HomePage> {
           children: [
             Expanded(
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  DrawerHeader(
-                    child: Image.asset(
-                      'assets/image/logo.png',
-                      color: const Color(0xFFFFFFFF),
-                      width: 400,
-                      fit: BoxFit.contain,
-                    ),
-                  ),
+                  const SizedBox(height: 20),
                   ListTile(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const CadastrarAluno(),
-                        ),
-                      );
-                    },
-                    leading: const Icon(
-                      Icons.group,
-                      size: 25,
-                      color: Colors.white54,
-                      // color: Color(0xFF000000),
-                    ),
-                    title: const Text(
-                      "Cadastrar Aluno",
-                      style: TextStyle(
-                        color: Colors.white54,
-                        fontWeight: FontWeight.w600,
+                    leading: const CircleAvatar(
+                      radius: 20,
+                      backgroundImage: AssetImage(
+                        'assets/image/logo.png',
                       ),
                     ),
-                  ),
-                  ListTile(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const CadastrarAluno(),
+                    title: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Olá 👋',
+                          style: GoogleFonts.poppins(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                            color: const Color(0xFF404046),
+                          ),
                         ),
-                      );
-                    },
-                    leading: const Icon(
-                      Icons.group,
-                      size: 25,
-                      color: Colors.white54,
-                      // color: Color(0xFF000000),
-                    ),
-                    title: const Text(
-                      "Cadastrar Faixa",
-                      style: TextStyle(
-                        color: Colors.white54,
-                        fontWeight: FontWeight.w600,
-                      ),
+                        Text(
+                          'VendaDireta',
+                          style: GoogleFonts.poppins(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: const Color(0xFF404046),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  ListTile(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const Sobre(),
+                  Divider(thickness: 1, color: Colors.grey[300]),
+                  Expanded(
+                    child: ListView(
+                      children: [
+                        ExpansionTile(
+                          leading: const Icon(
+                            Icons.group,
+                            color: Colors.white54,
+                          ),
+                          iconColor: Colors.white54,
+                          collapsedIconColor: Colors.white54,
+                          title: Text(
+                            "Cadastro",
+                            style: GoogleFonts.poppins(
+                              fontSize: 15,
+                              color: Colors.white54,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          children: <Widget>[
+                            buildSubListTile(
+                              "Cadastrar Aluno",
+                              () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const CadastrarAluno(showButton: false),
+                                  ),
+                                );
+                              },
+                            ),
+                            buildSubListTile(
+                              "Cadastrar Faixa",
+                              () {},
+                            ),
+                          ],
                         ),
-                      );
-                    },
-                    leading: const Icon(
-                      Icons.info,
-                      size: 25,
-                      color: Colors.white54,
-                      // color: Color(0xFF000000),
-                    ),
-                    title: const Text(
-                      "Sobre",
-                      style: TextStyle(
-                        color: Colors.white54,
-                        fontWeight: FontWeight.w600,
-                      ),
+                        buildListTile(
+                          Icons.info,
+                          "Sobre",
+                          () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const Sobre(),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
+              // Column(
+              //   children: [
+              //     DrawerHeader(
+              //       child: Image.asset(
+              //         'assets/image/logo.png',
+              //         color: const Color(0xFFFFFFFF),
+              //         width: 400,
+              //         fit: BoxFit.contain,
+              //       ),
+              //     ),
+              //     ListTile(
+              //       onTap: () {
+              //         Navigator.push(
+              //           context,
+              //           MaterialPageRoute(
+              //             builder: (context) => const CadastrarAluno(),
+              //           ),
+              //         );
+              //       },
+              //       leading: const Icon(
+              //         Icons.group,
+              //         size: 25,
+              //         color: Colors.white54,
+              //         // color: Color(0xFF000000),
+              //       ),
+              //       title: const Text(
+              //         "Cadastrar Aluno",
+              //         style: TextStyle(
+              //           color: Colors.white54,
+              //           fontWeight: FontWeight.w600,
+              //         ),
+              //       ),
+              //     ),
+              //     ListTile(
+              //       onTap: () {
+              //         Navigator.push(
+              //           context,
+              //           MaterialPageRoute(
+              //             builder: (context) => const CadastrarAluno(),
+              //           ),
+              //         );
+              //       },
+              //       leading: const Icon(
+              //         Icons.group,
+              //         size: 25,
+              //         color: Colors.white54,
+              //         // color: Color(0xFF000000),
+              //       ),
+              //       title: const Text(
+              //         "Cadastrar Faixa",
+              //         style: TextStyle(
+              //           color: Colors.white54,
+              //           fontWeight: FontWeight.w600,
+              //         ),
+              //       ),
+              //     ),
+              //     ListTile(
+              //       onTap: () {
+              //         Navigator.push(
+              //           context,
+              //           MaterialPageRoute(
+              //             builder: (context) => const Sobre(),
+              //           ),
+              //         );
+              //       },
+              //       leading: const Icon(
+              //         Icons.info,
+              //         size: 25,
+              //         color: Colors.white54,
+              //         // color: Color(0xFF000000),
+              //       ),
+              //       title: const Text(
+              //         "Sobre",
+              //         style: TextStyle(
+              //           color: Colors.white54,
+              //           fontWeight: FontWeight.w600,
+              //         ),
+              //       ),
+              //     ),
+              //   ],
+              // ),
             ),
             Expanded(
               flex: 4,
@@ -811,6 +900,42 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
+    );
+  }
+
+  ListTile buildListTile(IconData icon, String title, VoidCallback onTap) {
+    return ListTile(
+      leading: Icon(
+        icon,
+        size: 25,
+        color: Colors.white54,
+      ),
+      title: Text(
+        title,
+        style: GoogleFonts.poppins(
+          fontSize: 15,
+          color: Colors.white54,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+      onTap: onTap,
+    );
+  }
+
+  ListTile buildSubListTile(String title, VoidCallback onTap) {
+    return ListTile(
+      contentPadding: const EdgeInsets.only(
+        left: 40,
+      ),
+      title: Text(
+        title,
+        style: GoogleFonts.poppins(
+          fontSize: 14,
+          color: Colors.white54,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+      onTap: onTap,
     );
   }
 }

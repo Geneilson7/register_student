@@ -1,7 +1,5 @@
 // ignore_for_file: use_build_context_synchronously, deprecated_member_use, depend_on_referenced_packages
 
-import 'dart:io';
-
 import 'package:brasil_fields/brasil_fields.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -18,13 +16,17 @@ import 'package:register_student/util/form.dart';
 // import 'package:printing/printing.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
-import 'package:printing/printing.dart';
 import 'package:register_student/util/view_pdf.dart';
 
 class CadastrarAluno extends StatefulWidget {
   final int? alunoId; // Alterado para int? para aceitar o ID do aluno
+  final bool showButton;
 
-  const CadastrarAluno({Key? key, this.alunoId}) : super(key: key);
+  const CadastrarAluno({
+    Key? key,
+    this.alunoId,
+    this.showButton = true,
+  }) : super(key: key);
 
   @override
   State<CadastrarAluno> createState() => _CadastrarAlunoState();
@@ -769,46 +771,47 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    SizedBox(
-                      height: 50,
-                      width: 200,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(11),
-                          boxShadow: [
-                            BoxShadow(
-                              color: const Color(0xFF1F41BB).withOpacity(0.2),
-                              spreadRadius: 0,
-                              blurRadius: 4,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF1F41BB),
-                            foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(11),
-                            ),
+                    if (widget.showButton)
+                      SizedBox(
+                        height: 50,
+                        width: 200,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(11),
+                            boxShadow: [
+                              BoxShadow(
+                                color: const Color(0xFF1F41BB).withOpacity(0.2),
+                                spreadRadius: 0,
+                                blurRadius: 4,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
                           ),
-                          onPressed: () {
-                            if (_formKey.currentState!.validate()) {
-                              _displayPdf();
-                            }
-                          },
-                          child: const Center(
-                            child: Text(
-                              'Ficha Cadastral',
-                              style: TextStyle(
-                                fontSize: 19,
-                                fontWeight: FontWeight.w700,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF1F41BB),
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(11),
+                              ),
+                            ),
+                            onPressed: () {
+                              if (_formKey.currentState!.validate()) {
+                                _displayPdf();
+                              }
+                            },
+                            child: const Center(
+                              child: Text(
+                                'Ficha Cadastral',
+                                style: TextStyle(
+                                  fontSize: 19,
+                                  fontWeight: FontWeight.w700,
+                                ),
                               ),
                             ),
                           ),
                         ),
                       ),
-                    ),
                     const Spacer(),
                     SizedBox(
                       height: 50,
