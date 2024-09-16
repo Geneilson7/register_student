@@ -55,8 +55,8 @@ class DBHelper {
         escola TEXT,
         endescola TEXT,
         turnoescolar TEXT,
-        professor_id INTEGER
-        FOREIGN KEY (faixa_id) REFERENCES faixas(id)
+        professor_id INTEGER,
+        FOREIGN KEY (faixa_id) REFERENCES faixas(id),
         FOREIGN KEY (professor_id) REFERENCES professores(id)
       )
     ''');
@@ -68,7 +68,7 @@ class DBHelper {
         descricao TEXT
       )
     ''');
-    
+
     await db.execute('''
       CREATE TABLE professores (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -207,6 +207,11 @@ class DBHelper {
         'SELECT * FROM faixas WHERE id LIKE ? OR descricao LIKE ?',
         ['%$query%', '%$query%']);
     return result;
+  }
+
+  Future<List<Map<String, dynamic>>> fetchFaixas() async {
+    final db = await database; // função que obtém o database
+    return await db.query('faixas', columns: ['id', 'descricao']);
   }
 
   Future<void> insertProfessores(Map<String, dynamic> faixa) async {

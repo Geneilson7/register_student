@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:register_student/register/cadastrar_aluno.dart';
 import 'package:register_student/pages/home_page.dart';
+import 'package:register_student/register/cadastrar_professor.dart';
 import 'package:register_student/services/db_helper.dart';
 
 class ProfessorScreen extends StatefulWidget {
@@ -23,6 +24,7 @@ class _ProfessorScreenState extends State<ProfessorScreen> {
   int? _professoresCount = 0;
   int? _ativoCount = 0;
   int? _inativoCount = 0;
+  int _selectedIndex = 1;
 
   @override
   void initState() {
@@ -91,6 +93,63 @@ class _ProfessorScreenState extends State<ProfessorScreen> {
     } catch (error) {
       print(error);
     }
+  }
+
+  void _showDeleteDialog(BuildContext context, int itemId) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            'Confirmação',
+            style: GoogleFonts.poppins(
+              fontSize: 18,
+              fontWeight: FontWeight.w500,
+              color: const Color(0xFF000000),
+            ),
+          ),
+          content: const Text('Deseja realmente concluir a exclusão?'),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                // Chame a função de exclusão sem usar o resultado
+                _deleteItem(itemId); // Não espere um retorno aqui
+                Navigator.of(context).pop(); // Fecha o dialog
+                // Atualiza os itens sem mudar de tela
+                _refreshItems(); // Atualiza os itens
+              },
+              style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(13),
+                ),
+                elevation: 3,
+                backgroundColor: const Color(0xFFda2828),
+              ),
+              child: Text(
+                'Sim',
+                style: GoogleFonts.poppins(color: const Color(0xFFFFFFFF)),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(13),
+                ),
+                elevation: 3,
+                backgroundColor: const Color(0xFF008000),
+              ),
+              child: Text(
+                'Não',
+                style: GoogleFonts.poppins(color: const Color(0xFFFFFFFF)),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Color _getStatusColor(String status) {
@@ -263,16 +322,6 @@ class _ProfessorScreenState extends State<ProfessorScreen> {
                           ),
                           DataColumn(
                             label: Text(
-                              'Turno',
-                              style: GoogleFonts.poppins(
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                              ),
-                            ),
-                          ),
-                          DataColumn(
-                            label: Text(
                               'Status',
                               style: GoogleFonts.poppins(
                                 color: Colors.black,
@@ -323,8 +372,8 @@ class _ProfessorScreenState extends State<ProfessorScreen> {
                                   await Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) =>
-                                          CadastrarAluno(alunoId: item['id']),
+                                      builder: (context) => CadastrarPofessor(
+                                          alunoId: item['id']),
                                     ),
                                   ).then((value) => _refreshItems());
                                 },
@@ -342,27 +391,8 @@ class _ProfessorScreenState extends State<ProfessorScreen> {
                                   await Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) =>
-                                          CadastrarAluno(alunoId: item['id']),
-                                    ),
-                                  ).then((value) => _refreshItems());
-                                },
-                              ),
-                              DataCell(
-                                Text(
-                                  item['turnotreino'].toString().toUpperCase(),
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w700,
-                                    color: const Color(0xFF1C1C1C),
-                                  ),
-                                ),
-                                onTap: () async {
-                                  await Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          CadastrarAluno(alunoId: item['id']),
+                                      builder: (context) => CadastrarPofessor(
+                                          alunoId: item['id']),
                                     ),
                                   ).then((value) => _refreshItems());
                                 },
@@ -380,8 +410,8 @@ class _ProfessorScreenState extends State<ProfessorScreen> {
                                   await Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) =>
-                                          CadastrarAluno(alunoId: item['id']),
+                                      builder: (context) => CadastrarPofessor(
+                                          alunoId: item['id']),
                                     ),
                                   ).then((value) => _refreshItems());
                                 },
@@ -393,72 +423,7 @@ class _ProfessorScreenState extends State<ProfessorScreen> {
                                     color: Colors.red,
                                   ),
                                   onPressed: () {
-                                    showDialog(
-                                      context: context,
-                                      builder: (_) {
-                                        return AlertDialog(
-                                          title: Text(
-                                            'Confirmação',
-                                            style: GoogleFonts.poppins(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.w500,
-                                              color: const Color(0xFF000000),
-                                            ),
-                                          ),
-                                          content: const Text(
-                                              'Deseja realmente concluir a exclusão?'),
-                                          actions: <Widget>[
-                                            ElevatedButton(
-                                              onPressed: () async {
-                                                _deleteItem(item['id']);
-                                                Navigator.pushReplacement(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        HomePage(),
-                                                  ),
-                                                );
-                                              },
-                                              style: ElevatedButton.styleFrom(
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(13),
-                                                ),
-                                                elevation: 3,
-                                                backgroundColor:
-                                                    const Color(0xFFda2828),
-                                              ),
-                                              child: Text(
-                                                'Sim',
-                                                style: GoogleFonts.poppins(
-                                                    color: const Color(
-                                                        0xFFFFFFFF)),
-                                              ),
-                                            ),
-                                            ElevatedButton(
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                              style: ElevatedButton.styleFrom(
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(13),
-                                                ),
-                                                elevation: 3,
-                                                backgroundColor:
-                                                    const Color(0xFF008000),
-                                              ),
-                                              child: Text(
-                                                'Não',
-                                                style: GoogleFonts.poppins(
-                                                    color: const Color(
-                                                        0xFFFFFFFF)),
-                                              ),
-                                            ),
-                                          ],
-                                        );
-                                      },
-                                    );
+                                    _showDeleteDialog(context, item['id']);
                                   },
                                 ),
                               ),

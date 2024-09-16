@@ -3,15 +3,15 @@ import 'package:google_fonts/google_fonts.dart';
 
 class Faixa extends StatefulWidget {
   final String label;
-  final String? selectedValue;
-  final List<String> items;
-  final ValueChanged<String?> onChanged;
+  final int? selectedFaixaId; // Mude para int?
+  final List<Map<String, dynamic>> faixas; // id e descricao
+  final ValueChanged<int?> onChanged; // Mude para int?
 
   const Faixa({
     Key? key,
     required this.label,
-    required this.selectedValue,
-    required this.items,
+    required this.selectedFaixaId,
+    required this.faixas,
     required this.onChanged,
   }) : super(key: key);
 
@@ -32,23 +32,15 @@ class _FaixaState extends State<Faixa> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            DropdownButtonFormField<String>(
-              value: widget.selectedValue!.isNotEmpty
-                  ? widget.selectedValue
-                  : null,
+            DropdownButtonFormField<int>(
+              value: widget.selectedFaixaId,
               onChanged: widget.onChanged,
-              items: [
-                const DropdownMenuItem<String>(
-                  value: null,
-                  child: Text('Selecione'),
-                ),
-                ...widget.items.map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }),
-              ],
+              items: widget.faixas.map<DropdownMenuItem<int>>((faixa) {
+                return DropdownMenuItem<int>(
+                  value: faixa['id'], // deve ser int
+                  child: Text(faixa['descricao']),
+                );
+              }).toList(),
               decoration: InputDecoration(
                 label: Text(widget.label),
                 fillColor: const Color(0xFFF1F4FF).withOpacity(0.9),

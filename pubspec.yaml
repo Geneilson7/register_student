@@ -53,6 +53,7 @@ flutter:
     - assets/image/professojiujtsu.png
     - assets/image/sobre.png
     - assets/image/screen.png
+    - assets/image/faixa.png
 
   # fonts:
   #   - family: Roboto

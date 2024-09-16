@@ -59,18 +59,71 @@ class _CadastrarFaixaState extends State<CadastrarFaixa> {
           await dbHelper.insertFaixa(faixa);
         }
 
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const HomePage(),
-          ),
-        );
+        Navigator.pop(context);
       }
     } catch (error) {
       ScaffoldMessenger(
         child: Text("$error"),
       );
     }
+  }
+
+  void _showDeleteDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            'Confirmação',
+            style: GoogleFonts.poppins(
+              fontSize: 18,
+              fontWeight: FontWeight.w500,
+              color: const Color(0xFF000000),
+            ),
+          ),
+          content: const Text('Deseja realmente cancelar?'),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(
+                    builder: (context) => const HomePage(),
+                  ),
+                  (route) => false,
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(13),
+                ),
+                elevation: 3,
+                backgroundColor: const Color(0xFFda2828),
+              ),
+              child: Text(
+                'Sim',
+                style: GoogleFonts.poppins(color: const Color(0xFFFFFFFF)),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(13),
+                ),
+                elevation: 3,
+                backgroundColor: const Color(0xFF008000),
+              ),
+              child: Text(
+                'Não',
+                style: GoogleFonts.poppins(color: const Color(0xFFFFFFFF)),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -183,72 +236,11 @@ class _CadastrarFaixaState extends State<CadastrarFaixa> {
                             ),
                           ),
                           onPressed: () {
-                            showDialog(
-                              context: context,
-                              builder: (_) {
-                                return AlertDialog(
-                                  title: Text(
-                                    'Confirmação',
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w500,
-                                      color: const Color(0xFF000000),
-                                    ),
-                                  ),
-                                  content: const Text(
-                                      'Deseja realmente sair da página?'),
-                                  actions: <Widget>[
-                                    ElevatedButton(
-                                      onPressed: () async {
-                                        Navigator.of(context)
-                                            .pushAndRemoveUntil(
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                const HomePage(),
-                                          ),
-                                          (route) => false,
-                                        );
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(13),
-                                        ),
-                                        elevation: 3,
-                                        backgroundColor:
-                                            const Color(0xFFda2828),
-                                      ),
-                                      child: Text(
-                                        'Sim',
-                                        style: GoogleFonts.poppins(
-                                          color: const Color(0xFFFFFFFF),
-                                        ),
-                                      ),
-                                    ),
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(13),
-                                        ),
-                                        elevation: 3,
-                                        backgroundColor:
-                                            const Color(0xFF008000),
-                                      ),
-                                      child: Text(
-                                        'Não',
-                                        style: GoogleFonts.poppins(
-                                          color: const Color(0xFFFFFFFF),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                );
-                              },
-                            );
+                            if (widget.alunoId == null) {
+                              _showDeleteDialog(context);
+                            } else {
+                              Navigator.of(context).pop();
+                            }
                           },
                           child: Center(
                             child: Text(

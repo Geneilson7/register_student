@@ -9,8 +9,6 @@ import 'package:register_student/services/db_helper.dart';
 import 'package:register_student/src/dropdown_faixa.dart';
 import 'package:register_student/src/dropdown_pcd.dart';
 import 'package:register_student/src/dropdown_status.dart';
-import 'package:register_student/src/dropdown_turno_escolar.dart';
-import 'package:register_student/src/dropdown_turno_treino.dart';
 import 'package:register_student/util/form.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -42,23 +40,12 @@ class _CadastrarPofessorState extends State<CadastrarPofessor> {
   final TextEditingController _bairroController = TextEditingController();
   final TextEditingController _enderecoController = TextEditingController();
   final TextEditingController _municipioController = TextEditingController();
-  final TextEditingController _responsavelController = TextEditingController();
-  final TextEditingController _responsavel2Controller = TextEditingController();
   final TextEditingController _telefoneController = TextEditingController();
-  final TextEditingController _telresponsavelController =
-      TextEditingController();
-  final TextEditingController _telresponsavel2Controller =
-      TextEditingController();
   final TextEditingController _cepController = TextEditingController();
-  final TextEditingController _escolaController = TextEditingController();
-  final TextEditingController _endescolaController = TextEditingController();
-  String? tipoTurno = '';
-  String? tipoTurnoTreino = '';
-  String? tipoFaixa = '';
-  String? tipoParentesco = '';
-  String? tipoParentesco2 = '';
+  int? tipoFaixa;
 
   final _formKey = GlobalKey<FormState>();
+  List<Map<String, dynamic>> faixas = [];
 
   @override
   void initState() {
@@ -66,6 +53,11 @@ class _CadastrarPofessorState extends State<CadastrarPofessor> {
     if (widget.alunoId != null) {
       _loadAluno(widget.alunoId!);
     }
+    dbHelper.fetchFaixas().then((data) {
+      setState(() {
+        faixas = data;
+      });
+    });
   }
 
   void _populateFields(Map<String, dynamic> aluno) {
@@ -79,24 +71,14 @@ class _CadastrarPofessorState extends State<CadastrarPofessor> {
     _bairroController.text = aluno['bairro'];
     _enderecoController.text = aluno['endereco'];
     _municipioController.text = aluno['municipio'];
-    _responsavelController.text = aluno['responsavel'];
-    _responsavel2Controller.text = aluno['responsavel2'];
     _telefoneController.text = aluno['telefone'];
-    _telresponsavelController.text = aluno['telresponsavel'];
-    _telresponsavel2Controller.text = aluno['telresponsavel2'];
     _cepController.text = aluno['cep'];
-    _escolaController.text = aluno['escola'];
-    _endescolaController.text = aluno['endescola'];
-    tipoTurno = aluno['turnoescolar'];
-    tipoTurnoTreino = aluno['turnotreino'];
-    tipoFaixa = aluno['faixa'];
-    tipoParentesco = aluno['grau'];
-    tipoParentesco2 = aluno['grau2'];
+    tipoFaixa = aluno['faixa_id'];
     setState(() {});
   }
 
   void _loadAluno(int id) async {
-    final aluno = await dbHelper.getAlunoById(id);
+    final aluno = await dbHelper.getProfessoresId(id);
     if (aluno != null) {
       _populateFields(aluno);
     }
@@ -116,39 +98,36 @@ class _CadastrarPofessorState extends State<CadastrarPofessor> {
           'bairro': _bairroController.text,
           'endereco': _enderecoController.text,
           'municipio': _municipioController.text,
-          'responsavel': _responsavelController.text,
-          'responsavel2': _responsavel2Controller.text,
           'telefone': _telefoneController.text,
-          'telresponsavel': _telresponsavelController.text,
-          'telresponsavel2': _telresponsavel2Controller.text,
           'cep': _cepController.text,
-          'escola': _escolaController.text,
-          'endescola': _endescolaController.text,
-          'turnoescolar': tipoTurno,
-          'turnotreino': tipoTurnoTreino,
-          'faixa': tipoFaixa,
-          'grau': tipoParentesco,
-          'grau2': tipoParentesco2,
+          'faixa_id': tipoFaixa,
         };
 
         if (widget.alunoId != null) {
-          await dbHelper.updateAluno(widget.alunoId!, aluno);
+          await dbHelper.updateProfessores(widget.alunoId!, aluno);
         } else {
-          await dbHelper.insertAluno(aluno);
+          await dbHelper.insertProfessores(aluno);
         }
 
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const HomePage(),
-          ),
-        );
+        Navigator.pop(context);
       }
     } catch (error) {
       ScaffoldMessenger(
         child: Text("$error"),
       );
     }
+  }
+
+  String? getFaixaDescricao(int? faixaId, List<Map<String, dynamic>> faixas) {
+    if (faixaId == null) return null;
+
+    for (var faixa in faixas) {
+      if (faixa['id'] == faixaId) {
+        return faixa['descricao'];
+      }
+    }
+
+    return null;
   }
 
   void _displayPdf() {
@@ -190,7 +169,7 @@ class _CadastrarPofessorState extends State<CadastrarPofessor> {
               pw.SizedBox(height: 20),
 
               // Seção: Dados do Aluno
-              _buildSectionTitle('DADOS DO ALUNO'),
+              _buildSectionTitle('DADOS DO PROFESSOR'),
               _buildLabeledField('Nome do Aluno: ', _nomeController.text),
               _buildLabeledField('CPF: ', _cpfController.text),
               _buildLabeledField('RG: ', _rgController.text),
@@ -212,31 +191,9 @@ class _CadastrarPofessorState extends State<CadastrarPofessor> {
 
               // Seção: Status Treino
               _buildSectionTitle('STATUS TREINO'),
-              _buildLabeledField('Faixa: ', tipoFaixa!),
+              _buildLabeledField(
+                  'Faixa: ', getFaixaDescricao(tipoFaixa, faixas) ?? 'vazio'),
               _buildLabeledField('Situação: ', tipoStatus!),
-              _buildLabeledField('Turno Treino: ', tipoTurnoTreino!),
-
-              pw.SizedBox(height: 10),
-
-              // Seção: Responsável
-              _buildSectionTitle('RESPONSÁVEL'),
-              _buildLabeledField('Responsável 1: ', tipoParentesco!),
-              _buildLabeledField(
-                  'Telefone Responsável: ', _telresponsavelController.text),
-              _buildLabeledField('Grau Parentesco: ', tipoParentesco!),
-              pw.SizedBox(height: 5),
-              _buildLabeledField('Responsável 2: ', tipoParentesco2!),
-              _buildLabeledField(
-                  'Telefone Responsável: ', _telresponsavel2Controller.text),
-              _buildLabeledField('Grau Parentesco: ', tipoParentesco2!),
-
-              pw.SizedBox(height: 10),
-
-              // Seção: Dados Escolares
-              _buildSectionTitle('DADOS ESCOLAR'),
-              _buildLabeledField('Escola: ', _escolaController.text),
-              _buildLabeledField('Endereço: ', _endescolaController.text),
-              _buildLabeledField('Turno: ', tipoTurno!),
             ],
           );
         },
@@ -252,6 +209,64 @@ class _CadastrarPofessorState extends State<CadastrarPofessor> {
             pdfFileName: "${_nomeController.text}.pdf",
           ),
         ));
+  }
+
+  void _showDeleteDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            'Confirmação',
+            style: GoogleFonts.poppins(
+              fontSize: 18,
+              fontWeight: FontWeight.w500,
+              color: const Color(0xFF000000),
+            ),
+          ),
+          content: const Text('Deseja realmente cancelar?'),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(
+                    builder: (context) => const HomePage(),
+                  ),
+                  (route) => false,
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(13),
+                ),
+                elevation: 3,
+                backgroundColor: const Color(0xFFda2828),
+              ),
+              child: Text(
+                'Sim',
+                style: GoogleFonts.poppins(color: const Color(0xFFFFFFFF)),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(13),
+                ),
+                elevation: 3,
+                backgroundColor: const Color(0xFF008000),
+              ),
+              child: Text(
+                'Não',
+                style: GoogleFonts.poppins(color: const Color(0xFFFFFFFF)),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -502,22 +517,12 @@ class _CadastrarPofessorState extends State<CadastrarPofessor> {
                       flex: 1,
                       child: Faixa(
                         label: "Faixa",
-                        selectedValue: tipoFaixa,
-                        items: const [
-                          'Branca',
-                          'Amarela',
-                          'Laraja',
-                          'Verde',
-                          'Azul',
-                          'Roxa',
-                          'Marrom',
-                          'Preta',
-                          'Coral',
-                          'Vermelha',
-                        ],
-                        onChanged: (newValue) {
+                        selectedFaixaId: tipoFaixa,
+                        faixas: faixas,
+                        onChanged: (newFaixaId) {
+                          print(newFaixaId);
                           setState(() {
-                            tipoFaixa = newValue!;
+                            tipoFaixa = newFaixaId;
                           });
                         },
                       ),
@@ -645,72 +650,11 @@ class _CadastrarPofessorState extends State<CadastrarPofessor> {
                             ),
                           ),
                           onPressed: () {
-                            showDialog(
-                              context: context,
-                              builder: (_) {
-                                return AlertDialog(
-                                  title: Text(
-                                    'Confirmação',
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w500,
-                                      color: const Color(0xFF000000),
-                                    ),
-                                  ),
-                                  content: const Text(
-                                      'Deseja realmente sair da página?'),
-                                  actions: <Widget>[
-                                    ElevatedButton(
-                                      onPressed: () async {
-                                        Navigator.of(context)
-                                            .pushAndRemoveUntil(
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                const HomePage(),
-                                          ),
-                                          (route) => false,
-                                        );
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(13),
-                                        ),
-                                        elevation: 3,
-                                        backgroundColor:
-                                            const Color(0xFFda2828),
-                                      ),
-                                      child: Text(
-                                        'Sim',
-                                        style: GoogleFonts.poppins(
-                                          color: const Color(0xFFFFFFFF),
-                                        ),
-                                      ),
-                                    ),
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(13),
-                                        ),
-                                        elevation: 3,
-                                        backgroundColor:
-                                            const Color(0xFF008000),
-                                      ),
-                                      child: Text(
-                                        'Não',
-                                        style: GoogleFonts.poppins(
-                                          color: const Color(0xFFFFFFFF),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                );
-                              },
-                            );
+                            if (widget.alunoId == null) {
+                              _showDeleteDialog(context);
+                            } else {
+                              Navigator.of(context).pop();
+                            }
                           },
                           child: Center(
                             child: Text(

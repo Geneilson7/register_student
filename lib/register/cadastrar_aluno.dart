@@ -54,11 +54,13 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
   final TextEditingController _endescolaController = TextEditingController();
   String? tipoTurno = '';
   String? tipoTurnoTreino = '';
-  String? tipoFaixa = '';
+  int? tipoFaixa;
   String? tipoParentesco = '';
   String? tipoParentesco2 = '';
 
   final _formKey = GlobalKey<FormState>();
+
+  List<Map<String, dynamic>> faixas = [];
 
   @override
   void initState() {
@@ -66,6 +68,11 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
     if (widget.alunoId != null) {
       _loadAluno(widget.alunoId!);
     }
+    dbHelper.fetchFaixas().then((data) {
+      setState(() {
+        faixas = data;
+      });
+    });
   }
 
   void _populateFields(Map<String, dynamic> aluno) {
@@ -89,10 +96,11 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
     _endescolaController.text = aluno['endescola'];
     tipoTurno = aluno['turnoescolar'];
     tipoTurnoTreino = aluno['turnotreino'];
-    tipoFaixa = aluno['faixa'];
+    tipoFaixa = aluno['faixa_id'];
     tipoParentesco = aluno['grau'];
     tipoParentesco2 = aluno['grau2'];
     setState(() {});
+    print(_populateFields);
   }
 
   void _loadAluno(int id) async {
@@ -126,7 +134,7 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
           'endescola': _endescolaController.text,
           'turnoescolar': tipoTurno,
           'turnotreino': tipoTurnoTreino,
-          'faixa': tipoFaixa,
+          'faixa_id': tipoFaixa,
           'grau': tipoParentesco,
           'grau2': tipoParentesco2,
         };
@@ -137,18 +145,25 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
           await dbHelper.insertAluno(aluno);
         }
 
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const HomePage(),
-          ),
-        );
+        Navigator.pop(context);
       }
     } catch (error) {
       ScaffoldMessenger(
         child: Text("$error"),
       );
     }
+  }
+
+  String? getFaixaDescricao(int? faixaId, List<Map<String, dynamic>> faixas) {
+    if (faixaId == null) return null;
+
+    for (var faixa in faixas) {
+      if (faixa['id'] == faixaId) {
+        return faixa['descricao'];
+      }
+    }
+
+    return null;
   }
 
   void _displayPdf() {
@@ -163,7 +178,6 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
           return pw.Column(
             children: [
               pw.Row(
-                // mainAxisAlignment: pw.MainAxisAlignment.center,
                 children: [
                   pw.Expanded(
                     child: pw.Text(
@@ -190,7 +204,7 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
               pw.SizedBox(height: 20),
 
               // Seção: Dados do Aluno
-              _buildSectionTitle('DADOS DO ALUNO'),
+              _buildSectionTitle('DADOS DO PROFESSOR'),
               _buildLabeledField('Nome do Aluno: ', _nomeController.text),
               _buildLabeledField('CPF: ', _cpfController.text),
               _buildLabeledField('RG: ', _rgController.text),
@@ -212,7 +226,8 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
 
               // Seção: Status Treino
               _buildSectionTitle('STATUS TREINO'),
-              _buildLabeledField('Faixa: ', tipoFaixa!),
+              _buildLabeledField(
+                  'Faixa: ', getFaixaDescricao(tipoFaixa, faixas) ?? 'vazio'),
               _buildLabeledField('Situação: ', tipoStatus!),
               _buildLabeledField('Turno Treino: ', tipoTurnoTreino!),
 
@@ -245,13 +260,72 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
 
     /// open Preview Screen
     Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => PreviewScreen(
-            doc: doc,
-            pdfFileName: "${_nomeController.text}.pdf",
+      context,
+      MaterialPageRoute(
+        builder: (context) => PreviewScreen(
+          doc: doc,
+          pdfFileName: "${_nomeController.text}.pdf",
+        ),
+      ),
+    );
+  }
+
+  void _showDeleteDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            'Confirmação',
+            style: GoogleFonts.poppins(
+              fontSize: 18,
+              fontWeight: FontWeight.w500,
+              color: const Color(0xFF000000),
+            ),
           ),
-        ));
+          content: const Text('Deseja realmente cancelar?'),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(
+                    builder: (context) => const HomePage(),
+                  ),
+                  (route) => false,
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(13),
+                ),
+                elevation: 3,
+                backgroundColor: const Color(0xFFda2828),
+              ),
+              child: Text(
+                'Sim',
+                style: GoogleFonts.poppins(color: const Color(0xFFFFFFFF)),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(13),
+                ),
+                elevation: 3,
+                backgroundColor: const Color(0xFF008000),
+              ),
+              child: Text(
+                'Não',
+                style: GoogleFonts.poppins(color: const Color(0xFFFFFFFF)),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -500,22 +574,12 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                       flex: 1,
                       child: Faixa(
                         label: "Faixa",
-                        selectedValue: tipoFaixa,
-                        items: const [
-                          'Branca',
-                          'Amarela',
-                          'Laraja',
-                          'Verde',
-                          'Azul',
-                          'Roxa',
-                          'Marrom',
-                          'Preta',
-                          'Coral',
-                          'Vermelha',
-                        ],
-                        onChanged: (newValue) {
+                        selectedFaixaId: tipoFaixa,
+                        faixas: faixas,
+                        onChanged: (newFaixaId) {
+                          print(newFaixaId);
                           setState(() {
-                            tipoFaixa = newValue!;
+                            tipoFaixa = newFaixaId;
                           });
                         },
                       ),
@@ -872,72 +936,11 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                             ),
                           ),
                           onPressed: () {
-                            showDialog(
-                              context: context,
-                              builder: (_) {
-                                return AlertDialog(
-                                  title: Text(
-                                    'Confirmação',
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w500,
-                                      color: const Color(0xFF000000),
-                                    ),
-                                  ),
-                                  content: const Text(
-                                      'Deseja realmente sair da página?'),
-                                  actions: <Widget>[
-                                    ElevatedButton(
-                                      onPressed: () async {
-                                        Navigator.of(context)
-                                            .pushAndRemoveUntil(
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                const HomePage(),
-                                          ),
-                                          (route) => false,
-                                        );
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(13),
-                                        ),
-                                        elevation: 3,
-                                        backgroundColor:
-                                            const Color(0xFFda2828),
-                                      ),
-                                      child: Text(
-                                        'Sim',
-                                        style: GoogleFonts.poppins(
-                                          color: const Color(0xFFFFFFFF),
-                                        ),
-                                      ),
-                                    ),
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(13),
-                                        ),
-                                        elevation: 3,
-                                        backgroundColor:
-                                            const Color(0xFF008000),
-                                      ),
-                                      child: Text(
-                                        'Não',
-                                        style: GoogleFonts.poppins(
-                                          color: const Color(0xFFFFFFFF),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                );
-                              },
-                            );
+                            if (widget.alunoId == null) {
+                              _showDeleteDialog(context);
+                            } else {
+                              Navigator.of(context).pop();
+                            }
                           },
                           child: Center(
                             child: Text(

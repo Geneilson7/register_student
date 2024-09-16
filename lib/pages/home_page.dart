@@ -21,91 +21,25 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final DBHelper dbHelper = DBHelper();
 
-  List<Map<String, dynamic>> _items = [];
-
-  final TextEditingController _searchController = TextEditingController();
-
-  int? _alunoCount = 0;
-  int? _ativoCount = 0;
-  int? _inativoCount = 0;
-
   int? _selectedIndex;
   final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
 
   @override
   void initState() {
     super.initState();
-    _refreshItems();
-    _countAlunos();
-    _countAtivo();
-    _countInativo();
   }
 
-  Future<void> _performSearch(String query) async {
-    final dbHelper = DBHelper();
-    final searchResults = await dbHelper.searchAlunos(query);
-    setState(() {
-      _items = searchResults;
-    });
-  }
-
-  void _refreshItems() async {
-    final data = await dbHelper.getAlunos();
-    setState(() {
-      _items = data;
-    });
-  }
-
-  void _deleteItem(int id) async {
-    try {
-      await dbHelper.deleteAluno(id);
-      _refreshItems();
-    } catch (e) {
-      print('Erro ao deletar aluno: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Erro ao deletar aluno: $e')),
-      );
-    }
-  }
-
-  Future<void> _countAlunos() async {
-    try {
-      final count = await dbHelper.countAlunos();
-      setState(() {
-        _alunoCount = count;
-      });
-    } catch (error) {
-      print(error);
-    }
-  }
-
-  Future<void> _countAtivo() async {
-    try {
-      final count = await dbHelper.countAlunosAtivos();
-      setState(() {
-        _ativoCount = count;
-      });
-    } catch (error) {
-      print(error);
-    }
-  }
-
-  Future<void> _countInativo() async {
-    try {
-      final count = await dbHelper.countAlunosInativos();
-      setState(() {
-        _inativoCount = count;
-      });
-    } catch (error) {
-      print(error);
-    }
-  }
+  // void _onItemTapped(int index) {
+  //   setState(() {
+  //     _selectedIndex = index;
+  //   });
+  // }
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
-    // Utilize o Navigator interno para definir a tela inicial
+
     _navigatorKey.currentState?.pushReplacement(
       MaterialPageRoute(builder: (context) => _getSelectedScreen(index)),
     );
@@ -120,6 +54,18 @@ class _HomePageState extends State<HomePage> {
       case 2:
         return const FaixaScreen();
       case 3:
+        return const CadastrarAluno(
+          showButton: false,
+        );
+      case 4:
+        return const CadastrarPofessor(
+          showButton: false,
+        );
+      case 5:
+        return const CadastrarFaixa(
+          showButton: false,
+        );
+      case 6:
         return const Sobre();
       default:
         return Column(
@@ -178,29 +124,30 @@ class _HomePageState extends State<HomePage> {
                     child: ListView(
                       children: [
                         buildListTile(
-                          Icons.person,
+                          'assets/image/aluno.png',
                           "Alunos",
                           () {
                             _onItemTapped(0);
                           },
                         ),
                         buildListTile(
-                          Icons.person,
+                          'assets/image/professojiujtsu.png',
                           "Professores",
                           () {
                             _onItemTapped(1);
                           },
                         ),
                         buildListTile(
-                          Icons.person,
+                          'assets/image/faixa.png',
                           "Faixas",
                           () {
                             _onItemTapped(2);
                           },
                         ),
                         ExpansionTile(
-                          leading: const Icon(
-                            Icons.group,
+                          leading: Image.asset(
+                            'assets/image/cadastro.png',
+                            height: 26,
                             color: Colors.white54,
                           ),
                           iconColor: Colors.white54,
@@ -217,49 +164,28 @@ class _HomePageState extends State<HomePage> {
                             buildSubListTile(
                               "Cadastrar Aluno",
                               () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => const CadastrarAluno(
-                                      showButton: false,
-                                    ),
-                                  ),
-                                );
+                                _onItemTapped(3);
                               },
                             ),
                             buildSubListTile(
                               "Cadastrar Professor",
                               () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        const CadastrarPofessor(
-                                      showButton: false,
-                                    ),
-                                  ),
-                                );
+                                _onItemTapped(4);
                               },
                             ),
                             buildSubListTile(
                               "Cadastrar Faixa",
                               () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        const CadastrarFaixa(),
-                                  ),
-                                );
+                                _onItemTapped(5);
                               },
                             ),
                           ],
                         ),
                         buildListTile(
-                          Icons.info,
+                          'assets/image/sobre.png',
                           "Sobre",
                           () {
-                            _onItemTapped(3);
+                            _onItemTapped(6);
                           },
                         ),
                       ],
@@ -275,6 +201,7 @@ class _HomePageState extends State<HomePage> {
                 child: Navigator(
                   key: _navigatorKey,
                   onGenerateRoute: (settings) {
+                    // Sempre renderize a tela com base no selectedIndex, sem empilhar.
                     return MaterialPageRoute(
                       builder: (context) => _getSelectedScreen(_selectedIndex),
                     );
@@ -288,11 +215,12 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  ListTile buildListTile(IconData icon, String title, VoidCallback onTap) {
+  ListTile buildListTile(String imagePath, String title, VoidCallback onTap) {
     return ListTile(
-      leading: Icon(
-        icon,
-        size: 25,
+      leading: Image.asset(
+        imagePath,
+        // width: 30,
+        height: 22,
         color: Colors.white54,
       ),
       title: Text(
