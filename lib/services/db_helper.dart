@@ -55,7 +55,9 @@ class DBHelper {
         escola TEXT,
         endescola TEXT,
         turnoescolar TEXT,
+        professor_id INTEGER
         FOREIGN KEY (faixa_id) REFERENCES faixas(id)
+        FOREIGN KEY (professor_id) REFERENCES professores(id)
       )
     ''');
     // Define chave estrangeira
@@ -64,6 +66,26 @@ class DBHelper {
       CREATE TABLE faixas (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         descricao TEXT
+      )
+    ''');
+    
+    await db.execute('''
+      CREATE TABLE professores (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        nome TEXT,
+        cpf TEXT,
+        rg TEXT,
+        dtnascimento TEXT,
+        pcd TEXT,
+        sexo TEXT,
+        status TEXT,
+        faixa_id INTEGER, 
+        cep TEXT,
+        municipio TEXT,
+        bairro TEXT,
+        endereco TEXT,
+        telefone TEXT,
+        FOREIGN KEY (faixa_id) REFERENCES faixas(id)
       )
     ''');
   }
@@ -157,6 +179,13 @@ class DBHelper {
     await db.update('faixas', aluno, where: 'id = ?', whereArgs: [id]);
   }
 
+  Future<void> deleteFaixa(int id) async {
+    final db = await database;
+    await db.transaction((txn) async {
+      await txn.delete('alunos', where: 'id = ?', whereArgs: [id]);
+    });
+  }
+
   Future<List<Map<String, dynamic>>> getFaixas() async {
     final db = await database;
     return await db.query('faixas');
@@ -178,5 +207,68 @@ class DBHelper {
         'SELECT * FROM faixas WHERE id LIKE ? OR descricao LIKE ?',
         ['%$query%', '%$query%']);
     return result;
+  }
+
+  Future<void> insertProfessores(Map<String, dynamic> faixa) async {
+    final db = await database;
+    await db.insert('professores', faixa);
+  }
+
+  Future<void> updateProfessores(int id, Map<String, dynamic> aluno) async {
+    final db = await database;
+    await db.update('professores', aluno, where: 'id = ?', whereArgs: [id]);
+  }
+
+  Future<void> deleteProfessor(int id) async {
+    final db = await database;
+    await db.transaction((txn) async {
+      await txn.delete('alunos', where: 'id = ?', whereArgs: [id]);
+    });
+  }
+
+  Future<List<Map<String, dynamic>>> getProfessores() async {
+    final db = await database;
+    return await db.query('professores');
+  }
+
+  Future<Map<String, dynamic>?> getProfessoresId(int id) async {
+    final db = await database;
+    final List<Map<String, dynamic>> result = await db.query(
+      'professores',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+    return result.isNotEmpty ? result.first : null;
+  }
+
+  Future<List<Map<String, dynamic>>> searchProfessores(String query) async {
+    final db = await database;
+    final result = await db.rawQuery(
+        'SELECT * FROM professores WHERE id LIKE ? OR nome LIKE ?',
+        ['%$query%', '%$query%']);
+    return result;
+  }
+
+  Future<int> countProfessores() async {
+    final db = await database;
+    final result =
+        await db.rawQuery('SELECT COUNT(*) as count FROM professores');
+    return Sqflite.firstIntValue(result) ?? 0;
+  }
+
+  Future<int> countProfessoresAtivos() async {
+    final db = await database;
+    final result = await db.rawQuery(
+        'SELECT COUNT(*) as count FROM professores WHERE status = ?',
+        ['Ativo']);
+    return Sqflite.firstIntValue(result) ?? 0;
+  }
+
+  Future<int> countProfessoresInativos() async {
+    final db = await database;
+    final result = await db.rawQuery(
+        'SELECT COUNT(*) as count FROM professores WHERE status = ?',
+        ['Inativo']);
+    return Sqflite.firstIntValue(result) ?? 0;
   }
 }

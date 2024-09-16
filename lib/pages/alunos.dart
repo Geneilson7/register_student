@@ -114,7 +114,7 @@ class _AlunosScreenState extends State<AlunosScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "Home",
+                    "Alunos",
                     style: GoogleFonts.poppins(
                       fontSize: 20,
                       fontWeight: FontWeight.w700,

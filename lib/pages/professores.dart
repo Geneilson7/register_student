@@ -1,42 +1,48 @@
-// ignore_for_file: deprecated_member_use
+// ignore_for_file: deprecated_member_use, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:register_student/register/cadastrar_aluno.dart';
 import 'package:register_student/pages/home_page.dart';
-import 'package:register_student/register/cadastrar_faixa.dart';
 import 'package:register_student/services/db_helper.dart';
 
-class FaixaScreen extends StatefulWidget {
-  const FaixaScreen({super.key});
+class ProfessorScreen extends StatefulWidget {
+  const ProfessorScreen({super.key});
 
   @override
-  State<FaixaScreen> createState() => _FaixaScreenState();
+  State<ProfessorScreen> createState() => _ProfessorScreenState();
 }
 
-class _FaixaScreenState extends State<FaixaScreen> {
+class _ProfessorScreenState extends State<ProfessorScreen> {
   final DBHelper dbHelper = DBHelper();
 
   List<Map<String, dynamic>> _items = [];
 
   final TextEditingController _searchController = TextEditingController();
 
+  int? _professoresCount = 0;
+  int? _ativoCount = 0;
+  int? _inativoCount = 0;
+
   @override
   void initState() {
     super.initState();
     _refreshItems();
+    _countProfessores();
+    _countProfessoresAtivos();
+    _countProfessoresInativos();
   }
 
   Future<void> _performSearch(String query) async {
     final dbHelper = DBHelper();
-    final searchResults = await dbHelper.searchFaixas(query);
+    final searchResults = await dbHelper.searchProfessores(query);
     setState(() {
       _items = searchResults;
     });
   }
 
   void _refreshItems() async {
-    final data = await dbHelper.getFaixas();
+    final data = await dbHelper.getProfessores();
     setState(() {
       _items = data;
     });
@@ -44,13 +50,46 @@ class _FaixaScreenState extends State<FaixaScreen> {
 
   void _deleteItem(int id) async {
     try {
-      await dbHelper.deleteFaixa(id);
+      await dbHelper.deleteProfessor(id);
       _refreshItems();
     } catch (e) {
-      print('Erro ao deletar faixa: $e');
+      print('Erro ao deletar professor: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Erro ao deletar faixa: $e')),
+        SnackBar(content: Text('Erro ao deletar professor: $e')),
       );
+    }
+  }
+
+  Future<void> _countProfessores() async {
+    try {
+      final count = await dbHelper.countProfessores();
+      setState(() {
+        _professoresCount = count;
+      });
+    } catch (error) {
+      print(error);
+    }
+  }
+
+  Future<void> _countProfessoresAtivos() async {
+    try {
+      final count = await dbHelper.countProfessoresAtivos();
+      setState(() {
+        _ativoCount = count;
+      });
+    } catch (error) {
+      print(error);
+    }
+  }
+
+  Future<void> _countProfessoresInativos() async {
+    try {
+      final count = await dbHelper.countProfessoresInativos();
+      setState(() {
+        _inativoCount = count;
+      });
+    } catch (error) {
+      print(error);
     }
   }
 
@@ -75,7 +114,7 @@ class _FaixaScreenState extends State<FaixaScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "Faixas",
+                    "Professores",
                     style: GoogleFonts.poppins(
                       fontSize: 20,
                       fontWeight: FontWeight.w700,
@@ -87,6 +126,41 @@ class _FaixaScreenState extends State<FaixaScreen> {
             ),
             const SizedBox(
               height: 10,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Expanded(
+                    child: CustomButton(
+                      text: 'Matriculados',
+                      icon: Icons.group,
+                      iconColor: Colors.blueAccent,
+                      backgroundColor: const Color(0xFF2E374B),
+                      value: '$_professoresCount',
+                    ),
+                  ),
+                  Expanded(
+                    child: CustomButton(
+                      text: 'Ativos',
+                      icon: Icons.check_circle,
+                      iconColor: Colors.green,
+                      backgroundColor: const Color(0xFF2E374B),
+                      value: '$_ativoCount',
+                    ),
+                  ),
+                  Expanded(
+                    child: CustomButton(
+                      text: 'Inativos',
+                      icon: Icons.cancel,
+                      iconColor: Colors.red,
+                      backgroundColor: const Color(0xFF2E374B),
+                      value: '$_inativoCount',
+                    ),
+                  ),
+                ],
+              ),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
@@ -179,7 +253,27 @@ class _FaixaScreenState extends State<FaixaScreen> {
                           ),
                           DataColumn(
                             label: Text(
-                              'Descrição',
+                              'Nome',
+                              style: GoogleFonts.poppins(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ),
+                          DataColumn(
+                            label: Text(
+                              'Turno',
+                              style: GoogleFonts.poppins(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ),
+                          DataColumn(
+                            label: Text(
+                              'Status',
                               style: GoogleFonts.poppins(
                                 color: Colors.black,
                                 fontWeight: FontWeight.bold,
@@ -199,9 +293,22 @@ class _FaixaScreenState extends State<FaixaScreen> {
                           ),
                         ],
                         rows: _items.asMap().entries.map((entry) {
+                          final index = entry.key;
                           final item = entry.value;
 
                           return DataRow(
+                            color: MaterialStateProperty.resolveWith<Color?>(
+                              (Set<MaterialState> states) {
+                                Color? statusColor =
+                                    _getStatusColor(item['status']);
+                                if (statusColor != const Color(0xFFFFFFFF)) {
+                                  return statusColor;
+                                }
+                                return index.isEven
+                                    ? Colors.grey[200]
+                                    : Colors.white;
+                              },
+                            ),
                             cells: [
                               DataCell(
                                 Text(
@@ -217,14 +324,14 @@ class _FaixaScreenState extends State<FaixaScreen> {
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) =>
-                                          CadastrarFaixa(alunoId: item['id']),
+                                          CadastrarAluno(alunoId: item['id']),
                                     ),
                                   ).then((value) => _refreshItems());
                                 },
                               ),
                               DataCell(
                                 Text(
-                                  item['descricao'].toString().toUpperCase(),
+                                  item['nome'].toString().toUpperCase(),
                                   style: GoogleFonts.poppins(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w700,
@@ -236,7 +343,45 @@ class _FaixaScreenState extends State<FaixaScreen> {
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) =>
-                                          CadastrarFaixa(alunoId: item['id']),
+                                          CadastrarAluno(alunoId: item['id']),
+                                    ),
+                                  ).then((value) => _refreshItems());
+                                },
+                              ),
+                              DataCell(
+                                Text(
+                                  item['turnotreino'].toString().toUpperCase(),
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w700,
+                                    color: const Color(0xFF1C1C1C),
+                                  ),
+                                ),
+                                onTap: () async {
+                                  await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          CadastrarAluno(alunoId: item['id']),
+                                    ),
+                                  ).then((value) => _refreshItems());
+                                },
+                              ),
+                              DataCell(
+                                Text(
+                                  item['status'].toString().toUpperCase(),
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w700,
+                                    color: const Color(0xFF1C1C1C),
+                                  ),
+                                ),
+                                onTap: () async {
+                                  await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          CadastrarAluno(alunoId: item['id']),
                                     ),
                                   ).then((value) => _refreshItems());
                                 },

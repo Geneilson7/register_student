@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:register_student/pages/alunos.dart';
 import 'package:register_student/pages/faixa.dart';
+import 'package:register_student/pages/professores.dart';
 import 'package:register_student/pages/sobre.dart';
 import 'package:register_student/register/cadastrar_faixa.dart';
+import 'package:register_student/register/cadastrar_professor.dart';
 import 'package:register_student/services/db_helper.dart';
 import 'package:register_student/register/cadastrar_aluno.dart';
 
@@ -114,12 +116,10 @@ class _HomePageState extends State<HomePage> {
       case 0:
         return const AlunosScreen();
       case 1:
-        return FaixaScreen();
+        return const ProfessorScreen();
       case 2:
-        return CadastrarAluno(showButton: false);
+        return const FaixaScreen();
       case 3:
-        return const CadastrarFaixa();
-      case 4:
         return const Sobre();
       default:
         return Column(
@@ -140,26 +140,17 @@ class _HomePageState extends State<HomePage> {
                 ),
               ],
             ),
+            const Spacer(),
             Center(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 150),
-                child: Image.asset(
-                  'assets/image/background.jpg',
-                  height: 500,
-                  width: 500,
-                ),
+              child: Image.asset(
+                'assets/image/screen.png',
+                height: 400,
+                width: 400,
               ),
             ),
+            const Spacer(),
           ],
         );
-    }
-  }
-
-  Color _getStatusColor(String status) {
-    if (status == "Ativo") {
-      return const Color(0xFFFFFFFF);
-    } else {
-      return const Color(0xFF8A8A8A);
     }
   }
 
@@ -195,9 +186,16 @@ class _HomePageState extends State<HomePage> {
                         ),
                         buildListTile(
                           Icons.person,
-                          "Faixas",
+                          "Professores",
                           () {
                             _onItemTapped(1);
+                          },
+                        ),
+                        buildListTile(
+                          Icons.person,
+                          "Faixas",
+                          () {
+                            _onItemTapped(2);
                           },
                         ),
                         ExpansionTile(
@@ -219,13 +217,40 @@ class _HomePageState extends State<HomePage> {
                             buildSubListTile(
                               "Cadastrar Aluno",
                               () {
-                                _onItemTapped(2);
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const CadastrarAluno(
+                                      showButton: false,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                            buildSubListTile(
+                              "Cadastrar Professor",
+                              () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const CadastrarPofessor(
+                                      showButton: false,
+                                    ),
+                                  ),
+                                );
                               },
                             ),
                             buildSubListTile(
                               "Cadastrar Faixa",
                               () {
-                                _onItemTapped(3);
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const CadastrarFaixa(),
+                                  ),
+                                );
                               },
                             ),
                           ],
@@ -234,7 +259,7 @@ class _HomePageState extends State<HomePage> {
                           Icons.info,
                           "Sobre",
                           () {
-                            _onItemTapped(4);
+                            _onItemTapped(3);
                           },
                         ),
                       ],
@@ -307,7 +332,7 @@ class CustomButton extends StatelessWidget {
   final Color backgroundColor;
   final String value;
 
-  CustomButton({
+  const CustomButton({
     super.key,
     required this.text,
     required this.icon,

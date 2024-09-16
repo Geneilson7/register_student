@@ -16,21 +16,21 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:register_student/util/view_pdf.dart';
 
-class CadastrarAluno extends StatefulWidget {
+class CadastrarPofessor extends StatefulWidget {
   final int? alunoId;
   final bool showButton;
 
-  const CadastrarAluno({
+  const CadastrarPofessor({
     Key? key,
     this.alunoId,
     this.showButton = true,
   }) : super(key: key);
 
   @override
-  State<CadastrarAluno> createState() => _CadastrarAlunoState();
+  State<CadastrarPofessor> createState() => _CadastrarPofessorState();
 }
 
-class _CadastrarAlunoState extends State<CadastrarAluno> {
+class _CadastrarPofessorState extends State<CadastrarPofessor> {
   final DBHelper dbHelper = DBHelper();
   final TextEditingController _nomeController = TextEditingController();
   final TextEditingController _cpfController = TextEditingController();
@@ -262,7 +262,9 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
         elevation: 0,
         automaticallyImplyLeading: false,
         title: Text(
-          widget.alunoId != null ? 'Atualizar Aluno' : 'Cadastrar Aluno',
+          widget.alunoId != null
+              ? 'Atualizar Professor'
+              : 'Cadastrar Professor',
           style: GoogleFonts.poppins(
             fontSize: 20,
             fontWeight: FontWeight.w700,
@@ -521,244 +523,15 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                       ),
                     ),
                     const SizedBox(width: 25),
-                    Row(
-                      children: [
-                        SizedBox(
-                          width: 200,
-                          child: Status(
-                            label: "Status",
-                            selectedValue: tipoStatus,
-                            items: const ['Ativo', 'Inativo', 'Concluído'],
-                            onChanged: (newValue) {
-                              setState(() {
-                                tipoStatus = newValue!;
-                              });
-                            },
-                          ),
-                        ),
-                        const SizedBox(width: 25),
-                        SizedBox(
-                          width: 200,
-                          child: TurnoTreino(
-                            label: "Turno Treino",
-                            selectedValue: tipoTurnoTreino,
-                            items: const ['Manhã', 'Tarde', 'Noite'],
-                            onChanged: (newValue) {
-                              setState(() {
-                                tipoTurnoTreino = newValue!;
-                              });
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Text(
-                      "Responsável",
-                      style: GoogleFonts.poppins(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                Row(
-                  children: [
                     Expanded(
                       flex: 1,
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 15),
-                        child: TextFormField(
-                          decoration: textFormField("Responsável"),
-                          controller: _responsavelController,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return "Campo obrigatório.";
-                            }
-                            return null;
-                          },
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 25),
-                    Expanded(
-                      flex: 1,
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 15),
-                        child: TextFormField(
-                          decoration: textFormField("Telefone do Responsável"),
-                          keyboardType: TextInputType.number,
-                          controller: _telresponsavelController,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return "Campo obrigatório.";
-                            }
-                            return null;
-                          },
-                          inputFormatters: [
-                            // obrigatório
-                            FilteringTextInputFormatter.digitsOnly,
-                            TelefoneInputFormatter(),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 25,
-                    ),
-                    Row(
-                      children: [
-                        SizedBox(
-                          width: 200,
-                          child: Status(
-                            label: "Grau Parentesco",
-                            selectedValue: tipoParentesco,
-                            items: const [
-                              'Pai',
-                              'Mãe',
-                              'Tio (a)',
-                              'Maior 18',
-                            ],
-                            onChanged: (newValue) {
-                              setState(() {
-                                tipoParentesco = newValue!;
-                              });
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      flex: 1,
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 15),
-                        child: TextFormField(
-                          decoration: textFormField("Responsável"),
-                          controller: _responsavel2Controller,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return "Campo obrigatório.";
-                            }
-                            return null;
-                          },
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 25),
-                    Expanded(
-                      flex: 1,
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 15),
-                        child: TextFormField(
-                          decoration: textFormField("Telefone do Responsável"),
-                          keyboardType: TextInputType.number,
-                          controller: _telresponsavel2Controller,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return "Campo obrigatório.";
-                            }
-                            return null;
-                          },
-                          inputFormatters: [
-                            // obrigatório
-                            FilteringTextInputFormatter.digitsOnly,
-                            TelefoneInputFormatter(),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 25,
-                    ),
-                    Row(
-                      children: [
-                        SizedBox(
-                          width: 200,
-                          child: Status(
-                            label: "Grau Parentesco",
-                            selectedValue: tipoParentesco2,
-                            items: const [
-                              'Pai',
-                              'Mãe',
-                              'Tio (a)',
-                              'Maior 18',
-                            ],
-                            onChanged: (newValue) {
-                              setState(() {
-                                tipoParentesco2 = newValue!;
-                              });
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Text(
-                      "Dados Escolar",
-                      style: GoogleFonts.poppins(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                Row(
-                  children: [
-                    Expanded(
-                      flex: 1,
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 15),
-                        child: TextFormField(
-                          decoration: textFormField("Escola"),
-                          controller: _escolaController,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return "Campo obrigatório.";
-                            }
-                            return null;
-                          },
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 25),
-                    Expanded(
-                      flex: 1,
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 15),
-                        child: TextFormField(
-                          decoration: textFormField("Endereço da Escola"),
-                          controller: _endescolaController,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return "Campo obrigatório.";
-                            }
-                            return null;
-                          },
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 25),
-                    Expanded(
-                      flex: 1,
-                      child: Turno(
-                        label: "Turno Escolar",
-                        selectedValue: tipoTurno,
-                        items: const ['Manhã', 'Tarde', 'Noite'],
+                      child: Status(
+                        label: "Status",
+                        selectedValue: tipoStatus,
+                        items: const ['Ativo', 'Inativo', 'Concluído'],
                         onChanged: (newValue) {
                           setState(() {
-                            tipoTurno = newValue!;
+                            tipoStatus = newValue!;
                           });
                         },
                       ),
