@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:register_student/register/cadastrar_aluno.dart';
 import 'package:register_student/pages/home_page.dart';
 import 'package:register_student/register/cadastrar_faixa.dart';
 import 'package:register_student/services/db_helper.dart';

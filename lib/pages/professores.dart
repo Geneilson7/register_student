@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:register_student/register/cadastrar_aluno.dart';
 import 'package:register_student/pages/home_page.dart';
 import 'package:register_student/register/cadastrar_professor.dart';
 import 'package:register_student/services/db_helper.dart';
@@ -24,7 +23,6 @@ class _ProfessorScreenState extends State<ProfessorScreen> {
   int? _professoresCount = 0;
   int? _ativoCount = 0;
   int? _inativoCount = 0;
-  int _selectedIndex = 1;
 
   @override
   void initState() {
