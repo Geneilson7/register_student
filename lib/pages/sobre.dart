@@ -80,49 +80,54 @@ class _SobreState extends State<Sobre> {
             const SizedBox(
               height: 50,
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                SizedBox(
-                  height: 50,
-                  width: 150,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(11),
-                      boxShadow: [
-                        BoxShadow(
-                          color: const Color(0xFF1F41BB).withOpacity(0.2),
-                          spreadRadius: 0,
-                          blurRadius: 4,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        foregroundColor: Colors.black,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(11),
-                        ),
-                      ),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: Center(
-                        child: Text(
-                          'Concordo',
-                          style: GoogleFonts.poppins(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.end,
+            //   children: [
+            //     SizedBox(
+            //       height: 50,
+            //       width: 150,
+            //       child: Container(
+            //         decoration: BoxDecoration(
+            //           borderRadius: BorderRadius.circular(11),
+            //           boxShadow: [
+            //             BoxShadow(
+            //               color: const Color(0xFF1F41BB).withOpacity(0.2),
+            //               spreadRadius: 0,
+            //               blurRadius: 4,
+            //               offset: const Offset(0, 4),
+            //             ),
+            //           ],
+            //         ),
+            //         child: ElevatedButton(
+            //           style: ElevatedButton.styleFrom(
+            //             backgroundColor: Colors.white,
+            //             foregroundColor: Colors.black,
+            //             shape: RoundedRectangleBorder(
+            //               borderRadius: BorderRadius.circular(11),
+            //             ),
+            //           ),
+            //           onPressed: () {
+            //             Navigator.of(context).pushAndRemoveUntil(
+            //               MaterialPageRoute(
+            //                 builder: (context) => const HomePage(),
+            //               ),
+            //               (route) => false,
+            //             );
+            //           },
+            //           child: Center(
+            //             child: Text(
+            //               'Concordo',
+            //               style: GoogleFonts.poppins(
+            //                 fontSize: 16,
+            //                 fontWeight: FontWeight.w600,
+            //               ),
+            //             ),
+            //           ),
+            //         ),
+            //       ),
+            //     ),
+            //   ],
+            // ),
           ],
         ),
       ),

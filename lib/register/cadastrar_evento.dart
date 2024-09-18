@@ -7,21 +7,21 @@ import 'package:register_student/pages/home_page.dart';
 import 'package:register_student/services/db_helper.dart';
 import 'package:register_student/util/form.dart';
 
-class CadastrarFaixa extends StatefulWidget {
+class CadastrarEvento extends StatefulWidget {
   final int? alunoId;
   final bool showButton;
 
-  const CadastrarFaixa({
+  const CadastrarEvento({
     Key? key,
     this.alunoId,
     this.showButton = true,
   }) : super(key: key);
 
   @override
-  State<CadastrarFaixa> createState() => _CadastrarFaixaState();
+  State<CadastrarEvento> createState() => _CadastrarEventoState();
 }
 
-class _CadastrarFaixaState extends State<CadastrarFaixa> {
+class _CadastrarEventoState extends State<CadastrarEvento> {
   final DBHelper dbHelper = DBHelper();
   final TextEditingController _descricaoController = TextEditingController();
 
@@ -84,6 +84,8 @@ class _CadastrarFaixaState extends State<CadastrarFaixa> {
       );
     }
   }
+
+  
 
   void _showDeleteDialog(BuildContext context) {
     showDialog(
@@ -151,7 +153,7 @@ class _CadastrarFaixaState extends State<CadastrarFaixa> {
         elevation: 0,
         automaticallyImplyLeading: false,
         title: Text(
-          widget.alunoId != null ? 'Atualizar Faixa' : 'Cadastrar Faixa',
+          widget.alunoId != null ? 'Atualizar Evento' : 'Cadastrar Evento',
           style: GoogleFonts.poppins(
             fontSize: 20,
             fontWeight: FontWeight.w700,
@@ -168,14 +170,57 @@ class _CadastrarFaixaState extends State<CadastrarFaixa> {
             key: _formKey,
             child: Column(
               children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 15),
+                  child: TextFormField(
+                    decoration: textFormField("Título"),
+                    controller: _descricaoController,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Campo obrigatório.";
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 15),
+                  child: TextFormField(
+                    decoration: textFormField("Escrita").copyWith(
+                      alignLabelWithHint: true,
+                    ),
+                    controller: _descricaoController,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Campo obrigatório.";
+                      }
+                      return null;
+                    },
+                    minLines: 5,
+                    maxLines: null,
+                    keyboardType: TextInputType.multiline,
+                  ),
+                ),
+                const SizedBox(
+                  height: 180,
+                ),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    "Dupla Assinatura",
+                    style: GoogleFonts.poppins(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
                 Row(
                   children: [
                     Expanded(
-                      flex: 2,
                       child: Padding(
                         padding: const EdgeInsets.only(bottom: 15),
                         child: TextFormField(
-                          decoration: textFormField("Faixa"),
+                          decoration: textFormField("Assinatura 1"),
                           controller: _descricaoController,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
@@ -186,6 +231,53 @@ class _CadastrarFaixaState extends State<CadastrarFaixa> {
                         ),
                       ),
                     ),
+                    const SizedBox(width: 25),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 15),
+                        child: TextFormField(
+                          decoration: textFormField("Assinatura 2"),
+                          controller: _descricaoController,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return "Campo obrigatório.";
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                Align(
+                  alignment: Alignment.center,
+                  child: Text(
+                    "Assinatura Única",
+                    style: GoogleFonts.poppins(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+                Row(
+                  children: [
+                    const Spacer(),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 15),
+                        child: TextFormField(
+                          decoration: textFormField("Assinatura"),
+                          controller: _descricaoController,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return "Campo obrigatório.";
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                    ),
+                    const Spacer(),
                   ],
                 ),
                 const SizedBox(height: 50),

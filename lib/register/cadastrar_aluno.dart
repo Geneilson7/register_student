@@ -1,9 +1,12 @@
 // ignore_for_file: use_build_context_synchronously, deprecated_member_use, depend_on_referenced_packages
 
+import 'dart:io';
+
 import 'package:brasil_fields/brasil_fields.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:register_student/pages/alunos.dart';
 import 'package:register_student/pages/home_page.dart';
 import 'package:register_student/services/db_helper.dart';
 import 'package:register_student/src/dropdown_faixa.dart';
@@ -15,6 +18,7 @@ import 'package:register_student/util/form.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:register_student/util/view_pdf.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CadastrarAluno extends StatefulWidget {
   final int? alunoId;
@@ -61,6 +65,8 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
   final _formKey = GlobalKey<FormState>();
 
   List<Map<String, dynamic>> faixas = [];
+  bool isMaiorDeIdade = false;
+  bool isConcluido = false;
 
   @override
   void initState() {
@@ -68,11 +74,17 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
     if (widget.alunoId != null) {
       _loadAluno(widget.alunoId!);
     }
-    dbHelper.fetchFaixas().then((data) {
-      setState(() {
-        faixas = data;
-      });
-    });
+    dbHelper.fetchFaixas().then(
+      (data) {
+        setState(
+          () {
+            faixas = data;
+          },
+        );
+      },
+    );
+    _loadSwitchState();
+    _loadConcluido();
   }
 
   void _populateFields(Map<String, dynamic> aluno) {
@@ -145,7 +157,23 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
           await dbHelper.insertAluno(aluno);
         }
 
-        Navigator.pop(context);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => WillPopScope(
+              onWillPop: () async {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const HomePage(),
+                  ),
+                );
+                return false;
+              },
+              child: const AlunosScreen(),
+            ),
+          ),
+        );
       }
     } catch (error) {
       ScaffoldMessenger(
@@ -166,10 +194,34 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
     return null;
   }
 
+  Future<void> _loadSwitchState() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      isMaiorDeIdade = prefs.getBool('isMaiorDeIdade') ?? false;
+    });
+  }
+
+  Future<void> _saveSwitchState() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setBool('isMaiorDeIdade', isMaiorDeIdade);
+  }
+
+  Future<void> _loadConcluido() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      isConcluido = prefs.getBool('isConcluido') ?? false;
+    });
+  }
+
+  Future<void> _saveConcluido() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setBool('isConcluido', isConcluido);
+  }
+
   void _displayPdf() {
     final doc = pw.Document();
-    // final imageBytes = File('assets/image/logo.png').readAsBytesSync();
-    // final image = pw.MemoryImage(imageBytes);
+    final imageBytes = File('assets/image/logoacademia.jpg').readAsBytesSync();
+    final image = pw.MemoryImage(imageBytes);
 
     doc.addPage(
       pw.Page(
@@ -178,32 +230,30 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
           return pw.Column(
             children: [
               pw.Row(
+                mainAxisAlignment: pw.MainAxisAlignment.center,
                 children: [
-                  pw.Expanded(
-                    child: pw.Text(
-                      'FICHA CADASTRAL',
-                      textAlign: pw.TextAlign.center,
-                      style: pw.TextStyle(
-                        fontSize: 20,
-                        fontWeight: pw.FontWeight.bold,
-                      ),
+                  pw.Spacer(flex: 3),
+                  pw.Text(
+                    'FICHA CADASTRAL',
+                    textAlign: pw.TextAlign.center,
+                    style: pw.TextStyle(
+                      fontSize: 20,
+                      fontWeight: pw.FontWeight.bold,
                     ),
                   ),
-                  // pw.Padding(
-                  //   padding:  pw.EdgeInsets.only(right: 0),
-                  //   child: pw.Container(
-                  //     width: 80,
-                  //     height: 80,
-                  //     child: pw.Image(image),
-                  //     color: PdfColor.fromHex('eaf1f8'),
-                  //   ),
-                  // ),
+                  pw.Spacer(flex: 2),
+                  pw.SizedBox(
+                    width: 100,
+                    child: pw.Container(
+                      width: 50,
+                      height: 50,
+                      child: pw.Image(image),
+                      color: PdfColor.fromHex('eaf1f8'),
+                    ),
+                  ),
                 ],
               ),
-
               pw.SizedBox(height: 20),
-
-              // Seção: Dados do Aluno
               _buildSectionTitle('DADOS DO PROFESSOR'),
               _buildLabeledField('Nome do Aluno: ', _nomeController.text),
               _buildLabeledField('CPF: ', _cpfController.text),
@@ -212,53 +262,44 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                   'Data Nascimento: ', _dtnascimentoController.text),
               _buildLabeledField('Sexo: ', _sexoController.text),
               _buildLabeledField('PDC: ', tipoValue!),
-
               pw.SizedBox(height: 10),
-
-              // Seção: Endereço
               _buildSectionTitle('ENDEREÇO'),
               _buildLabeledField('CEP: ', _cepController.text),
               _buildLabeledField('Município: ', _municipioController.text),
               _buildLabeledField('Bairro: ', _bairroController.text),
               _buildLabeledField('Endereço: ', _enderecoController.text),
-
               pw.SizedBox(height: 10),
-
-              // Seção: Status Treino
               _buildSectionTitle('STATUS TREINO'),
               _buildLabeledField(
                   'Faixa: ', getFaixaDescricao(tipoFaixa, faixas) ?? 'vazio'),
               _buildLabeledField('Situação: ', tipoStatus!),
               _buildLabeledField('Turno Treino: ', tipoTurnoTreino!),
-
               pw.SizedBox(height: 10),
-
-              // Seção: Responsável
-              _buildSectionTitle('RESPONSÁVEL'),
-              _buildLabeledField('Responsável 1: ', tipoParentesco!),
-              _buildLabeledField(
-                  'Telefone Responsável: ', _telresponsavelController.text),
-              _buildLabeledField('Grau Parentesco: ', tipoParentesco!),
-              pw.SizedBox(height: 5),
-              _buildLabeledField('Responsável 2: ', tipoParentesco2!),
-              _buildLabeledField(
-                  'Telefone Responsável: ', _telresponsavel2Controller.text),
-              _buildLabeledField('Grau Parentesco: ', tipoParentesco2!),
-
+              if (!isMaiorDeIdade) ...[
+                _buildSectionTitle('RESPONSÁVEL'),
+                _buildLabeledField('Responsável 1: ', tipoParentesco!),
+                _buildLabeledField(
+                    'Telefone Responsável: ', _telresponsavelController.text),
+                _buildLabeledField('Grau Parentesco: ', tipoParentesco!),
+                pw.SizedBox(height: 5),
+                _buildLabeledField('Responsável 2: ', tipoParentesco2!),
+                _buildLabeledField(
+                    'Telefone Responsável: ', _telresponsavel2Controller.text),
+                _buildLabeledField('Grau Parentesco: ', tipoParentesco2!),
+              ],
               pw.SizedBox(height: 10),
-
-              // Seção: Dados Escolares
-              _buildSectionTitle('DADOS ESCOLAR'),
-              _buildLabeledField('Escola: ', _escolaController.text),
-              _buildLabeledField('Endereço: ', _endescolaController.text),
-              _buildLabeledField('Turno: ', tipoTurno!),
+              if (!isConcluido) ...[
+                _buildSectionTitle('DADOS ESCOLAR'),
+                _buildLabeledField('Escola: ', _escolaController.text),
+                _buildLabeledField('Endereço: ', _endescolaController.text),
+                _buildLabeledField('Turno: ', tipoTurno!),
+              ]
             ],
           );
         },
       ),
     );
 
-    /// open Preview Screen
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -594,9 +635,11 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                             selectedValue: tipoStatus,
                             items: const ['Ativo', 'Inativo', 'Concluído'],
                             onChanged: (newValue) {
-                              setState(() {
-                                tipoStatus = newValue!;
-                              });
+                              setState(
+                                () {
+                                  tipoStatus = newValue!;
+                                },
+                              );
                             },
                           ),
                         ),
@@ -619,216 +662,281 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                   ],
                 ),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "Responsável",
+                      "Maior de idade?",
                       style: GoogleFonts.poppins(
-                        fontSize: 20,
+                        fontSize: 16,
                         fontWeight: FontWeight.w700,
                       ),
+                    ),
+                    Switch(
+                      value: isMaiorDeIdade,
+                      activeColor: const Color(0xFF1d1e2b),
+                      onChanged: (value) {
+                        setState(() {
+                          isMaiorDeIdade = value;
+                          _saveSwitchState();
+                        });
+                      },
                     ),
                   ],
                 ),
                 const SizedBox(height: 10),
-                Row(
-                  children: [
-                    Expanded(
-                      flex: 1,
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 15),
-                        child: TextFormField(
-                          decoration: textFormField("Responsável"),
-                          controller: _responsavelController,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return "Campo obrigatório.";
-                            }
-                            return null;
-                          },
+                if (!isMaiorDeIdade)
+                  Row(
+                    children: [
+                      Text(
+                        "Responsável",
+                        style: GoogleFonts.poppins(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
-                    ),
-                    const SizedBox(width: 25),
-                    Expanded(
-                      flex: 1,
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 15),
-                        child: TextFormField(
-                          decoration: textFormField("Telefone do Responsável"),
-                          keyboardType: TextInputType.number,
-                          controller: _telresponsavelController,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return "Campo obrigatório.";
-                            }
-                            return null;
-                          },
-                          inputFormatters: [
-                            // obrigatório
-                            FilteringTextInputFormatter.digitsOnly,
-                            TelefoneInputFormatter(),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 25,
-                    ),
-                    Row(
-                      children: [
-                        SizedBox(
-                          width: 200,
-                          child: Status(
-                            label: "Grau Parentesco",
-                            selectedValue: tipoParentesco,
-                            items: const [
-                              'Pai',
-                              'Mãe',
-                              'Tio (a)',
-                              'Maior 18',
-                            ],
-                            onChanged: (newValue) {
-                              setState(() {
-                                tipoParentesco = newValue!;
-                              });
+                    ],
+                  ),
+                const SizedBox(height: 10),
+                if (!isMaiorDeIdade)
+                  Row(
+                    children: [
+                      Expanded(
+                        flex: 1,
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 15),
+                          child: TextFormField(
+                            decoration: textFormField("Responsável"),
+                            controller: _responsavelController,
+                            validator: (value) {
+                              if (!isMaiorDeIdade) {
+                                if (value == null || value.isEmpty) {
+                                  return "Campo obrigatório.";
+                                }
+                                return null;
+                              }
+                              return null;
                             },
                           ),
                         ),
-                      ],
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      flex: 1,
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 15),
-                        child: TextFormField(
-                          decoration: textFormField("Responsável"),
-                          controller: _responsavel2Controller,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return "Campo obrigatório.";
-                            }
-                            return null;
-                          },
-                        ),
                       ),
-                    ),
-                    const SizedBox(width: 25),
-                    Expanded(
-                      flex: 1,
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 15),
-                        child: TextFormField(
-                          decoration: textFormField("Telefone do Responsável"),
-                          keyboardType: TextInputType.number,
-                          controller: _telresponsavel2Controller,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return "Campo obrigatório.";
-                            }
-                            return null;
-                          },
-                          inputFormatters: [
-                            // obrigatório
-                            FilteringTextInputFormatter.digitsOnly,
-                            TelefoneInputFormatter(),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 25,
-                    ),
-                    Row(
-                      children: [
-                        SizedBox(
-                          width: 200,
-                          child: Status(
-                            label: "Grau Parentesco",
-                            selectedValue: tipoParentesco2,
-                            items: const [
-                              'Pai',
-                              'Mãe',
-                              'Tio (a)',
-                              'Maior 18',
+                      const SizedBox(width: 25),
+                      Expanded(
+                        flex: 1,
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 15),
+                          child: TextFormField(
+                            decoration:
+                                textFormField("Telefone do Responsável"),
+                            keyboardType: TextInputType.number,
+                            controller: _telresponsavelController,
+                            validator: (value) {
+                              if (!isMaiorDeIdade) {
+                                if (value == null || value.isEmpty) {
+                                  return "Campo obrigatório.";
+                                }
+                                return null;
+                              }
+                              return null;
+                            },
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly,
+                              TelefoneInputFormatter(),
                             ],
-                            onChanged: (newValue) {
-                              setState(() {
-                                tipoParentesco2 = newValue!;
-                              });
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 25,
+                      ),
+                      Row(
+                        children: [
+                          SizedBox(
+                            width: 200,
+                            child: Status(
+                              label: "Grau Parentesco",
+                              selectedValue: tipoParentesco,
+                              items: const [
+                                'Pai',
+                                'Mãe',
+                                'Tio (a)',
+                                'Maior 18',
+                              ],
+                              onChanged: (newValue) {
+                                setState(() {
+                                  tipoParentesco = newValue!;
+                                });
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                if (!isMaiorDeIdade)
+                  Row(
+                    children: [
+                      Expanded(
+                        flex: 1,
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 15),
+                          child: TextFormField(
+                            decoration: textFormField("Responsável"),
+                            controller: _responsavel2Controller,
+                            validator: (value) {
+                              if (!isMaiorDeIdade) {
+                                if (value == null || value.isEmpty) {
+                                  return "Campo obrigatório.";
+                                }
+                                return null;
+                              }
+                              return null;
                             },
                           ),
                         ),
-                      ],
-                    ),
-                  ],
-                ),
+                      ),
+                      const SizedBox(width: 25),
+                      Expanded(
+                        flex: 1,
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 15),
+                          child: TextFormField(
+                            decoration:
+                                textFormField("Telefone do Responsável"),
+                            keyboardType: TextInputType.number,
+                            controller: _telresponsavel2Controller,
+                            validator: (value) {
+                              if (!isMaiorDeIdade) {
+                                if (value == null || value.isEmpty) {
+                                  return "Campo obrigatório.";
+                                }
+                                return null;
+                              }
+                              return null;
+                            },
+                            inputFormatters: [
+                              // obrigatório
+                              FilteringTextInputFormatter.digitsOnly,
+                              TelefoneInputFormatter(),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 25,
+                      ),
+                      Row(
+                        children: [
+                          SizedBox(
+                            width: 200,
+                            child: Status(
+                              label: "Grau Parentesco",
+                              selectedValue: tipoParentesco2,
+                              items: const [
+                                'Pai',
+                                'Mãe',
+                                'Tio (a)',
+                                'Maior 18',
+                              ],
+                              onChanged: (newValue) {
+                                setState(() {
+                                  tipoParentesco2 = newValue!;
+                                });
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "Dados Escolar",
+                      "Concluído?",
                       style: GoogleFonts.poppins(
-                        fontSize: 20,
+                        fontSize: 16,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
+                    Switch(
+                      value: isConcluido,
+                      activeColor: const Color(0xFF1d1e2b),
+                      onChanged: (value) {
+                        setState(
+                          () {
+                            isConcluido = value;
+                            _saveConcluido();
+                          },
+                        );
+                      },
+                    ),
                   ],
                 ),
+                if (!isConcluido)
+                  Row(
+                    children: [
+                      Text(
+                        "Dados Escolar",
+                        style: GoogleFonts.poppins(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
+                  ),
                 const SizedBox(height: 10),
-                Row(
-                  children: [
-                    Expanded(
-                      flex: 1,
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 15),
-                        child: TextFormField(
-                          decoration: textFormField("Escola"),
-                          controller: _escolaController,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return "Campo obrigatório.";
-                            }
-                            return null;
+                if (!isConcluido)
+                  Row(
+                    children: [
+                      Expanded(
+                        flex: 1,
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 15),
+                          child: TextFormField(
+                            decoration: textFormField("Escola"),
+                            controller: _escolaController,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return "Campo obrigatório.";
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 25),
+                      Expanded(
+                        flex: 1,
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 15),
+                          child: TextFormField(
+                            decoration: textFormField("Endereço da Escola"),
+                            controller: _endescolaController,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return "Campo obrigatório.";
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 25),
+                      Expanded(
+                        flex: 1,
+                        child: Turno(
+                          label: "Turno Escolar",
+                          selectedValue: tipoTurno,
+                          items: const ['Manhã', 'Tarde', 'Noite'],
+                          onChanged: (newValue) {
+                            setState(() {
+                              tipoTurno = newValue!;
+                            });
                           },
                         ),
                       ),
-                    ),
-                    const SizedBox(width: 25),
-                    Expanded(
-                      flex: 1,
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 15),
-                        child: TextFormField(
-                          decoration: textFormField("Endereço da Escola"),
-                          controller: _endescolaController,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return "Campo obrigatório.";
-                            }
-                            return null;
-                          },
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 25),
-                    Expanded(
-                      flex: 1,
-                      child: Turno(
-                        label: "Turno Escolar",
-                        selectedValue: tipoTurno,
-                        items: const ['Manhã', 'Tarde', 'Noite'],
-                        onChanged: (newValue) {
-                          setState(() {
-                            tipoTurno = newValue!;
-                          });
-                        },
-                      ),
-                    ),
-                  ],
-                ),
+                    ],
+                  ),
                 const SizedBox(height: 50),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -965,7 +1073,6 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
   }
 }
 
-// Função para criar título de seção com estilo
 pw.Widget _buildSectionTitle(String title) {
   return pw.Padding(
     padding: const pw.EdgeInsets.symmetric(vertical: 5),
@@ -986,7 +1093,6 @@ pw.Widget _buildSectionTitle(String title) {
   );
 }
 
-// Função para criar campos com rótulos e valores
 pw.Widget _buildLabeledField(String label, String value) {
   return pw.Row(
     children: [

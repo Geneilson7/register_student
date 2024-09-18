@@ -6,6 +6,7 @@ import 'package:register_student/pages/alunos.dart';
 import 'package:register_student/pages/faixa.dart';
 import 'package:register_student/pages/professores.dart';
 import 'package:register_student/pages/sobre.dart';
+import 'package:register_student/register/cadastrar_evento.dart';
 import 'package:register_student/register/cadastrar_faixa.dart';
 import 'package:register_student/register/cadastrar_professor.dart';
 import 'package:register_student/services/db_helper.dart';
@@ -23,6 +24,7 @@ class _HomePageState extends State<HomePage> {
 
   int? _selectedIndex;
   final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
+  bool isExpanded = true;
 
   @override
   void initState() {
@@ -35,12 +37,23 @@ class _HomePageState extends State<HomePage> {
   //   });
   // }
 
+  // void _onItemTapped(int index) {
+  //   setState(() {
+  //     _selectedIndex = index;
+  //   });
+
+  //   _navigatorKey.currentState?.pushReplacement(
+  //     MaterialPageRoute(builder: (context) => _getSelectedScreen(index)),
+  //   );
+  // }
+
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
 
-    _navigatorKey.currentState?.pushReplacement(
+    // Alterado para `push` ao invés de `pushReplacement`
+    _navigatorKey.currentState?.push(
       MaterialPageRoute(builder: (context) => _getSelectedScreen(index)),
     );
   }
@@ -66,38 +79,44 @@ class _HomePageState extends State<HomePage> {
           showButton: false,
         );
       case 6:
+        return const CadastrarEvento(
+          showButton: false,
+        );
+      case 7:
         return const Sobre();
       default:
-        return Column(
+        return _buildHomeScreen();
+    }
+  }
+
+  Widget _buildHomeScreen() {
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const SizedBox(
-                  height: 50,
-                ),
-                Text(
-                  'Home',
-                  style: GoogleFonts.poppins(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
-                    color: const Color(0xFF404046),
-                  ),
-                ),
-              ],
-            ),
-            const Spacer(),
-            Center(
-              child: Image.asset(
-                'assets/image/screen.png',
-                height: 400,
-                width: 400,
+            const SizedBox(height: 50),
+            Text(
+              'Home',
+              style: GoogleFonts.poppins(
+                fontSize: 20,
+                fontWeight: FontWeight.w700,
+                color: const Color(0xFF404046),
               ),
             ),
-            const Spacer(),
           ],
-        );
-    }
+        ),
+        const Spacer(),
+        Center(
+          child: Image.asset(
+            'assets/image/screen.png',
+            height: 400,
+            width: 400,
+          ),
+        ),
+        const Spacer(),
+      ],
+    );
   }
 
   @override
@@ -105,107 +124,156 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       backgroundColor: const Color(0xFF1d1e2b),
       body: SafeArea(
-        child: Row(
+        child: Stack(
           children: [
-            Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 20),
-                  ListTile(
-                    title: Image.asset(
-                      'assets/image/logo.png',
-                      height: 100,
-                      width: 100,
-                    ),
-                  ),
-                  Divider(thickness: 1, color: Colors.grey[300]),
+            Row(
+              children: [
+                if (isExpanded)
                   Expanded(
-                    child: ListView(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        buildListTile(
-                          'assets/image/aluno.png',
-                          "Alunos",
-                          () {
-                            _onItemTapped(0);
-                          },
-                        ),
-                        buildListTile(
-                          'assets/image/professojiujtsu.png',
-                          "Professores",
-                          () {
-                            _onItemTapped(1);
-                          },
-                        ),
-                        buildListTile(
-                          'assets/image/faixa.png',
-                          "Faixas",
-                          () {
-                            _onItemTapped(2);
-                          },
-                        ),
-                        ExpansionTile(
-                          leading: Image.asset(
-                            'assets/image/cadastro.png',
-                            height: 26,
-                            color: Colors.white54,
+                        const SizedBox(height: 20),
+                        ListTile(
+                          title: Image.asset(
+                            'assets/image/logo.png',
+                            height: 100,
+                            width: 100,
                           ),
-                          iconColor: Colors.white54,
-                          collapsedIconColor: Colors.white54,
-                          title: Text(
-                            "Cadastros",
-                            style: GoogleFonts.poppins(
-                              fontSize: 15,
-                              color: Colors.white54,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          children: <Widget>[
-                            buildSubListTile(
-                              "Cadastrar Aluno",
-                              () {
-                                _onItemTapped(3);
-                              },
-                            ),
-                            buildSubListTile(
-                              "Cadastrar Professor",
-                              () {
-                                _onItemTapped(4);
-                              },
-                            ),
-                            buildSubListTile(
-                              "Cadastrar Faixa",
-                              () {
-                                _onItemTapped(5);
-                              },
-                            ),
-                          ],
                         ),
-                        buildListTile(
-                          'assets/image/sobre.png',
-                          "Sobre",
-                          () {
-                            _onItemTapped(6);
-                          },
+                        Divider(thickness: 1, color: Colors.grey[300]),
+                        Expanded(
+                          child: ListView(
+                            children: [
+                              buildListTile(
+                                imagePath: 'assets/image/aluno.png',
+                                index: 0,
+                                title: "Alunos",
+                                onTap: () {
+                                  _onItemTapped(0);
+                                },
+                              ),
+                              buildListTile(
+                                imagePath: 'assets/image/professojiujtsu.png',
+                                index: 1,
+                                title: "Professores",
+                                onTap: () {
+                                  _onItemTapped(1);
+                                },
+                              ),
+                              buildListTile(
+                                imagePath: 'assets/image/faixa.png',
+                                index: 2,
+                                title: "Faixas",
+                                onTap: () {
+                                  _onItemTapped(2);
+                                },
+                              ),
+                              buildListTile(
+                                imagePath: 'assets/image/faixa.png',
+                                index: 2,
+                                title: "Eventos",
+                                onTap: () {
+                                  _onItemTapped(2);
+                                },
+                              ),
+                              ExpansionTile(
+                                leading: Image.asset(
+                                  'assets/image/cadastro.png',
+                                  height: 26,
+                                  color: Colors.white54,
+                                ),
+                                iconColor: Colors.white54,
+                                collapsedIconColor: Colors.white54,
+                                title: Text(
+                                  "Cadastros",
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 15,
+                                    color: Colors.white54,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                children: <Widget>[
+                                  buildSubListTile(
+                                    title: "Cadastrar Aluno",
+                                    index: 3,
+                                    onTap: () {
+                                      _onItemTapped(3);
+                                    },
+                                  ),
+                                  buildSubListTile(
+                                    title: "Cadastrar Professor",
+                                    index: 4,
+                                    onTap: () {
+                                      _onItemTapped(4);
+                                    },
+                                  ),
+                                  buildSubListTile(
+                                    title: "Cadastrar Faixa",
+                                    index: 5,
+                                    onTap: () {
+                                      _onItemTapped(5);
+                                    },
+                                  ),
+                                  buildSubListTile(
+                                    title: "Cadastrar Evento",
+                                    index: 6,
+                                    onTap: () {
+                                      _onItemTapped(6);
+                                    },
+                                  ),
+                                ],
+                              ),
+                              buildListTile(
+                                imagePath: 'assets/image/sobre.png',
+                                title: "Sobre",
+                                onTap: () {
+                                  _onItemTapped(7);
+                                },
+                                index: 7,
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
                   ),
-                ],
-              ),
+                Expanded(
+                  flex: 4,
+                  child: Container(
+                    color: const Color(0xFFF1F3F6),
+                    child: Navigator(
+                      key: _navigatorKey,
+                      onGenerateRoute: (settings) {
+                        return MaterialPageRoute(
+                          builder: (context) =>
+                              _getSelectedScreen(_selectedIndex),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ],
             ),
-            Expanded(
-              flex: 4,
-              child: Container(
-                color: const Color(0xFFF1F3F6),
-                child: Navigator(
-                  key: _navigatorKey,
-                  onGenerateRoute: (settings) {
-                    // Sempre renderize a tela com base no selectedIndex, sem empilhar.
-                    return MaterialPageRoute(
-                      builder: (context) => _getSelectedScreen(_selectedIndex),
-                    );
+            Positioned(
+              top: MediaQuery.of(context).size.height * 0.4,
+              left: isExpanded
+                  ? MediaQuery.of(context).size.width * 0.19
+                  : MediaQuery.of(context).size.width * 0.0,
+              child: CircleAvatar(
+                radius: 16,
+                backgroundColor: Colors.blueAccent,
+                child: IconButton(
+                  icon: Icon(isExpanded
+                      ? Icons.arrow_back_ios
+                      : Icons.arrow_forward_ios),
+                  onPressed: () {
+                    setState(() {
+                      isExpanded = !isExpanded;
+                    });
                   },
+                  color: const Color(0xFFFFFFFF),
+                  iconSize: 16,
                 ),
               ),
             ),
@@ -215,40 +283,91 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  ListTile buildListTile(String imagePath, String title, VoidCallback onTap) {
-    return ListTile(
-      leading: Image.asset(
-        imagePath,
-        // width: 30,
-        height: 22,
-        color: Colors.white54,
-      ),
-      title: Text(
-        title,
-        style: GoogleFonts.poppins(
-          fontSize: 15,
-          color: Colors.white54,
-          fontWeight: FontWeight.w600,
+  Widget buildListTile({
+    required int index,
+    required String imagePath,
+    required String title,
+    required VoidCallback onTap,
+  }) {
+    bool isSelected = _selectedIndex == index;
+
+    return GestureDetector(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 5),
+        child: Container(
+          decoration: BoxDecoration(
+            color: isSelected ? const Color(0xFF555555) : Colors.transparent,
+            borderRadius: BorderRadius.circular(5),
+            boxShadow: isSelected
+                ? [
+                    const BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 8,
+                      offset: Offset(0, 4),
+                    ),
+                  ]
+                : [],
+          ),
+          child: ListTile(
+            leading: Image.asset(
+              imagePath,
+              height: 22,
+              color: isSelected ? Colors.blue : Colors.white54,
+            ),
+            title: Text(
+              title,
+              style: GoogleFonts.poppins(
+                fontSize: 15,
+                color: isSelected ? Colors.blue : Colors.white54,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
         ),
       ),
-      onTap: onTap,
     );
   }
 
-  ListTile buildSubListTile(String title, VoidCallback onTap) {
-    return ListTile(
-      contentPadding: const EdgeInsets.only(
-        left: 40,
-      ),
-      title: Text(
-        title,
-        style: GoogleFonts.poppins(
-          fontSize: 14,
-          color: Colors.white54,
-          fontWeight: FontWeight.w600,
+  Widget buildSubListTile({
+    required String title,
+    required VoidCallback onTap,
+    required int index,
+  }) {
+    bool isSelected = _selectedIndex == index;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 5),
+      child: Container(
+        decoration: BoxDecoration(
+          color: isSelected ? const Color(0xFF555555) : Colors.transparent,
+          borderRadius: BorderRadius.circular(5),
+          boxShadow: isSelected
+              ? [
+                  const BoxShadow(
+                    color: Colors.black12,
+                    blurRadius: 8,
+                    offset: Offset(0, 4),
+                  ),
+                ]
+              : [],
+        ),
+        child: ListTile(
+          contentPadding: const EdgeInsets.only(
+            left: 40,
+          ),
+          title: Text(
+            title,
+            style: GoogleFonts.poppins(
+              fontSize: 14,
+              color:
+                  _selectedIndex == index ? Colors.blueAccent : Colors.white54,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          onTap: onTap,
         ),
       ),
-      onTap: onTap,
     );
   }
 }
@@ -328,3 +447,33 @@ class CustomButton extends StatelessWidget {
     );
   }
 }
+
+
+// class LinePainter extends CustomPainter {
+//   @override
+//   void paint(Canvas canvas, Size size) {
+//     final paint = Paint()
+//       ..color = Colors.grey.shade400
+//       ..strokeWidth = 1.0
+//       ..style = PaintingStyle.stroke;
+
+//     // Linha vertical principal
+//     canvas.drawLine(
+//       Offset(20, 0), // Início da linha
+//       Offset(20, size.height), // Fim da linha
+//       paint,
+//     );
+
+//     // Linha horizontal conectando à lista
+//     canvas.drawLine(
+//       Offset(20, size.height / 4), // Início da linha horizontal
+//       Offset(40, size.height / 4), // Fim da linha horizontal
+//       paint,
+//     );
+//   }
+
+//   @override
+//   bool shouldRepaint(CustomPainter oldDelegate) {
+//     return false;
+//   }
+// }

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:register_student/pages/home_page.dart';
+import 'package:register_student/pages/professores.dart';
 import 'package:register_student/services/db_helper.dart';
 import 'package:register_student/src/dropdown_faixa.dart';
 import 'package:register_student/src/dropdown_pcd.dart';
@@ -87,7 +88,8 @@ class _CadastrarPofessorState extends State<CadastrarPofessor> {
   void _saveItem() async {
     try {
       if (_formKey.currentState!.validate()) {
-        final aluno = {
+        // Dados do professor
+        final professor = {
           'nome': _nomeController.text,
           'cpf': _cpfController.text,
           'rg': _rgController.text,
@@ -104,16 +106,34 @@ class _CadastrarPofessorState extends State<CadastrarPofessor> {
         };
 
         if (widget.alunoId != null) {
-          await dbHelper.updateProfessores(widget.alunoId!, aluno);
+          // Atualizar o professor
+          await dbHelper.updateProfessores(widget.alunoId!, professor);
         } else {
-          await dbHelper.insertProfessores(aluno);
+          // Inserir um novo professor
+          await dbHelper.insertProfessores(professor);
         }
 
-        Navigator.pop(context);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => WillPopScope(
+              onWillPop: () async {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const HomePage(),
+                  ),
+                );
+                return false;
+              },
+              child: const ProfessorScreen(),
+            ),
+          ),
+        );
       }
     } catch (error) {
-      ScaffoldMessenger(
-        child: Text("$error"),
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("$error")),
       );
     }
   }
@@ -650,11 +670,23 @@ class _CadastrarPofessorState extends State<CadastrarPofessor> {
                             ),
                           ),
                           onPressed: () {
-                            if (widget.alunoId == null) {
-                              _showDeleteDialog(context);
-                            } else {
-                              Navigator.of(context).pop();
-                            }
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => WillPopScope(
+                                  onWillPop: () async {
+                                    Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => const HomePage(),
+                                      ),
+                                    );
+                                    return false;
+                                  },
+                                  child: const ProfessorScreen(),
+                                ),
+                              ),
+                            );
                           },
                           child: Center(
                             child: Text(
