@@ -9,11 +9,13 @@ import 'package:printing/printing.dart';
 class PreviewScreen extends StatelessWidget {
   final pw.Document doc;
   final String pdfFileName;
+  final String titulo;
 
   const PreviewScreen({
     Key? key,
     required this.doc,
     required this.pdfFileName,
+    required this.titulo,
   }) : super(key: key);
 
   @override
@@ -28,7 +30,7 @@ class PreviewScreen extends StatelessWidget {
         ),
         centerTitle: true,
         title: Text(
-          "Ficha Cadastral",
+          titulo,
           style: GoogleFonts.poppins(
             fontSize: 20,
             fontWeight: FontWeight.w700,

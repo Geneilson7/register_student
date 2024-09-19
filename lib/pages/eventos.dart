@@ -6,14 +6,14 @@ import 'package:register_student/pages/home_page.dart';
 import 'package:register_student/register/cadastrar_faixa.dart';
 import 'package:register_student/services/db_helper.dart';
 
-class FaixaScreen extends StatefulWidget {
-  const FaixaScreen({super.key});
+class EventosScreen extends StatefulWidget {
+  const EventosScreen({super.key});
 
   @override
-  State<FaixaScreen> createState() => _FaixaScreenState();
+  State<EventosScreen> createState() => _EventosScreenState();
 }
 
-class _FaixaScreenState extends State<FaixaScreen> {
+class _EventosScreenState extends State<EventosScreen> {
   final DBHelper dbHelper = DBHelper();
 
   List<Map<String, dynamic>> _items = [];
@@ -74,7 +74,7 @@ class _FaixaScreenState extends State<FaixaScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "Faixas",
+                    "Eventos",
                     style: GoogleFonts.poppins(
                       fontSize: 20,
                       fontWeight: FontWeight.w700,

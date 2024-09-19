@@ -1,5 +1,7 @@
 // ignore_for_file: use_build_context_synchronously, deprecated_member_use, depend_on_referenced_packages
 
+import 'dart:io';
+
 import 'package:brasil_fields/brasil_fields.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -14,6 +16,8 @@ import 'package:register_student/util/form.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:register_student/util/view_pdf.dart';
+import 'package:intl/intl.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 class CadastrarPofessor extends StatefulWidget {
   final int? alunoId;
@@ -143,17 +147,22 @@ class _CadastrarPofessorState extends State<CadastrarPofessor> {
 
     for (var faixa in faixas) {
       if (faixa['id'] == faixaId) {
-        return faixa['descricao'];
+        String descricao = faixa['descricao'];
+        return descricao[0].toUpperCase() + descricao.substring(1);
       }
     }
 
     return null;
   }
 
-  void _displayPdf() {
+  void _displayPdf() async {
+    await initializeDateFormatting('pt_BR', null);
     final doc = pw.Document();
-    // final imageBytes = File('assets/image/logo.png').readAsBytesSync();
-    // final image = pw.MemoryImage(imageBytes);
+
+    final imageBytes = File('assets/image/logoacademia.jpg').readAsBytesSync();
+    final image = pw.MemoryImage(imageBytes);
+    final String dataAtual =
+        DateFormat("d 'de' MMMM 'de' y", 'pt_BR').format(DateTime.now());
 
     doc.addPage(
       pw.Page(
@@ -162,27 +171,40 @@ class _CadastrarPofessorState extends State<CadastrarPofessor> {
           return pw.Column(
             children: [
               pw.Row(
-                // mainAxisAlignment: pw.MainAxisAlignment.center,
+                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                 children: [
-                  pw.Expanded(
-                    child: pw.Text(
-                      'FICHA CADASTRAL',
-                      textAlign: pw.TextAlign.center,
-                      style: pw.TextStyle(
-                        fontSize: 20,
-                        fontWeight: pw.FontWeight.bold,
-                      ),
+                  pw.SizedBox(
+                    width: 100,
+                    child: pw.Container(
+                      width: 70,
+                      height: 70,
+                      child: pw.Image(image),
+                      // color: PdfColor.fromHex('eaf1f8'),
                     ),
                   ),
-                  // pw.Padding(
-                  //   padding:  pw.EdgeInsets.only(right: 0),
-                  //   child: pw.Container(
-                  //     width: 80,
-                  //     height: 80,
-                  //     child: pw.Image(image),
-                  //     color: PdfColor.fromHex('eaf1f8'),
-                  //   ),
-                  // ),
+                  pw.Text(
+                    dataAtual,
+                    style: pw.TextStyle(
+                      fontSize: 9,
+                      fontWeight: pw.FontWeight.normal,
+                    ),
+                  ),
+                ],
+              ),
+              pw.SizedBox(
+                height: 10,
+              ),
+              pw.Row(
+                mainAxisAlignment: pw.MainAxisAlignment.center,
+                children: [
+                  pw.Text(
+                    'FICHA CADASTRAL',
+                    textAlign: pw.TextAlign.center,
+                    style: pw.TextStyle(
+                      fontSize: 20,
+                      fontWeight: pw.FontWeight.bold,
+                    ),
+                  ),
                 ],
               ),
 
@@ -190,7 +212,7 @@ class _CadastrarPofessorState extends State<CadastrarPofessor> {
 
               // Seção: Dados do Aluno
               _buildSectionTitle('DADOS DO PROFESSOR'),
-              _buildLabeledField('Nome do Aluno: ', _nomeController.text),
+              _buildLabeledField('Nome do Professor: ', _nomeController.text),
               _buildLabeledField('CPF: ', _cpfController.text),
               _buildLabeledField('RG: ', _rgController.text),
               _buildLabeledField(
@@ -222,13 +244,15 @@ class _CadastrarPofessorState extends State<CadastrarPofessor> {
 
     /// open Preview Screen
     Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => PreviewScreen(
-            doc: doc,
-            pdfFileName: "${_nomeController.text}.pdf",
-          ),
-        ));
+      context,
+      MaterialPageRoute(
+        builder: (context) => PreviewScreen(
+          doc: doc,
+          pdfFileName: "${_nomeController.text}.pdf",
+          titulo: "Visualizar Ficha Cadastral",
+        ),
+      ),
+    );
   }
 
   void _showDeleteDialog(BuildContext context) {
@@ -670,23 +694,28 @@ class _CadastrarPofessorState extends State<CadastrarPofessor> {
                             ),
                           ),
                           onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => WillPopScope(
-                                  onWillPop: () async {
-                                    Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => const HomePage(),
-                                      ),
-                                    );
-                                    return false;
-                                  },
-                                  child: const ProfessorScreen(),
-                                ),
-                              ),
-                            );
+                            if (widget.alunoId == null) {
+                              _showDeleteDialog(context);
+                            } else {
+                              Navigator.of(context).pop();
+                            }
+                            // Navigator.push(
+                            //   context,
+                            //   MaterialPageRoute(
+                            //     builder: (context) => WillPopScope(
+                            //       onWillPop: () async {
+                            //         Navigator.pushReplacement(
+                            //           context,
+                            //           MaterialPageRoute(
+                            //             builder: (context) => const HomePage(),
+                            //           ),
+                            //         );
+                            //         return false;
+                            //       },
+                            //       child: const ProfessorScreen(),
+                            //     ),
+                            //   ),
+                            // );
                           },
                           child: Center(
                             child: Text(

@@ -1,11 +1,19 @@
 // ignore_for_file: use_build_context_synchronously, deprecated_member_use, depend_on_referenced_packages
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:register_student/pages/faixa.dart';
+import 'package:register_student/pages/faixas.dart';
 import 'package:register_student/pages/home_page.dart';
 import 'package:register_student/services/db_helper.dart';
 import 'package:register_student/util/form.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:register_student/util/view_pdf.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:intl/intl.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 class CadastrarEvento extends StatefulWidget {
   final int? alunoId;
@@ -23,9 +31,15 @@ class CadastrarEvento extends StatefulWidget {
 
 class _CadastrarEventoState extends State<CadastrarEvento> {
   final DBHelper dbHelper = DBHelper();
-  final TextEditingController _descricaoController = TextEditingController();
+  final TextEditingController _tituloController = TextEditingController();
+  final TextEditingController _escrtiaController = TextEditingController();
+  final TextEditingController _assinatura1Controller = TextEditingController();
+  final TextEditingController _assinatura2Controller = TextEditingController();
+  final TextEditingController _assUnicaController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
+  bool isDuplaAss = false;
+  bool isAssUnica = false;
 
   @override
   void initState() {
@@ -33,10 +47,12 @@ class _CadastrarEventoState extends State<CadastrarEvento> {
     if (widget.alunoId != null) {
       _loadAluno(widget.alunoId!);
     }
+    _loadDuplaAss();
+    _loadAssUnica();
   }
 
   void _populateFields(Map<String, dynamic> faixa) {
-    _descricaoController.text = faixa['descricao'];
+    _tituloController.text = faixa['descricao'];
     setState(() {});
   }
 
@@ -51,7 +67,7 @@ class _CadastrarEventoState extends State<CadastrarEvento> {
     try {
       if (_formKey.currentState!.validate()) {
         final faixa = {
-          'descricao': _descricaoController.text,
+          'descricao': _tituloController.text,
         };
 
         if (widget.alunoId != null) {
@@ -84,8 +100,6 @@ class _CadastrarEventoState extends State<CadastrarEvento> {
       );
     }
   }
-
-  
 
   void _showDeleteDialog(BuildContext context) {
     showDialog(
@@ -145,6 +159,154 @@ class _CadastrarEventoState extends State<CadastrarEvento> {
     );
   }
 
+  Future<void> _loadDuplaAss() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      isDuplaAss = prefs.getBool('isDuplaAss') ?? false;
+    });
+  }
+
+  Future<void> _saveDuplaAss() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setBool('isDuplaAss', isDuplaAss);
+  }
+
+  Future<void> _loadAssUnica() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      isAssUnica = prefs.getBool('isAssUnica') ?? false;
+    });
+  }
+
+  Future<void> _saveAssUnica() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setBool('isAssUnica', isAssUnica);
+  }
+
+  Future<void> _displayPdf() async {
+    await initializeDateFormatting('pt_BR', null);
+    final doc = pw.Document();
+
+    final imageBytes = File('assets/image/logoacademia.jpg').readAsBytesSync();
+    final image = pw.MemoryImage(imageBytes);
+    final String dataAtual =
+        DateFormat("d 'de' MMMM 'de' y", 'pt_BR').format(DateTime.now());
+
+    doc.addPage(
+      pw.Page(
+        pageFormat: PdfPageFormat.a4,
+        build: (pw.Context context) {
+          return pw.Column(
+            children: [
+              pw.Row(
+                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                children: [
+                  pw.SizedBox(
+                    width: 100,
+                    child: pw.Container(
+                      width: 70,
+                      height: 70,
+                      child: pw.Image(image),
+                      // color: PdfColor.fromHex('eaf1f8'),
+                    ),
+                  ),
+                  pw.Text(
+                    dataAtual,
+                    style: pw.TextStyle(
+                      fontSize: 9,
+                      fontWeight: pw.FontWeight.normal,
+                    ),
+                  ),
+                ],
+              ),
+              pw.SizedBox(
+                height: 10,
+              ),
+              pw.Row(
+                mainAxisAlignment: pw.MainAxisAlignment.center,
+                children: [
+                  pw.Text(
+                    _tituloController.text,
+                    textAlign: pw.TextAlign.center,
+                    style: pw.TextStyle(
+                      fontSize: 25,
+                      fontWeight: pw.FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+              pw.SizedBox(height: 20),
+              pw.Text(
+                _escrtiaController.text,
+                style: const pw.TextStyle(
+                  fontSize: 12,
+                ),
+                textAlign: pw.TextAlign.justify,
+                softWrap: true, // Ativa a quebra de linha automática
+              ),
+              pw.Spacer(),
+              if (!isDuplaAss) ...[
+                pw.Row(
+                  mainAxisAlignment: pw.MainAxisAlignment.spaceAround,
+                  children: [
+                    pw.Column(
+                      children: [
+                        pw.Text('________________________________'),
+                        pw.SizedBox(
+                          height: 5,
+                        ),
+                        _buildLabeledField(_assinatura1Controller.text),
+                      ],
+                    ),
+                    pw.SizedBox(
+                      width: 10,
+                    ),
+                    pw.Column(
+                      children: [
+                        pw.Text('________________________________'),
+                        pw.SizedBox(
+                          height: 5,
+                        ),
+                        _buildLabeledField(_assinatura2Controller.text),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+              if (!isAssUnica) ...[
+                pw.Row(
+                  mainAxisAlignment: pw.MainAxisAlignment.center,
+                  children: [
+                    pw.Column(
+                      children: [
+                        pw.Text('________________________________'),
+                        pw.SizedBox(
+                          height: 5,
+                        ),
+                        _buildLabeledField(_assUnicaController.text),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ],
+          );
+        },
+      ),
+    );
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PreviewScreen(
+          doc: doc,
+          pdfFileName: "${_tituloController.text}.pdf",
+          titulo: "Visualizar Evento",
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -174,7 +336,7 @@ class _CadastrarEventoState extends State<CadastrarEvento> {
                   padding: const EdgeInsets.only(bottom: 15),
                   child: TextFormField(
                     decoration: textFormField("Título"),
-                    controller: _descricaoController,
+                    controller: _tituloController,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return "Campo obrigatório.";
@@ -189,7 +351,7 @@ class _CadastrarEventoState extends State<CadastrarEvento> {
                     decoration: textFormField("Escrita").copyWith(
                       alignLabelWithHint: true,
                     ),
-                    controller: _descricaoController,
+                    controller: _escrtiaController,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return "Campo obrigatório.";
@@ -204,86 +366,182 @@ class _CadastrarEventoState extends State<CadastrarEvento> {
                 const SizedBox(
                   height: 180,
                 ),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    "Dupla Assinatura",
-                    style: GoogleFonts.poppins(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 15),
-                        child: TextFormField(
-                          decoration: textFormField("Assinatura 1"),
-                          controller: _descricaoController,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return "Campo obrigatório.";
-                            }
-                            return null;
-                          },
-                        ),
+                    Text(
+                      "Dupla Ass?",
+                      style: GoogleFonts.poppins(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
-                    const SizedBox(width: 25),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 15),
-                        child: TextFormField(
-                          decoration: textFormField("Assinatura 2"),
-                          controller: _descricaoController,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return "Campo obrigatório.";
-                            }
-                            return null;
+                    Switch(
+                      value: isDuplaAss,
+                      activeColor: const Color(0xFF1d1e2b),
+                      onChanged: (value) {
+                        setState(
+                          () {
+                            isDuplaAss = value;
+                            _saveDuplaAss();
                           },
-                        ),
-                      ),
+                        );
+                      },
                     ),
                   ],
                 ),
-                Align(
-                  alignment: Alignment.center,
-                  child: Text(
-                    "Assinatura Única",
-                    style: GoogleFonts.poppins(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ),
-                Row(
-                  children: [
-                    const Spacer(),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 15),
-                        child: TextFormField(
-                          decoration: textFormField("Assinatura"),
-                          controller: _descricaoController,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return "Campo obrigatório.";
-                            }
-                            return null;
-                          },
-                        ),
+                if (!isDuplaAss)
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      "Dupla Assinatura",
+                      style: GoogleFonts.poppins(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
-                    const Spacer(),
+                  ),
+                if (!isDuplaAss)
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 15),
+                          child: TextFormField(
+                            decoration: textFormField("Assinatura 1"),
+                            controller: _assinatura1Controller,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return "Campo obrigatório.";
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 25),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 15),
+                          child: TextFormField(
+                            decoration: textFormField("Assinatura 2"),
+                            controller: _assinatura2Controller,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return "Campo obrigatório.";
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                const SizedBox(
+                  height: 5,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Ass Única?",
+                      style: GoogleFonts.poppins(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    Switch(
+                      value: isAssUnica,
+                      activeColor: const Color(0xFF1d1e2b),
+                      onChanged: (value) {
+                        setState(
+                          () {
+                            isAssUnica = value;
+                            _saveAssUnica();
+                          },
+                        );
+                      },
+                    ),
                   ],
                 ),
+                if (!isAssUnica)
+                  Align(
+                    alignment: Alignment.center,
+                    child: Text(
+                      "Assinatura Única",
+                      style: GoogleFonts.poppins(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                if (!isAssUnica)
+                  Row(
+                    children: [
+                      const Spacer(),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 15),
+                          child: TextFormField(
+                            decoration: textFormField("Assinatura"),
+                            controller: _assUnicaController,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return "Campo obrigatório.";
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                      ),
+                      const Spacer(),
+                    ],
+                  ),
                 const SizedBox(height: 50),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
+                    SizedBox(
+                      height: 50,
+                      width: 180,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(11),
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0xFF1F41BB).withOpacity(0.2),
+                              spreadRadius: 0,
+                              blurRadius: 4,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF1F41BB),
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(11),
+                            ),
+                          ),
+                          onPressed: () {
+                            if (_formKey.currentState!.validate()) {
+                              _displayPdf();
+                            }
+                          },
+                          child: Center(
+                            child: Text(
+                              'Gerar Evento',
+                              style: GoogleFonts.poppins(
+                                fontSize: 19,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const Spacer(),
                     SizedBox(
                       height: 50,
                       width: 150,
@@ -345,23 +603,28 @@ class _CadastrarEventoState extends State<CadastrarEvento> {
                             ),
                           ),
                           onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => WillPopScope(
-                                  onWillPop: () async {
-                                    Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => const HomePage(),
-                                      ),
-                                    );
-                                    return false;
-                                  },
-                                  child: const FaixaScreen(),
-                                ),
-                              ),
-                            );
+                            if (widget.alunoId == null) {
+                              _showDeleteDialog(context);
+                            } else {
+                              Navigator.of(context).pop();
+                            }
+                            // Navigator.push(
+                            //   context,
+                            //   MaterialPageRoute(
+                            //     builder: (context) => WillPopScope(
+                            //       onWillPop: () async {
+                            //         Navigator.pushReplacement(
+                            //           context,
+                            //           MaterialPageRoute(
+                            //             builder: (context) => const HomePage(),
+                            //           ),
+                            //         );
+                            //         return false;
+                            //       },
+                            //       child: const FaixaScreen(),
+                            //     ),
+                            //   ),
+                            // );
                           },
                           child: Center(
                             child: Text(
@@ -384,4 +647,42 @@ class _CadastrarEventoState extends State<CadastrarEvento> {
       ),
     );
   }
+}
+
+// Função para criar título de seção com estilo
+pw.Widget _buildSectionTitle(String value) {
+  return pw.Padding(
+    padding: const pw.EdgeInsets.symmetric(vertical: 5),
+    child: pw.Container(
+      color: PdfColor.fromHex('eaf1f8'),
+      width: double.infinity,
+      // child: pw.Center(
+      //   child: pw.Text(
+      //     title,
+      //     textAlign: pw.TextAlign.center,
+      //     style: pw.TextStyle(
+      //       fontWeight: pw.FontWeight.bold,
+      //       fontSize: 14,
+      //     ),
+      //   ),
+      // ),
+    ),
+  );
+}
+
+// Função para criar campos com rótulos e valores
+pw.Widget _buildLabeledField(String value) {
+  return pw.Row(
+    children: [
+      // pw.Text(
+      //   label,
+      //   style: pw.TextStyle(
+      //     fontWeight: pw.FontWeight.bold,
+      //   ),
+      // ),
+      pw.Text(
+        value.isNotEmpty ? value : '',
+      ),
+    ],
+  );
 }

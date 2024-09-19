@@ -19,6 +19,8 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:register_student/util/view_pdf.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:intl/intl.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 class CadastrarAluno extends StatefulWidget {
   final int? alunoId;
@@ -187,7 +189,8 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
 
     for (var faixa in faixas) {
       if (faixa['id'] == faixaId) {
-        return faixa['descricao'];
+        String descricao = faixa['descricao'];
+        return descricao[0].toUpperCase() + descricao.substring(1);
       }
     }
 
@@ -218,10 +221,13 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
     prefs.setBool('isConcluido', isConcluido);
   }
 
-  void _displayPdf() {
+  void _displayPdf() async {
+    await initializeDateFormatting('pt_BR', null);
     final doc = pw.Document();
     final imageBytes = File('assets/image/logoacademia.jpg').readAsBytesSync();
     final image = pw.MemoryImage(imageBytes);
+    final String dataAtual =
+        DateFormat("d 'de' MMMM 'de' y", 'pt_BR').format(DateTime.now());
 
     doc.addPage(
       pw.Page(
@@ -230,25 +236,38 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
           return pw.Column(
             children: [
               pw.Row(
+                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                children: [
+                  pw.SizedBox(
+                    width: 100,
+                    child: pw.Container(
+                      width: 70,
+                      height: 70,
+                      child: pw.Image(image),
+                      // color: PdfColor.fromHex('eaf1f8'),
+                    ),
+                  ),
+                  pw.Text(
+                    dataAtual,
+                    style: pw.TextStyle(
+                      fontSize: 9,
+                      fontWeight: pw.FontWeight.normal,
+                    ),
+                  ),
+                ],
+              ),
+              pw.SizedBox(
+                height: 10,
+              ),
+              pw.Row(
                 mainAxisAlignment: pw.MainAxisAlignment.center,
                 children: [
-                  pw.Spacer(flex: 3),
                   pw.Text(
                     'FICHA CADASTRAL',
                     textAlign: pw.TextAlign.center,
                     style: pw.TextStyle(
                       fontSize: 20,
                       fontWeight: pw.FontWeight.bold,
-                    ),
-                  ),
-                  pw.Spacer(flex: 2),
-                  pw.SizedBox(
-                    width: 100,
-                    child: pw.Container(
-                      width: 50,
-                      height: 50,
-                      child: pw.Image(image),
-                      color: PdfColor.fromHex('eaf1f8'),
                     ),
                   ),
                 ],
@@ -306,6 +325,7 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
         builder: (context) => PreviewScreen(
           doc: doc,
           pdfFileName: "${_nomeController.text}.pdf",
+          titulo: "Visualizar Ficha Cadastral",
         ),
       ),
     );

@@ -24,7 +24,7 @@ class DBHelper {
       path,
       version: 2,
       onCreate: _onCreate,
-      onUpgrade: _onUpgrade, // Atualização do banco de dados
+      onUpgrade: _onUpgrade,
     );
   }
 
@@ -56,12 +56,23 @@ class DBHelper {
         endescola TEXT,
         turnoescolar TEXT,
         professor_id INTEGER,
+        data_cadastro TEXT DEFAULT (datetime('now')),
+        data_inativo TEXT,
         FOREIGN KEY (faixa_id) REFERENCES faixas(id),
         FOREIGN KEY (professor_id) REFERENCES professores(id)
       )
     ''');
-    // Define chave estrangeira
-    // Relaciona com a tabela de faixas
+
+    await db.execute('''
+    CREATE TABLE frequencia (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      aluno_id INTEGER,
+      data TEXT,
+      presente INTEGER,
+      FOREIGN KEY (aluno_id) REFERENCES alunos(id)
+    )
+  ''');
+
     await db.execute('''
       CREATE TABLE faixas (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -86,6 +97,17 @@ class DBHelper {
         endereco TEXT,
         telefone TEXT,
         FOREIGN KEY (faixa_id) REFERENCES faixas(id)
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE eventos (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        titulo TEXT,
+        escrita TEXT,
+        assinatura_1 TEXT,
+        assinatura_2 TEXT,
+        ass_unica TEXT
       )
     ''');
   }
@@ -275,5 +297,66 @@ class DBHelper {
         'SELECT COUNT(*) as count FROM professores WHERE status = ?',
         ['Inativo']);
     return Sqflite.firstIntValue(result) ?? 0;
+  }
+
+  // registrar frequência
+  Future<void> registrarFrequencia(int alunoId, bool presente) async {
+    final db = await database;
+    await db.insert('frequencia', {
+      'aluno_id': alunoId,
+      'data': DateTime.now().toIso8601String(),
+      'presente': presente ? 1 : 0,
+    });
+  }
+
+  // listar a frequência de um determinado dia
+  Future<List<Map<String, dynamic>>> obterFrequenciaPorDia(String data) async {
+    final db = await database;
+    return await db.query('frequencia', where: 'data = ?', whereArgs: [data]);
+  }
+
+// buscar a frequência de um aluno específico
+  Future<Map<String, dynamic>?> obterFrequenciaPorAluno(
+      int alunoId, String data) async {
+    final db = await database;
+    final List<Map<String, dynamic>> result = await db.query(
+      'frequencia',
+      where: 'aluno_id = ? AND data = ?',
+      whereArgs: [alunoId, data],
+    );
+    return result.isNotEmpty ? result.first : null;
+  }
+
+  // Atualização de presença
+  Future<void> atualizarFrequencia(
+      int alunoId, String data, bool presente) async {
+    final db = await database;
+    await db.update(
+      'frequencia',
+      {'presente': presente ? 1 : 0},
+      where: 'aluno_id = ? AND data = ?',
+      whereArgs: [alunoId, data],
+    );
+  }
+
+  // frequencia por data
+  Future<List<Map<String, dynamic>>> getFrequenciaPorData(String data) async {
+    final db = await database;
+    final result = await db.rawQuery('''
+    SELECT frequencia.aluno_id, alunos.nome, frequencia.presente
+    FROM frequencia
+    JOIN alunos ON frequencia.aluno_id = alunos.id 
+    WHERE DATE(frequencia.data) = ?
+  ''', [data]);
+    return result;
+  }
+
+  Future<void> deleteFrequencia(int alunoId) async {
+    final db = await database;
+    await db.delete(
+      'frequencia', 
+      where: 'aluno_id = ?',
+      whereArgs: [alunoId],
+    );
   }
 }

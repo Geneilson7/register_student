@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:register_student/pages/faixa.dart';
+import 'package:register_student/pages/faixas.dart';
 import 'package:register_student/pages/home_page.dart';
 import 'package:register_student/services/db_helper.dart';
 import 'package:register_student/util/form.dart';
@@ -253,23 +253,28 @@ class _CadastrarFaixaState extends State<CadastrarFaixa> {
                             ),
                           ),
                           onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => WillPopScope(
-                                  onWillPop: () async {
-                                    Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => const HomePage(),
-                                      ),
-                                    );
-                                    return false;
-                                  },
-                                  child: const FaixaScreen(),
-                                ),
-                              ),
-                            );
+                            if (widget.alunoId == null) {
+                              _showDeleteDialog(context);
+                            } else {
+                              Navigator.of(context).pop();
+                            }
+                            // Navigator.push(
+                            //   context,
+                            //   MaterialPageRoute(
+                            //     builder: (context) => WillPopScope(
+                            //       onWillPop: () async {
+                            //         Navigator.pushReplacement(
+                            //           context,
+                            //           MaterialPageRoute(
+                            //             builder: (context) => const HomePage(),
+                            //           ),
+                            //         );
+                            //         return false;
+                            //       },
+                            //       child: const FaixaScreen(),
+                            //     ),
+                            //   ),
+                            // );
                           },
                           child: Center(
                             child: Text(

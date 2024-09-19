@@ -3,7 +3,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:register_student/pages/alunos.dart';
-import 'package:register_student/pages/faixa.dart';
+import 'package:register_student/pages/eventos.dart';
+import 'package:register_student/pages/faixas.dart';
+import 'package:register_student/pages/fenquencias.dart';
+import 'package:register_student/pages/lista_frequencia.dart';
 import 'package:register_student/pages/professores.dart';
 import 'package:register_student/pages/sobre.dart';
 import 'package:register_student/register/cadastrar_evento.dart';
@@ -67,22 +70,28 @@ class _HomePageState extends State<HomePage> {
       case 2:
         return const FaixaScreen();
       case 3:
+        return const EventosScreen();
+      case 4:
+        return FrequenciaScreen();
+      case 5:
+        return const ListagemFrequenciaScreen();
+      case 6:
         return const CadastrarAluno(
           showButton: false,
         );
-      case 4:
+      case 7:
         return const CadastrarPofessor(
           showButton: false,
         );
-      case 5:
+      case 8:
         return const CadastrarFaixa(
           showButton: false,
         );
-      case 6:
+      case 9:
         return const CadastrarEvento(
           showButton: false,
         );
-      case 7:
+      case 10:
         return const Sobre();
       default:
         return _buildHomeScreen();
@@ -171,10 +180,26 @@ class _HomePageState extends State<HomePage> {
                               ),
                               buildListTile(
                                 imagePath: 'assets/image/faixa.png',
-                                index: 2,
+                                index: 3,
                                 title: "Eventos",
                                 onTap: () {
-                                  _onItemTapped(2);
+                                  _onItemTapped(3);
+                                },
+                              ),
+                              buildListTile(
+                                imagePath: 'assets/image/faixa.png',
+                                index: 4,
+                                title: "Frequência",
+                                onTap: () {
+                                  _onItemTapped(4);
+                                },
+                              ),
+                              buildListTile(
+                                imagePath: 'assets/image/faixa.png',
+                                index: 5,
+                                title: "Lista de Frequências",
+                                onTap: () {
+                                  _onItemTapped(5);
                                 },
                               ),
                               ExpansionTile(
@@ -196,30 +221,30 @@ class _HomePageState extends State<HomePage> {
                                 children: <Widget>[
                                   buildSubListTile(
                                     title: "Cadastrar Aluno",
-                                    index: 3,
+                                    index: 6,
                                     onTap: () {
-                                      _onItemTapped(3);
+                                      _onItemTapped(6);
                                     },
                                   ),
                                   buildSubListTile(
                                     title: "Cadastrar Professor",
-                                    index: 4,
+                                    index: 7,
                                     onTap: () {
-                                      _onItemTapped(4);
+                                      _onItemTapped(7);
                                     },
                                   ),
                                   buildSubListTile(
                                     title: "Cadastrar Faixa",
-                                    index: 5,
+                                    index: 8,
                                     onTap: () {
-                                      _onItemTapped(5);
+                                      _onItemTapped(8);
                                     },
                                   ),
                                   buildSubListTile(
                                     title: "Cadastrar Evento",
-                                    index: 6,
+                                    index: 9,
                                     onTap: () {
-                                      _onItemTapped(6);
+                                      _onItemTapped(9);
                                     },
                                   ),
                                 ],
@@ -228,9 +253,9 @@ class _HomePageState extends State<HomePage> {
                                 imagePath: 'assets/image/sobre.png',
                                 title: "Sobre",
                                 onTap: () {
-                                  _onItemTapped(7);
+                                  _onItemTapped(10);
                                 },
-                                index: 7,
+                                index: 10,
                               ),
                             ],
                           ),
