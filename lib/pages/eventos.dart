@@ -1,4 +1,4 @@
-// ignore_for_file: deprecated_member_use
+// ignore_for_file: deprecated_member_use, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -28,14 +28,14 @@ class _EventosScreenState extends State<EventosScreen> {
 
   Future<void> _performSearch(String query) async {
     final dbHelper = DBHelper();
-    final searchResults = await dbHelper.searchFaixas(query);
+    final searchResults = await dbHelper.searchEventos(query);
     setState(() {
       _items = searchResults;
     });
   }
 
   void _refreshItems() async {
-    final data = await dbHelper.getFaixas();
+    final data = await dbHelper.getEventos();
     setState(() {
       _items = data;
     });
@@ -43,23 +43,17 @@ class _EventosScreenState extends State<EventosScreen> {
 
   void _deleteItem(int id) async {
     try {
-      await dbHelper.deleteFaixa(id);
+      await dbHelper.deleteEventos(id);
       _refreshItems();
     } catch (e) {
-      print('Erro ao deletar faixa: $e');
+      print('Erro ao deletar eventos: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Erro ao deletar faixa: $e')),
+        SnackBar(content: Text('Erro ao deletar eventos: $e')),
       );
     }
   }
 
-  Color _getStatusColor(String status) {
-    if (status == "Ativo") {
-      return const Color(0xFFFFFFFF);
-    } else {
-      return const Color(0xFF8A8A8A);
-    }
-  }
+  
 
   @override
   Widget build(BuildContext context) {

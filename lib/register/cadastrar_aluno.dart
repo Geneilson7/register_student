@@ -58,6 +58,9 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
   final TextEditingController _cepController = TextEditingController();
   final TextEditingController _escolaController = TextEditingController();
   final TextEditingController _endescolaController = TextEditingController();
+  final TextEditingController _dataInscricaoController =
+      TextEditingController();
+  final TextEditingController _dataInativoController = TextEditingController();
   String? tipoTurno = '';
   String? tipoTurnoTreino = '';
   int? tipoFaixa;
@@ -113,6 +116,28 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
     tipoFaixa = aluno['faixa_id'];
     tipoParentesco = aluno['grau'];
     tipoParentesco2 = aluno['grau2'];
+
+    // Data cadastro
+    String dataIso = aluno['data_cadastro'];
+    if (dataIso.isNotEmpty) {
+      DateTime dataCadastro = DateTime.parse(dataIso);
+      String dataFormatada = DateFormat('dd/MM/yyyy').format(dataCadastro);
+      _dataInscricaoController.text = dataFormatada;
+    } else {
+      _dataInscricaoController.text = '';
+    }
+
+    // Data
+    String dataInativoIso = aluno['data_inativo'];
+    if (dataInativoIso.isNotEmpty) {
+      DateTime dataInativo = DateTime.parse(dataInativoIso);
+      String dataInativoFormatada =
+          DateFormat('dd/MM/yyyy').format(dataInativo);
+      _dataInativoController.text = dataInativoFormatada;
+    } else {
+      _dataInativoController.text = ''; // Limpa caso o aluno esteja ativo
+    }
+
     setState(() {});
     print(_populateFields);
   }
@@ -184,6 +209,30 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
     }
   }
 
+  void _onStatusChanged(String? newValue) {
+    setState(() {
+      tipoStatus = newValue;
+
+      if (tipoStatus == 'Inativo') {
+        // Salva a data atual como data de inatividade
+        String dataAtual = DateFormat('yyyy-MM-dd').format(DateTime.now());
+        _dataInativoController.text =
+            DateFormat('dd/MM/yyyy').format(DateTime.now());
+
+        // Atualiza no banco de dados passando um Map
+        dbHelper.updateAluno(
+            widget.alunoId!, {'status': tipoStatus, 'data_inativo': dataAtual});
+      } else if (tipoStatus == 'Ativo') {
+        // Limpa a data de inatividade
+        _dataInativoController.clear();
+
+        // Atualiza no banco de dados com a data de inatividade como null
+        dbHelper.updateAluno(
+            widget.alunoId!, {'status': tipoStatus, 'data_inativo': null});
+      }
+    });
+  }
+
   String? getFaixaDescricao(int? faixaId, List<Map<String, dynamic>> faixas) {
     if (faixaId == null) return null;
 
@@ -238,15 +287,6 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
               pw.Row(
                 mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                 children: [
-                  pw.SizedBox(
-                    width: 100,
-                    child: pw.Container(
-                      width: 70,
-                      height: 70,
-                      child: pw.Image(image),
-                      // color: PdfColor.fromHex('eaf1f8'),
-                    ),
-                  ),
                   pw.Text(
                     dataAtual,
                     style: pw.TextStyle(
@@ -254,20 +294,20 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                       fontWeight: pw.FontWeight.normal,
                     ),
                   ),
-                ],
-              ),
-              pw.SizedBox(
-                height: 10,
-              ),
-              pw.Row(
-                mainAxisAlignment: pw.MainAxisAlignment.center,
-                children: [
                   pw.Text(
                     'FICHA CADASTRAL',
                     textAlign: pw.TextAlign.center,
                     style: pw.TextStyle(
                       fontSize: 20,
                       fontWeight: pw.FontWeight.bold,
+                    ),
+                  ),
+                  pw.SizedBox(
+                    width: 100,
+                    child: pw.Container(
+                      width: 80,
+                      height: 80,
+                      child: pw.Image(image),
                     ),
                   ),
                 ],
@@ -637,11 +677,14 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                         label: "Faixa",
                         selectedFaixaId: tipoFaixa,
                         faixas: faixas,
-                        onChanged: (newFaixaId) {
-                          print(newFaixaId);
+                        onChanged: (newFaixaId) async {
                           setState(() {
                             tipoFaixa = newFaixaId;
                           });
+                          if (widget.alunoId != null) {
+                            await dbHelper.addFormacao(
+                                widget.alunoId!, newFaixaId!);
+                          }
                         },
                       ),
                     ),
@@ -654,13 +697,7 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                             label: "Status",
                             selectedValue: tipoStatus,
                             items: const ['Ativo', 'Inativo', 'Concluído'],
-                            onChanged: (newValue) {
-                              setState(
-                                () {
-                                  tipoStatus = newValue!;
-                                },
-                              );
-                            },
+                            onChanged: _onStatusChanged,
                           ),
                         ),
                         const SizedBox(width: 25),
@@ -679,6 +716,50 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                         ),
                       ],
                     ),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    SizedBox(
+                      width: 200,
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 15),
+                        child: TextFormField(
+                          decoration: textFormField("Data Inscrição"),
+                          keyboardType: TextInputType.number,
+                          controller: _dataInscricaoController,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                            TelefoneInputFormatter(),
+                          ],
+                          readOnly: true,
+                        ),
+                      ),
+                    ),
+                    if (tipoStatus == 'Inativo')
+                      SizedBox(
+                        width: 200,
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 15),
+                          child: TextFormField(
+                            decoration: textFormField("Data Inativo"),
+                            keyboardType: TextInputType.number,
+                            controller: _dataInativoController,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return "Campo obrigatório.";
+                              }
+                              return null;
+                            },
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly,
+                              TelefoneInputFormatter(),
+                            ],
+                            readOnly: true,
+                          ),
+                        ),
+                      ),
                   ],
                 ),
                 Row(

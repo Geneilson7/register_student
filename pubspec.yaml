@@ -58,6 +58,9 @@ flutter:
     - assets/image/screen.png
     - assets/image/faixa.png
     - assets/image/logoacademia.jpg
+    - assets/image/addfrequencia.png
+    - assets/image/listafrequencia.png
+    - assets/image/evento.png
 
   # fonts:
   #   - family: Roboto

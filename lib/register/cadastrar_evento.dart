@@ -4,7 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:register_student/pages/faixas.dart';
+import 'package:register_student/pages/eventos.dart';
 import 'package:register_student/pages/home_page.dart';
 import 'package:register_student/services/db_helper.dart';
 import 'package:register_student/util/form.dart';
@@ -45,35 +45,43 @@ class _CadastrarEventoState extends State<CadastrarEvento> {
   void initState() {
     super.initState();
     if (widget.alunoId != null) {
-      _loadAluno(widget.alunoId!);
+      _loadEvento(widget.alunoId!);
     }
     _loadDuplaAss();
     _loadAssUnica();
   }
 
-  void _populateFields(Map<String, dynamic> faixa) {
-    _tituloController.text = faixa['descricao'];
+  void _populateFields(Map<String, dynamic> evento) {
+    _tituloController.text = evento['titulo'];
+    _escrtiaController.text = evento['escrita'];
+    _assinatura1Controller.text = evento['assinatura_1'];
+    _assinatura2Controller.text = evento['assinatura_2'];
+    _assUnicaController.text = evento['ass_unica'];
     setState(() {});
   }
 
-  void _loadAluno(int id) async {
-    final faixa = await dbHelper.getFaixasById(id);
-    if (faixa != null) {
-      _populateFields(faixa);
+  void _loadEvento(int id) async {
+    final evento = await dbHelper.getEventosById(id);
+    if (evento != null) {
+      _populateFields(evento);
     }
   }
 
   void _saveItem() async {
     try {
       if (_formKey.currentState!.validate()) {
-        final faixa = {
-          'descricao': _tituloController.text,
+        final evento = {
+          'titulo': _tituloController.text,
+          'escrita': _escrtiaController.text,
+          'assinatura_1': _assinatura1Controller.text,
+          'assinatura_2': _assinatura2Controller.text,
+          'ass_unica': _assUnicaController.text,
         };
 
         if (widget.alunoId != null) {
-          await dbHelper.updateFaixa(widget.alunoId!, faixa);
+          await dbHelper.updateEventos(widget.alunoId!, evento);
         } else {
-          await dbHelper.insertFaixa(faixa);
+          await dbHelper.insertEventos(evento);
         }
 
         Navigator.push(
@@ -89,7 +97,7 @@ class _CadastrarEventoState extends State<CadastrarEvento> {
                 );
                 return false;
               },
-              child: const FaixaScreen(),
+              child: const EventosScreen(),
             ),
           ),
         );

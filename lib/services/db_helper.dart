@@ -69,6 +69,7 @@ class DBHelper {
       aluno_id INTEGER,
       data TEXT,
       presente INTEGER,
+      data_cadastro TEXT DEFAULT (datetime('now')),
       FOREIGN KEY (aluno_id) REFERENCES alunos(id)
     )
   ''');
@@ -76,7 +77,8 @@ class DBHelper {
     await db.execute('''
       CREATE TABLE faixas (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        descricao TEXT
+        descricao TEXT,
+        data_cadastro TEXT DEFAULT (datetime('now'))
       )
     ''');
 
@@ -96,6 +98,8 @@ class DBHelper {
         bairro TEXT,
         endereco TEXT,
         telefone TEXT,
+        data_cadastro TEXT DEFAULT (datetime('now')),
+        data_inativo TEXT,
         FOREIGN KEY (faixa_id) REFERENCES faixas(id)
       )
     ''');
@@ -107,9 +111,21 @@ class DBHelper {
         escrita TEXT,
         assinatura_1 TEXT,
         assinatura_2 TEXT,
-        ass_unica TEXT
+        ass_unica TEXT,
+        data_cadastro TEXT DEFAULT (datetime('now'))
       )
     ''');
+
+    await db.execute('''
+      CREATE TABLE formacao_aluno (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        aluno_id INTEGER NOT NULL,
+        faixa_id INTEGER NOT NULL,
+        data_mudanca TEXT NOT NULL,
+        FOREIGN KEY (aluno_id) REFERENCES alunos(id),
+        FOREIGN KEY (faixa_id) REFERENCES faixas(id)
+      )
+  ''');
   }
 
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
@@ -117,7 +133,8 @@ class DBHelper {
       await db.execute('''
         CREATE TABLE faixas (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
-          descricao TEXT
+          descricao TEXT,
+          data_cadastro TEXT DEFAULT (datetime('now'))
         )
       ''');
 
@@ -354,9 +371,80 @@ class DBHelper {
   Future<void> deleteFrequencia(int alunoId) async {
     final db = await database;
     await db.delete(
-      'frequencia', 
+      'frequencia',
       where: 'aluno_id = ?',
       whereArgs: [alunoId],
     );
+  }
+
+  // Eventos
+  Future<void> insertEventos(Map<String, dynamic> faixa) async {
+    final db = await database;
+    await db.insert('eventos', faixa);
+  }
+
+  Future<void> updateEventos(int id, Map<String, dynamic> aluno) async {
+    final db = await database;
+    await db.update('eventos', aluno, where: 'id = ?', whereArgs: [id]);
+  }
+
+  Future<void> deleteEventos(int id) async {
+    final db = await database;
+    await db.transaction((txn) async {
+      await txn.delete('eventos', where: 'id = ?', whereArgs: [id]);
+    });
+  }
+
+  Future<List<Map<String, dynamic>>> getEventos() async {
+    final db = await database;
+    return await db.query('eventos');
+  }
+
+  Future<Map<String, dynamic>?> getEventosById(int id) async {
+    final db = await database;
+    final List<Map<String, dynamic>> result = await db.query(
+      'eventos',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+    return result.isNotEmpty ? result.first : null;
+  }
+
+  Future<List<Map<String, dynamic>>> searchEventos(String query) async {
+    final db = await database;
+    final result = await db.rawQuery(
+        'SELECT * FROM faixas WHERE id LIKE ? OR descricao LIKE ?',
+        ['%$query%', '%$query%']);
+    return result;
+  }
+
+  Future<List<Map<String, dynamic>>> getHistoricoFormacaoFiltrado(
+      int alunoId, DateTime startDate, DateTime endDate) async {
+    final db = await database;
+    String start = startDate.toIso8601String();
+    String end = endDate.toIso8601String();
+
+    return await db.rawQuery('''
+    SELECT faixas.descricao AS faixa, formacao_aluno.data_mudanca
+    FROM formacao_aluno
+    JOIN faixas ON formacao_aluno.faixa_id = faixas.id
+    WHERE formacao_aluno.aluno_id = ? AND formacao_aluno.data_mudanca BETWEEN ? AND ?
+    ORDER BY formacao_aluno.data_mudanca DESC
+  ''', [alunoId, start, end]);
+  }
+
+  Future<List<Map<String, dynamic>>> getFormacaoByAlunoId(int alunoId) async {
+    final db = await database;
+    return await db
+        .query('formacao_aluno', where: 'aluno_id = ?', whereArgs: [alunoId]);
+  }
+
+  Future<void> addFormacao(int alunoId, int faixaId) async {
+    final db = await database;
+    await db.insert('formacao_aluno', {
+      'aluno_id': alunoId,
+      'faixa_id': faixaId,
+      'data_mudanca': DateTime.now().toIso8601String(),
+    });
   }
 }

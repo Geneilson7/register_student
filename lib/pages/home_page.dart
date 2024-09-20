@@ -72,7 +72,7 @@ class _HomePageState extends State<HomePage> {
       case 3:
         return const EventosScreen();
       case 4:
-        return FrequenciaScreen();
+        return const FrequenciaScreen();
       case 5:
         return const ListagemFrequenciaScreen();
       case 6:
@@ -179,7 +179,7 @@ class _HomePageState extends State<HomePage> {
                                 },
                               ),
                               buildListTile(
-                                imagePath: 'assets/image/faixa.png',
+                                imagePath: 'assets/image/evento.png',
                                 index: 3,
                                 title: "Eventos",
                                 onTap: () {
@@ -187,15 +187,15 @@ class _HomePageState extends State<HomePage> {
                                 },
                               ),
                               buildListTile(
-                                imagePath: 'assets/image/faixa.png',
+                                imagePath: 'assets/image/addfrequencia.png',
                                 index: 4,
-                                title: "Frequência",
+                                title: "Frequências",
                                 onTap: () {
                                   _onItemTapped(4);
                                 },
                               ),
                               buildListTile(
-                                imagePath: 'assets/image/faixa.png',
+                                imagePath: 'assets/image/listafrequencia.png',
                                 index: 5,
                                 title: "Lista de Frequências",
                                 onTap: () {

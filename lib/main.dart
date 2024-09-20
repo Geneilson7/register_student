@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print, depend_on_referenced_packages, unused_local_variable
 
 import 'package:flutter/material.dart';
 import 'package:register_student/pages/home_page.dart';
@@ -18,10 +18,10 @@ void main() async {
     size: Size(1366, 768),
   );
 
-  await windowManager.waitUntilReadyToShow(windowOptions, () async {
-    // await windowManager.maximize();
-    // await windowManager.show();
-  });
+  // await windowManager.waitUntilReadyToShow(windowOptions, () async {
+  //   // await windowManager.maximize();
+  //   // await windowManager.show();
+  // });
 
   // Inicializar o banco de dados
   sqfliteFfiInit();

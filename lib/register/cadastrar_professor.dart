@@ -176,10 +176,9 @@ class _CadastrarPofessorState extends State<CadastrarPofessor> {
                   pw.SizedBox(
                     width: 100,
                     child: pw.Container(
-                      width: 70,
-                      height: 70,
+                      width: 80,
+                      height: 80,
                       child: pw.Image(image),
-                      // color: PdfColor.fromHex('eaf1f8'),
                     ),
                   ),
                   pw.Text(

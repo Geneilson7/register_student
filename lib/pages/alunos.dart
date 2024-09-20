@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:register_student/pages/formacao.dart';
 import 'package:register_student/register/cadastrar_aluno.dart';
 import 'package:register_student/pages/home_page.dart';
 import 'package:register_student/services/db_helper.dart';
@@ -283,6 +284,16 @@ class _AlunosScreenState extends State<AlunosScreen> {
                           ),
                           DataColumn(
                             label: Text(
+                              'Formação',
+                              style: GoogleFonts.poppins(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ),
+                          DataColumn(
+                            label: Text(
                               'Ações',
                               style: GoogleFonts.poppins(
                                 color: Colors.black,
@@ -388,6 +399,23 @@ class _AlunosScreenState extends State<AlunosScreen> {
                               ),
                               DataCell(
                                 IconButton(
+                                  icon: const Icon(Icons.school,
+                                      color: Colors.blue),
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            FormacaoAlunoScreen(
+                                                alunoId: item['id'],
+                                                nomeId: item['nome']),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                              DataCell(
+                                IconButton(
                                   icon: const Icon(
                                     Icons.delete,
                                     color: Colors.red,
@@ -415,7 +443,7 @@ class _AlunosScreenState extends State<AlunosScreen> {
                                                   context,
                                                   MaterialPageRoute(
                                                     builder: (context) =>
-                                                        HomePage(),
+                                                        const HomePage(),
                                                   ),
                                                 );
                                               },
