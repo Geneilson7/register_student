@@ -53,64 +53,6 @@ class _FaixaScreenState extends State<FaixaScreen> {
     }
   }
 
-  void _showDeleteDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(
-            'Confirmação',
-            style: GoogleFonts.poppins(
-              fontSize: 18,
-              fontWeight: FontWeight.w500,
-              color: const Color(0xFF000000),
-            ),
-          ),
-          content: const Text('Deseja realmente cancelar?'),
-          actions: [
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(
-                    builder: (context) => const HomePage(),
-                  ),
-                  (route) => false,
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(13),
-                ),
-                elevation: 3,
-                backgroundColor: const Color(0xFFda2828),
-              ),
-              child: Text(
-                'Sim',
-                style: GoogleFonts.poppins(color: const Color(0xFFFFFFFF)),
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(13),
-                ),
-                elevation: 3,
-                backgroundColor: const Color(0xFF008000),
-              ),
-              child: Text(
-                'Não',
-                style: GoogleFonts.poppins(color: const Color(0xFFFFFFFF)),
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -297,92 +239,7 @@ class _FaixaScreenState extends State<FaixaScreen> {
                                     color: Colors.red,
                                   ),
                                   onPressed: () {
-                                    showDialog(
-                                      context: context,
-                                      builder: (_) {
-                                        return AlertDialog(
-                                          title: Text(
-                                            'Confirmação',
-                                            style: GoogleFonts.poppins(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.w500,
-                                              color: const Color(0xFF000000),
-                                            ),
-                                          ),
-                                          content: const Text(
-                                              'Deseja realmente concluir a exclusão?'),
-                                          actions: <Widget>[
-                                            ElevatedButton(
-                                              onPressed: () async {
-                                                _deleteItem(item['id']);
-                                                Navigator.pushReplacement(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        const HomePage(),
-                                                  ),
-                                                );
-                                              },
-                                              style: ElevatedButton.styleFrom(
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(13),
-                                                ),
-                                                elevation: 3,
-                                                backgroundColor:
-                                                    const Color(0xFFda2828),
-                                              ),
-                                              child: Text(
-                                                'Sim',
-                                                style: GoogleFonts.poppins(
-                                                    color: const Color(
-                                                        0xFFFFFFFF)),
-                                              ),
-                                            ),
-                                            ElevatedButton(
-                                              onPressed: () {
-                                                Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        WillPopScope(
-                                                      onWillPop: () async {
-                                                        Navigator
-                                                            .pushReplacement(
-                                                          context,
-                                                          MaterialPageRoute(
-                                                            builder: (context) =>
-                                                                const HomePage(),
-                                                          ),
-                                                        );
-                                                        return false;
-                                                      },
-                                                      child:
-                                                          const FaixaScreen(),
-                                                    ),
-                                                  ),
-                                                );
-                                              },
-                                              style: ElevatedButton.styleFrom(
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(13),
-                                                ),
-                                                elevation: 3,
-                                                backgroundColor:
-                                                    const Color(0xFF008000),
-                                              ),
-                                              child: Text(
-                                                'Não',
-                                                style: GoogleFonts.poppins(
-                                                    color: const Color(
-                                                        0xFFFFFFFF)),
-                                              ),
-                                            ),
-                                          ],
-                                        );
-                                      },
-                                    );
+                                    _showDeleteDialog(context);
                                   },
                                 ),
                               ),
@@ -398,6 +255,64 @@ class _FaixaScreenState extends State<FaixaScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  void _showDeleteDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            'Confirmação',
+            style: GoogleFonts.poppins(
+              fontSize: 18,
+              fontWeight: FontWeight.w500,
+              color: const Color(0xFF000000),
+            ),
+          ),
+          content: const Text('Deseja realmente cancelar?'),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(
+                    builder: (context) => const HomePage(),
+                  ),
+                  (route) => false,
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(13),
+                ),
+                elevation: 3,
+                backgroundColor: const Color(0xFFda2828),
+              ),
+              child: Text(
+                'Sim',
+                style: GoogleFonts.poppins(color: const Color(0xFFFFFFFF)),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(13),
+                ),
+                elevation: 3,
+                backgroundColor: const Color(0xFF008000),
+              ),
+              child: Text(
+                'Não',
+                style: GoogleFonts.poppins(color: const Color(0xFFFFFFFF)),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }

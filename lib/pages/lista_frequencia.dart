@@ -303,22 +303,6 @@ class _ListagemFrequenciaScreenState extends State<ListagemFrequenciaScreen> {
             ElevatedButton(
               onPressed: () {
                 Navigator.of(context).pop();
-              },
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(13),
-                ),
-                elevation: 3,
-                backgroundColor: const Color(0xFF008000),
-              ),
-              child: Text(
-                'Cancelar',
-                style: GoogleFonts.poppins(color: const Color(0xFFFFFFFF)),
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
                 _deletarFrequencia(alunoId);
               },
               style: ElevatedButton.styleFrom(
@@ -330,6 +314,22 @@ class _ListagemFrequenciaScreenState extends State<ListagemFrequenciaScreen> {
               ),
               child: Text(
                 'Excluir',
+                style: GoogleFonts.poppins(color: const Color(0xFFFFFFFF)),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(13),
+                ),
+                elevation: 3,
+                backgroundColor: const Color(0xFF008000),
+              ),
+              child: Text(
+                'Cancelar',
                 style: GoogleFonts.poppins(color: const Color(0xFFFFFFFF)),
               ),
             ),

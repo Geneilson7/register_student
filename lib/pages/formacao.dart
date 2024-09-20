@@ -89,7 +89,7 @@ class _FormacaoAlunoScreenState extends State<FormacaoAlunoScreen> {
               ),
               pw.SizedBox(height: 20),
               pw.Text('Período: $selectedDateRangeText',
-                  style: pw.TextStyle(fontSize: 16)),
+                  style: const pw.TextStyle(fontSize: 16)),
               pw.SizedBox(height: 10),
               pw.ListView.builder(
                 itemCount: _formacaoItems.length,
