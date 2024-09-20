@@ -360,7 +360,7 @@ class DBHelper {
   Future<List<Map<String, dynamic>>> getFrequenciaPorData(String data) async {
     final db = await database;
     final result = await db.rawQuery('''
-    SELECT frequencia.aluno_id, alunos.nome, frequencia.presente
+    SELECT frequencia.id, alunos.nome, frequencia.presente
     FROM frequencia
     JOIN alunos ON frequencia.aluno_id = alunos.id 
     WHERE DATE(frequencia.data) = ?
@@ -372,7 +372,7 @@ class DBHelper {
     final db = await database;
     await db.delete(
       'frequencia',
-      where: 'aluno_id = ?',
+      where: 'id = ?',
       whereArgs: [alunoId],
     );
   }
@@ -423,13 +423,12 @@ class DBHelper {
     final db = await database;
     String start = startDate.toIso8601String();
     String end = endDate.toIso8601String();
-
     return await db.rawQuery('''
-    SELECT faixas.descricao AS faixa, formacao_aluno.data_mudanca
-    FROM formacao_aluno
-    JOIN faixas ON formacao_aluno.faixa_id = faixas.id
-    WHERE formacao_aluno.aluno_id = ? AND formacao_aluno.data_mudanca BETWEEN ? AND ?
-    ORDER BY formacao_aluno.data_mudanca DESC
+    SELECT  formacao_aluno.id, faixas.descricao AS faixa, formacao_aluno.data_mudanca
+    FROM    formacao_aluno
+    JOIN    faixas ON formacao_aluno.faixa_id = faixas.id
+    WHERE   formacao_aluno.aluno_id = ? AND formacao_aluno.data_mudanca BETWEEN ? AND ?
+            ORDER BY formacao_aluno.data_mudanca DESC
   ''', [alunoId, start, end]);
   }
 
@@ -446,5 +445,14 @@ class DBHelper {
       'faixa_id': faixaId,
       'data_mudanca': DateTime.now().toIso8601String(),
     });
+  }
+
+  Future<void> deleteFormacao(int formacaoId) async {
+    final db = await database;
+    await db.delete(
+      'formacao_aluno',
+      where: 'id = ?',
+      whereArgs: [formacaoId],
+    );
   }
 }

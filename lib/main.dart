@@ -18,10 +18,7 @@ void main() async {
     size: Size(1366, 768),
   );
 
-  // await windowManager.waitUntilReadyToShow(windowOptions, () async {
-  //   // await windowManager.maximize();
-  //   // await windowManager.show();
-  // });
+  await windowManager.waitUntilReadyToShow(windowOptions, () async {});
 
   // Inicializar o banco de dados
   sqfliteFfiInit();

@@ -294,20 +294,28 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                       fontWeight: pw.FontWeight.normal,
                     ),
                   ),
+                  pw.SizedBox(
+                    width: 100,
+                    child: pw.Container(
+                      width: 70,
+                      height: 70,
+                      child: pw.Image(image),
+                    ),
+                  ),
+                ],
+              ),
+              pw.SizedBox(
+                height: 10,
+              ),
+              pw.Row(
+                mainAxisAlignment: pw.MainAxisAlignment.center,
+                children: [
                   pw.Text(
                     'FICHA CADASTRAL',
                     textAlign: pw.TextAlign.center,
                     style: pw.TextStyle(
                       fontSize: 20,
                       fontWeight: pw.FontWeight.bold,
-                    ),
-                  ),
-                  pw.SizedBox(
-                    width: 100,
-                    child: pw.Container(
-                      width: 80,
-                      height: 80,
-                      child: pw.Image(image),
                     ),
                   ),
                 ],

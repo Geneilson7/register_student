@@ -3,7 +3,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:register_student/services/db_helper.dart';
-// import 'db_helper.dart'; // Assumindo que o arquivo DBHelper está nesse caminho
 
 class FrequenciaScreen extends StatefulWidget {
   const FrequenciaScreen({super.key});
@@ -16,6 +15,7 @@ class _FrequenciaScreenState extends State<FrequenciaScreen> {
   List<Map<String, dynamic>> alunos = [];
   Map<int, bool> frequencia = {};
   bool isLoading = true;
+  bool marcarTodos = false; // Controle do Switch "Marcar Todos"
 
   @override
   void initState() {
@@ -43,15 +43,22 @@ class _FrequenciaScreenState extends State<FrequenciaScreen> {
         const SnackBar(content: Text('Frequência registrada com sucesso!')));
   }
 
+  void _toggleMarcarTodos(bool? value) {
+    setState(() {
+      marcarTodos = value ?? false;
+      for (var aluno in alunos) {
+        frequencia[aluno['id']] = marcarTodos; // Atualiza a frequência de todos
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 15,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 15),
               child: Column(
                 children: [
                   Padding(
@@ -70,11 +77,20 @@ class _FrequenciaScreenState extends State<FrequenciaScreen> {
                       ],
                     ),
                   ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text("Marcar Todos"),
+                      Switch(
+                        value: marcarTodos,
+                        activeColor: const Color(0xFF1d1e2b),
+                        onChanged: _toggleMarcarTodos,
+                      ),
+                    ],
+                  ),
                   Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.only(
-                        top: 20,
-                      ),
+                      padding: const EdgeInsets.only(top: 20),
                       child: ListView.builder(
                         itemCount: alunos.length,
                         itemBuilder: (context, index) {

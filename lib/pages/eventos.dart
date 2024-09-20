@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:register_student/pages/home_page.dart';
+import 'package:register_student/register/cadastrar_evento.dart';
 import 'package:register_student/register/cadastrar_faixa.dart';
 import 'package:register_student/services/db_helper.dart';
 
@@ -52,8 +53,6 @@ class _EventosScreenState extends State<EventosScreen> {
       );
     }
   }
-
-  
 
   @override
   Widget build(BuildContext context) {
@@ -210,14 +209,14 @@ class _EventosScreenState extends State<EventosScreen> {
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) =>
-                                          CadastrarFaixa(alunoId: item['id']),
+                                          CadastrarEvento(alunoId: item['id']),
                                     ),
                                   ).then((value) => _refreshItems());
                                 },
                               ),
                               DataCell(
                                 Text(
-                                  item['descricao'].toString().toUpperCase(),
+                                  item['titulo'].toString().toUpperCase(),
                                   style: GoogleFonts.poppins(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w700,
@@ -229,7 +228,7 @@ class _EventosScreenState extends State<EventosScreen> {
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) =>
-                                          CadastrarFaixa(alunoId: item['id']),
+                                          CadastrarEvento(alunoId: item['id']),
                                     ),
                                   ).then((value) => _refreshItems());
                                 },

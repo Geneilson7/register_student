@@ -209,20 +209,19 @@ class _CadastrarEventoState extends State<CadastrarEvento> {
               pw.Row(
                 mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                 children: [
+                  pw.Text(
+                    dataAtual,
+                    style: pw.TextStyle(
+                      fontSize: 9,
+                      fontWeight: pw.FontWeight.normal,
+                    ),
+                  ),
                   pw.SizedBox(
                     width: 100,
                     child: pw.Container(
                       width: 70,
                       height: 70,
                       child: pw.Image(image),
-                      // color: PdfColor.fromHex('eaf1f8'),
-                    ),
-                  ),
-                  pw.Text(
-                    dataAtual,
-                    style: pw.TextStyle(
-                      fontSize: 9,
-                      fontWeight: pw.FontWeight.normal,
                     ),
                   ),
                 ],
@@ -244,13 +243,17 @@ class _CadastrarEventoState extends State<CadastrarEvento> {
                 ],
               ),
               pw.SizedBox(height: 20),
-              pw.Text(
-                _escrtiaController.text,
-                style: const pw.TextStyle(
-                  fontSize: 12,
+              pw.Container(
+                alignment: pw.Alignment.topLeft, // Alinhamento do container
+                child: pw.Text(
+                  _escrtiaController.text,
+                  style: const pw.TextStyle(
+                    fontSize: 12,
+                  ),
+                  textAlign:
+                      pw.TextAlign.left, // Garantindo alinhamento à esquerda
+                  softWrap: true, // Ativa a quebra de linha automática
                 ),
-                textAlign: pw.TextAlign.justify,
-                softWrap: true, // Ativa a quebra de linha automática
               ),
               pw.Spacer(),
               if (!isDuplaAss) ...[

@@ -4,6 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:register_student/services/db_helper.dart';
 import 'package:intl/intl.dart'; // Para formatar a data
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
+
+import 'package:register_student/util/view_pdf.dart';
 
 class ListagemFrequenciaScreen extends StatefulWidget {
   const ListagemFrequenciaScreen({super.key});
@@ -62,6 +68,97 @@ class _ListagemFrequenciaScreenState extends State<ListagemFrequenciaScreen> {
     buscarFrequencia();
   }
 
+  Future<void> _gerarPdf() async {
+    final pdf = pw.Document();
+    final String dataFormatada =
+        DateFormat('dd/MM/yyyy').format(dataSelecionada!);
+
+    pdf.addPage(
+      pw.Page(
+        build: (pw.Context context) {
+          return pw.Column(
+            children: [
+              pw.Text(
+                'Relatório de Presença - $dataFormatada',
+                style:
+                    pw.TextStyle(fontSize: 20, fontWeight: pw.FontWeight.bold),
+                textAlign: pw.TextAlign.center,
+              ),
+              pw.SizedBox(height: 20),
+              pw.Table(
+                border: pw.TableBorder.all(
+                  color: PdfColors.black,
+                  width: 1,
+                ),
+                children: [
+                  pw.TableRow(
+                    children: [
+                      pw.Padding(
+                        padding: const pw.EdgeInsets.symmetric(
+                          horizontal: 35,
+                          vertical: 8,
+                        ),
+                        child: pw.Text(
+                          'Nome do Aluno',
+                          style: pw.TextStyle(
+                            fontWeight: pw.FontWeight.bold,
+                          ),
+                          textAlign: pw.TextAlign.center,
+                        ),
+                      ),
+                      pw.Padding(
+                        padding: const pw.EdgeInsets.all(8.0),
+                        child: pw.Text(
+                          'Status',
+                          style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                          textAlign: pw.TextAlign.center,
+                        ),
+                      ),
+                    ],
+                  ),
+                  ...frequencias.map((freq) {
+                    final nome = freq['nome'] ?? 'Desconhecido';
+                    final presente = freq['presente'] ?? 0;
+                    return pw.TableRow(
+                      children: [
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(8.0),
+                          child: pw.Text(nome),
+                        ),
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(8.0),
+                          child: pw.Text(
+                            presente == 1 ? 'Presente' : 'Faltou',
+                            style: pw.TextStyle(
+                              color: presente == 1
+                                  ? PdfColors.green
+                                  : PdfColors.red,
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  }).toList(),
+                ],
+              ),
+            ],
+          );
+        },
+      ),
+    );
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PreviewScreen(
+          doc: pdf,
+          pdfFileName: 'Relatório de Presença - $dataFormatada.pdf',
+          titulo: "Visualizar Lista de Presença",
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -86,10 +183,8 @@ class _ListagemFrequenciaScreenState extends State<ListagemFrequenciaScreen> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 15,
-                    vertical: 10,
-                  ),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -109,14 +204,12 @@ class _ListagemFrequenciaScreenState extends State<ListagemFrequenciaScreen> {
                 ),
                 Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 15,
-                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
                     child: ListView.builder(
                       itemCount: frequencias.length,
                       itemBuilder: (context, index) {
                         final freq = frequencias[index];
-                        final alunoId = freq['aluno_id'] ?? '';
+                        final alunoId = freq['id'] ?? '';
                         final nome = freq['nome'] ?? 'Desconhecido';
                         final presente = freq['presente'] ?? 0;
 
@@ -136,9 +229,8 @@ class _ListagemFrequenciaScreenState extends State<ListagemFrequenciaScreen> {
                             color: const Color(0xFFFFFFFF),
                             elevation: 0,
                             child: ListTile(
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 20,
-                              ),
+                              contentPadding:
+                                  const EdgeInsets.symmetric(horizontal: 20),
                               leading: Text(
                                 alunoId.toString(),
                                 style: GoogleFonts.poppins(
@@ -164,15 +256,10 @@ class _ListagemFrequenciaScreenState extends State<ListagemFrequenciaScreen> {
                                         : Colors.red,
                                     size: 30,
                                   ),
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
+                                  const SizedBox(width: 10),
                                   IconButton(
-                                    icon: const Icon(
-                                      Icons.delete,
-                                      color: Colors.red,
-                                      size: 30,
-                                    ),
+                                    icon: const Icon(Icons.delete,
+                                        color: Colors.red, size: 30),
                                     onPressed: () =>
                                         _showConfirmDialog(alunoId),
                                   ),
@@ -187,6 +274,12 @@ class _ListagemFrequenciaScreenState extends State<ListagemFrequenciaScreen> {
                 ),
               ],
             ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: const Color(0xFF1d1e2b),
+        foregroundColor: const Color(0xFFFFFFFF),
+        onPressed: _gerarPdf,
+        child: const Icon(Icons.picture_as_pdf),
+      ),
     );
   }
 
