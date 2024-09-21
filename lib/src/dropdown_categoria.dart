@@ -1,25 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class Categoria extends StatefulWidget {
+class Turma extends StatefulWidget {
   final String label;
-  final int? selectedCategoriaId; // Mude para int?
-  final List<Map<String, dynamic>> faixas; // id e descricao
+  final int? selectedTurmaId; // Mude para int?
+  final List<Map<String, dynamic>> turmas; // id e descricao
   final ValueChanged<int?> onChanged; // Mude para int?
 
-  const Categoria({
+  const Turma({
     Key? key,
     required this.label,
-    required this.selectedCategoriaId,
-    required this.faixas,
+    required this.selectedTurmaId,
+    required this.turmas,
     required this.onChanged,
   }) : super(key: key);
 
   @override
-  State<Categoria> createState() => _CategoriaState();
+  State<Turma> createState() => _TurmaState();
 }
 
-class _CategoriaState extends State<Categoria> {
+class _TurmaState extends State<Turma> {
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -33,9 +33,9 @@ class _CategoriaState extends State<Categoria> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             DropdownButtonFormField<int>(
-              value: widget.selectedCategoriaId,
+              value: widget.selectedTurmaId,
               onChanged: widget.onChanged,
-              items: widget.faixas.map<DropdownMenuItem<int>>((faixa) {
+              items: widget.turmas.map<DropdownMenuItem<int>>((faixa) {
                 return DropdownMenuItem<int>(
                   value: faixa['id'], // deve ser int
                   child: Text(faixa['descricao']),

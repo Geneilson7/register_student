@@ -60,8 +60,10 @@ class DBHelper {
         data_inativo TEXT,
         numero_casa TEXT,
         categoria TEXT,
+        turma_id TEXT,
         FOREIGN KEY (faixa_id) REFERENCES faixas(id),
-        FOREIGN KEY (professor_id) REFERENCES professores(id)
+        FOREIGN KEY (professor_id) REFERENCES professores(id),
+        FOREIGN KEY (turma_id) REFERENCES turmas(id)
       )
     ''');
 
@@ -231,7 +233,7 @@ class DBHelper {
   Future<void> deleteFaixa(int id) async {
     final db = await database;
     await db.transaction((txn) async {
-      await txn.delete('alunos', where: 'id = ?', whereArgs: [id]);
+      await txn.delete('faixas', where: 'id = ?', whereArgs: [id]);
     });
   }
 
@@ -506,5 +508,10 @@ class DBHelper {
   Future<List<Map<String, dynamic>>> getTurmas() async {
     final db = await database;
     return await db.query('turmas');
+  }
+
+  Future<List<Map<String, dynamic>>> fetchTurmas() async {
+    final db = await database; // função que obtém o database
+    return await db.query('turmas', columns: ['id', 'descricao']);
   }
 }

@@ -9,6 +9,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:register_student/pages/alunos.dart';
 import 'package:register_student/pages/home_page.dart';
 import 'package:register_student/services/db_helper.dart';
+import 'package:register_student/src/dropdown_categoria.dart';
 import 'package:register_student/src/dropdown_faixa.dart';
 import 'package:register_student/src/dropdown_pcd.dart';
 import 'package:register_student/src/dropdown_status.dart';
@@ -65,12 +66,14 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
   String? tipoTurno = '';
   String? tipoTurnoTreino = '';
   int? tipoFaixa;
+  int? tipoTurma;
   String? tipoParentesco = '';
   String? tipoParentesco2 = '';
 
   final _formKey = GlobalKey<FormState>();
 
   List<Map<String, dynamic>> faixas = [];
+  List<Map<String, dynamic>> turmas = [];
   bool isMaiorDeIdade = false;
   bool isConcluido = false;
 
@@ -85,6 +88,17 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
         setState(
           () {
             faixas = data;
+          },
+        );
+      },
+    );
+
+    // Turma
+    dbHelper.fetchTurmas().then(
+      (data) {
+        setState(
+          () {
+            turmas = data;
           },
         );
       },
@@ -115,6 +129,7 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
     tipoTurno = aluno['turnoescolar'];
     tipoTurnoTreino = aluno['turnotreino'];
     tipoFaixa = aluno['faixa_id'];
+    tipoTurma = aluno['turma_id'];
     tipoParentesco = aluno['grau'];
     tipoParentesco2 = aluno['grau2'];
     _numCasaController.text = aluno['numero_casa'];
@@ -176,6 +191,7 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
           'turnoescolar': tipoTurno,
           'turnotreino': tipoTurnoTreino,
           'faixa_id': tipoFaixa,
+          'turma_id': tipoTurma,
           'grau': tipoParentesco,
           'grau2': tipoParentesco2,
           'numero_casa': _numCasaController.text,
@@ -743,6 +759,21 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                           // keyboardType: TextInputType.number,
                           controller: _numCasaController,
                         ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 200,
+                      child: Turma(
+                        label: "Turma",
+                        selectedTurmaId: tipoTurma,
+                        turmas: turmas,
+                        onChanged: (newTurmaId) async {
+                          setState(
+                            () {
+                              tipoTurma = newTurmaId;
+                            },
+                          );
+                        },
                       ),
                     ),
                     SizedBox(

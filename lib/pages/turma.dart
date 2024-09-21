@@ -6,14 +6,14 @@ import 'package:register_student/pages/home_page.dart';
 import 'package:register_student/register/cadastrar_faixa.dart';
 import 'package:register_student/services/db_helper.dart';
 
-class TrumaScreen extends StatefulWidget {
-  const TrumaScreen({super.key});
+class TurmaScreen extends StatefulWidget {
+  const TurmaScreen({super.key});
 
   @override
-  State<TrumaScreen> createState() => _TrumaScreenState();
+  State<TurmaScreen> createState() => _TurmaScreenState();
 }
 
-class _TrumaScreenState extends State<TrumaScreen> {
+class _TurmaScreenState extends State<TurmaScreen> {
   final DBHelper dbHelper = DBHelper();
 
   List<Map<String, dynamic>> _items = [];

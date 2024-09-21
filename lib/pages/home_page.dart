@@ -78,7 +78,7 @@ class _HomePageState extends State<HomePage> {
       case 5:
         return const ListagemFrequenciaScreen();
       case 6:
-        return const TrumaScreen();
+        return const TurmaScreen();
       case 7:
         return const CadastrarAluno(
           showButton: false,
