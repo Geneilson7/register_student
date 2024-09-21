@@ -137,7 +137,7 @@ class _FormacaoAlunoScreenState extends State<FormacaoAlunoScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "Listagem de Frequência",
+                    "Histórico de Formação",
                     style: GoogleFonts.poppins(
                       fontSize: 20,
                       fontWeight: FontWeight.w700,

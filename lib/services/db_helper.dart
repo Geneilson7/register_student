@@ -58,6 +58,8 @@ class DBHelper {
         professor_id INTEGER,
         data_cadastro TEXT DEFAULT (datetime('now')),
         data_inativo TEXT,
+        numero_casa TEXT,
+        categoria TEXT,
         FOREIGN KEY (faixa_id) REFERENCES faixas(id),
         FOREIGN KEY (professor_id) REFERENCES professores(id)
       )
@@ -76,6 +78,14 @@ class DBHelper {
 
     await db.execute('''
       CREATE TABLE faixas (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        descricao TEXT,
+        data_cadastro TEXT DEFAULT (datetime('now'))
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE turmas (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         descricao TEXT,
         data_cadastro TEXT DEFAULT (datetime('now'))
@@ -454,5 +464,47 @@ class DBHelper {
       where: 'id = ?',
       whereArgs: [formacaoId],
     );
+  }
+
+  // turmas
+
+  Future<void> insertTurma(Map<String, dynamic> faixa) async {
+    final db = await database;
+    await db.insert('turmas', faixa);
+  }
+
+  Future<void> updateTurma(int id, Map<String, dynamic> aluno) async {
+    final db = await database;
+    await db.update('turmas', aluno, where: 'id = ?', whereArgs: [id]);
+  }
+
+  Future<void> deleteTurma(int id) async {
+    final db = await database;
+    await db.transaction((txn) async {
+      await txn.delete('turmas', where: 'id = ?', whereArgs: [id]);
+    });
+  }
+
+  Future<Map<String, dynamic>?> getTurmaById(int id) async {
+    final db = await database;
+    final List<Map<String, dynamic>> result = await db.query(
+      'turmas',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+    return result.isNotEmpty ? result.first : null;
+  }
+
+  Future<List<Map<String, dynamic>>> searchTurmas(String query) async {
+    final db = await database;
+    final result = await db.rawQuery(
+        'SELECT * FROM turmas WHERE id LIKE ? OR descricao LIKE ?',
+        ['%$query%', '%$query%']);
+    return result;
+  }
+
+  Future<List<Map<String, dynamic>>> getTurmas() async {
+    final db = await database;
+    return await db.query('turmas');
   }
 }

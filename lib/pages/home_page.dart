@@ -9,9 +9,11 @@ import 'package:register_student/pages/fenquencias.dart';
 import 'package:register_student/pages/lista_frequencia.dart';
 import 'package:register_student/pages/professores.dart';
 import 'package:register_student/pages/sobre.dart';
+import 'package:register_student/pages/turma.dart';
 import 'package:register_student/register/cadastrar_evento.dart';
 import 'package:register_student/register/cadastrar_faixa.dart';
 import 'package:register_student/register/cadastrar_professor.dart';
+import 'package:register_student/register/cadastrar_turma.dart';
 import 'package:register_student/services/db_helper.dart';
 import 'package:register_student/register/cadastrar_aluno.dart';
 
@@ -76,22 +78,28 @@ class _HomePageState extends State<HomePage> {
       case 5:
         return const ListagemFrequenciaScreen();
       case 6:
+        return const TrumaScreen();
+      case 7:
         return const CadastrarAluno(
           showButton: false,
         );
-      case 7:
+      case 8:
         return const CadastrarPofessor(
           showButton: false,
         );
-      case 8:
+      case 9:
         return const CadastrarFaixa(
           showButton: false,
         );
-      case 9:
+      case 10:
         return const CadastrarEvento(
           showButton: false,
         );
-      case 10:
+      case 11:
+        return const CadastrarTurma(
+          showButton: false,
+        );
+      case 12:
         return const Sobre();
       default:
         return _buildHomeScreen();
@@ -202,6 +210,14 @@ class _HomePageState extends State<HomePage> {
                                   _onItemTapped(5);
                                 },
                               ),
+                              buildListTile(
+                                imagePath: 'assets/image/listafrequencia.png',
+                                index: 6,
+                                title: "Turmas",
+                                onTap: () {
+                                  _onItemTapped(6);
+                                },
+                              ),
                               ExpansionTile(
                                 leading: Image.asset(
                                   'assets/image/cadastro.png',
@@ -221,30 +237,37 @@ class _HomePageState extends State<HomePage> {
                                 children: <Widget>[
                                   buildSubListTile(
                                     title: "Cadastrar Aluno",
-                                    index: 6,
-                                    onTap: () {
-                                      _onItemTapped(6);
-                                    },
-                                  ),
-                                  buildSubListTile(
-                                    title: "Cadastrar Professor",
                                     index: 7,
                                     onTap: () {
                                       _onItemTapped(7);
                                     },
                                   ),
                                   buildSubListTile(
-                                    title: "Cadastrar Faixa",
+                                    title: "Cadastrar Professor",
                                     index: 8,
                                     onTap: () {
                                       _onItemTapped(8);
                                     },
                                   ),
                                   buildSubListTile(
-                                    title: "Cadastrar Evento",
+                                    title: "Cadastrar Faixa",
                                     index: 9,
                                     onTap: () {
                                       _onItemTapped(9);
+                                    },
+                                  ),
+                                  buildSubListTile(
+                                    title: "Cadastrar Evento",
+                                    index: 10,
+                                    onTap: () {
+                                      _onItemTapped(10);
+                                    },
+                                  ),
+                                  buildSubListTile(
+                                    title: "Cadastrar Turma",
+                                    index: 11,
+                                    onTap: () {
+                                      _onItemTapped(11);
                                     },
                                   ),
                                 ],
@@ -253,9 +276,9 @@ class _HomePageState extends State<HomePage> {
                                 imagePath: 'assets/image/sobre.png',
                                 title: "Sobre",
                                 onTap: () {
-                                  _onItemTapped(10);
+                                  _onItemTapped(12);
                                 },
-                                index: 10,
+                                index: 12,
                               ),
                             ],
                           ),

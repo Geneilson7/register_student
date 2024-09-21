@@ -61,6 +61,7 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
   final TextEditingController _dataInscricaoController =
       TextEditingController();
   final TextEditingController _dataInativoController = TextEditingController();
+  final TextEditingController _numCasaController = TextEditingController();
   String? tipoTurno = '';
   String? tipoTurnoTreino = '';
   int? tipoFaixa;
@@ -116,6 +117,7 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
     tipoFaixa = aluno['faixa_id'];
     tipoParentesco = aluno['grau'];
     tipoParentesco2 = aluno['grau2'];
+    _numCasaController.text = aluno['numero_casa'];
 
     // Data cadastro
     String dataIso = aluno['data_cadastro'];
@@ -176,6 +178,7 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
           'faixa_id': tipoFaixa,
           'grau': tipoParentesco,
           'grau2': tipoParentesco2,
+          'numero_casa': _numCasaController.text,
         };
 
         if (widget.alunoId != null) {
@@ -321,7 +324,7 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                 ],
               ),
               pw.SizedBox(height: 20),
-              _buildSectionTitle('DADOS DO PROFESSOR'),
+              _buildSectionTitle('DADOS DO ALUNO'),
               _buildLabeledField('Nome do Aluno: ', _nomeController.text),
               _buildLabeledField('CPF: ', _cpfController.text),
               _buildLabeledField('RG: ', _rgController.text),
@@ -329,12 +332,14 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                   'Data Nascimento: ', _dtnascimentoController.text),
               _buildLabeledField('Sexo: ', _sexoController.text),
               _buildLabeledField('PDC: ', tipoValue!),
+              _buildLabeledField('Contato: ', _telefoneController.text),
               pw.SizedBox(height: 10),
               _buildSectionTitle('ENDEREÇO'),
               _buildLabeledField('CEP: ', _cepController.text),
               _buildLabeledField('Município: ', _municipioController.text),
               _buildLabeledField('Bairro: ', _bairroController.text),
               _buildLabeledField('Endereço: ', _enderecoController.text),
+              _buildLabeledField('N°: ', _numCasaController.text),
               pw.SizedBox(height: 10),
               _buildSectionTitle('STATUS TREINO'),
               _buildLabeledField(
@@ -734,6 +739,17 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                       child: Padding(
                         padding: const EdgeInsets.only(bottom: 15),
                         child: TextFormField(
+                          decoration: textFormField("N°"),
+                          // keyboardType: TextInputType.number,
+                          controller: _numCasaController,
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 200,
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 15),
+                        child: TextFormField(
                           decoration: textFormField("Data Inscrição"),
                           keyboardType: TextInputType.number,
                           controller: _dataInscricaoController,
@@ -1091,6 +1107,49 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                           ),
                         ),
                       ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    SizedBox(
+                      height: 50,
+                      width: 220,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(11),
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0xFF1F41BB).withOpacity(0.2),
+                              spreadRadius: 0,
+                              blurRadius: 4,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF1F41BB),
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(11),
+                            ),
+                          ),
+                          onPressed: () {
+                            if (_formKey.currentState!.validate()) {
+                              _pdfTermo();
+                            }
+                          },
+                          child: Center(
+                            child: Text(
+                              'Termo Inscrição',
+                              style: GoogleFonts.poppins(
+                                fontSize: 19,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                     const Spacer(),
                     SizedBox(
                       height: 50,
@@ -1180,40 +1239,484 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
       ),
     );
   }
-}
 
-pw.Widget _buildSectionTitle(String title) {
-  return pw.Padding(
-    padding: const pw.EdgeInsets.symmetric(vertical: 5),
-    child: pw.Container(
-      color: PdfColor.fromHex('eaf1f8'),
-      width: double.infinity,
-      child: pw.Center(
-        child: pw.Text(
-          title,
-          textAlign: pw.TextAlign.center,
-          style: pw.TextStyle(
-            fontWeight: pw.FontWeight.bold,
-            fontSize: 14,
+  void _pdfTermo() async {
+    await initializeDateFormatting('pt_BR', null);
+    final doc = pw.Document();
+    final imageBytes = File('assets/image/logoacademia.jpg').readAsBytesSync();
+    final image = pw.MemoryImage(imageBytes);
+    final String dataAtual = DateFormat('dd/MM/yyyy').format(DateTime.now());
+
+    doc.addPage(
+      pw.Page(
+        pageFormat: PdfPageFormat.a4,
+        build: (pw.Context context) {
+          return pw.Column(
+            children: [
+              pw.Row(
+                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                children: [
+                  pw.Text(
+                    dataAtual,
+                    style: pw.TextStyle(
+                      fontSize: 9,
+                      fontWeight: pw.FontWeight.normal,
+                    ),
+                  ),
+                  pw.Text(
+                    'FICHA DE INSCRIÇÃO',
+                    textAlign: pw.TextAlign.center,
+                    style: pw.TextStyle(
+                      fontSize: 20,
+                      fontWeight: pw.FontWeight.bold,
+                    ),
+                  ),
+                  pw.SizedBox(
+                    width: 100,
+                    child: pw.Container(
+                      width: 70,
+                      height: 70,
+                      child: pw.Image(image),
+                    ),
+                  ),
+                ],
+              ),
+              pw.SizedBox(height: 20),
+              _buildLabeledField('Nome do Aluno: ', _nomeController.text),
+              pw.Row(
+                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                children: [
+                  _buildLabeledField(
+                      'Data Nascimento: ', _dtnascimentoController.text),
+                  _buildLabeledField('Bairro: ', _bairroController.text),
+                  _buildLabeledField('End: ', _enderecoController.text),
+                  _buildLabeledField('N°: ', '100'),
+                ],
+              ),
+              _buildLabeledField('Contato: ', _telefoneController.text),
+              pw.SizedBox(height: 10),
+
+              pw.Row(
+                mainAxisAlignment: pw.MainAxisAlignment.center,
+                children: [
+                  pw.Text(
+                      '(91) 98761-8409 falar com: John ou Priscila.\n ( ) INFANTIL ( ) JUVENIL - ADULTO',
+                      style: const pw.TextStyle(
+                        fontSize: 10,
+                      ),
+                      textAlign: pw.TextAlign.center),
+                ],
+              ),
+
+              pw.SizedBox(height: 10),
+
+              // Adicionando o conteúdo do termo com negrito
+              pw.RichText(
+                text: pw.TextSpan(
+                  children: [
+                    const pw.TextSpan(
+                      text: 'Eu, ________________________________________, ',
+                      style: pw.TextStyle(fontSize: 10),
+                    ),
+                    const pw.TextSpan(
+                      text:
+                          'responsável pelo menor (aluno) acima citado, venho solicitar a inscrição no ',
+                      style: pw.TextStyle(fontSize: 10),
+                    ),
+                    pw.TextSpan(
+                      text: '"Projeto Mais que Vencedor" jiu-jitsu',
+                      style: pw.TextStyle(
+                        fontWeight: pw.FontWeight.bold,
+                        fontSize: 10,
+                      ),
+                    ),
+                    const pw.TextSpan(
+                      text: ', assumindo, nesta oportunidade:',
+                      style: pw.TextStyle(fontSize: 10),
+                    ),
+                  ],
+                ),
+              ),
+              pw.SizedBox(height: 10),
+
+              pw.Column(
+                crossAxisAlignment: pw.CrossAxisAlignment.start,
+                children: [
+                  // 1st point
+                  pw.RichText(
+                    text: pw.TextSpan(
+                      children: [
+                        pw.TextSpan(
+                          text: '1) ',
+                          style: pw.TextStyle(
+                            fontWeight: pw.FontWeight.bold,
+                            fontSize: 10,
+                          ),
+                        ),
+                        const pw.TextSpan(
+                          text: 'Eximir o ',
+                          style: pw.TextStyle(fontSize: 10),
+                        ),
+                        pw.TextSpan(
+                          text: '"projeto Mais que vencedor" jiu-jitsu',
+                          style: pw.TextStyle(
+                            fontWeight: pw.FontWeight.bold,
+                            fontSize: 10,
+                          ),
+                        ),
+                        const pw.TextSpan(
+                          text:
+                              ' de eventuais acidentes - tais como lesões, machucados, torções, fraturas, etc. - decorrentes da prática de JIU-JITSU. Se ocorrer é dever do ',
+                          style: pw.TextStyle(fontSize: 10),
+                        ),
+                        pw.TextSpan(
+                          text: '"projeto Mais que vencedor" jiu-jitsu',
+                          style: pw.TextStyle(
+                            fontWeight: pw.FontWeight.bold,
+                            fontSize: 10,
+                          ),
+                        ),
+                        const pw.TextSpan(
+                          text:
+                              ' prestar os primeiros socorros e comunicar o fato ao responsável, que deverá se dirigir ao local indicado a fim de que seja dada continuidade ao atendimento.',
+                          style: pw.TextStyle(fontSize: 10),
+                        ),
+                      ],
+                    ),
+                  ),
+                  pw.SizedBox(height: 5),
+
+                  // 2st point
+                  pw.RichText(
+                    text: pw.TextSpan(
+                      children: [
+                        pw.TextSpan(
+                          text: '2) ',
+                          style: pw.TextStyle(
+                            fontWeight: pw.FontWeight.bold,
+                            fontSize: 10,
+                          ),
+                        ),
+                        const pw.TextSpan(
+                          text: 'Caso o menor (aluno) tenha algum ',
+                          style: pw.TextStyle(fontSize: 10),
+                        ),
+                        pw.TextSpan(
+                          text: 'problema de saúde, ',
+                          style: pw.TextStyle(
+                            fontWeight: pw.FontWeight.bold,
+                            fontSize: 10,
+                          ),
+                        ),
+                        const pw.TextSpan(
+                          text: 'o responsável deverá informar.',
+                          style: pw.TextStyle(fontSize: 10),
+                        ),
+                      ],
+                    ),
+                  ),
+                  pw.SizedBox(height: 5),
+
+                  // 3st point
+                  pw.RichText(
+                    text: pw.TextSpan(
+                      children: [
+                        pw.TextSpan(
+                          text: '3) ',
+                          style: pw.TextStyle(
+                            fontWeight: pw.FontWeight.bold,
+                            fontSize: 10,
+                          ),
+                        ),
+                        const pw.TextSpan(
+                          text: 'É ',
+                          style: pw.TextStyle(fontSize: 10),
+                        ),
+                        pw.TextSpan(
+                          text: 'indispensável ',
+                          style: pw.TextStyle(
+                            fontWeight: pw.FontWeight.bold,
+                            fontSize: 10,
+                          ),
+                        ),
+                        const pw.TextSpan(
+                          text: 'que o menor (aluno) esteja estudando.',
+                          style: pw.TextStyle(fontSize: 10),
+                        ),
+                      ],
+                    ),
+                  ),
+                  pw.SizedBox(height: 5),
+
+                  // 4st point
+                  pw.RichText(
+                    text: pw.TextSpan(
+                      children: [
+                        pw.TextSpan(
+                          text: '4) ',
+                          style: pw.TextStyle(
+                            fontWeight: pw.FontWeight.bold,
+                            fontSize: 10,
+                          ),
+                        ),
+                        const pw.TextSpan(
+                          text:
+                              'A frequência do menor (aluno) nos treinos será controlada pela ',
+                          style: pw.TextStyle(fontSize: 10),
+                        ),
+                        pw.TextSpan(
+                          text: '"projeto Mais que Vencedor".',
+                          style: pw.TextStyle(
+                            fontWeight: pw.FontWeight.bold,
+                            fontSize: 10,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  pw.Text(
+                    'É cargo doresponsável pelo aluno zelar pela frequência do atleta nos treinamentos. Pois 3 faltas consecutivas sem justificativa o aluno será desligado do projeto. ',
+                    style: const pw.TextStyle(fontSize: 10),
+                  ),
+                  pw.SizedBox(height: 5),
+
+                  // 5st point
+                  pw.RichText(
+                    text: pw.TextSpan(
+                      children: [
+                        pw.TextSpan(
+                          text: '5) ',
+                          style: pw.TextStyle(
+                            fontWeight: pw.FontWeight.bold,
+                            fontSize: 10,
+                          ),
+                        ),
+                        const pw.TextSpan(
+                          text: 'Os treinos serão realizados ',
+                          style: pw.TextStyle(fontSize: 10),
+                        ),
+                        pw.TextSpan(
+                          text:
+                              'TRÊS vezes na semana (infantil) e (juvenil - adulto).',
+                          style: pw.TextStyle(
+                            fontWeight: pw.FontWeight.bold,
+                            fontSize: 10,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  pw.SizedBox(height: 5),
+
+                  // 5st point
+                  pw.RichText(
+                    text: pw.TextSpan(
+                      children: [
+                        pw.TextSpan(
+                          text: '6) ',
+                          style: pw.TextStyle(
+                            fontWeight: pw.FontWeight.bold,
+                            fontSize: 10,
+                          ),
+                        ),
+                        const pw.TextSpan(
+                          text:
+                              'Será cobrada a compra do uniforme do aluno no valor de R\$ 50,00.',
+                          style: pw.TextStyle(fontSize: 10),
+                        ),
+                      ],
+                    ),
+                  ),
+                  pw.SizedBox(height: 5),
+
+                  // OBS
+                  pw.RichText(
+                    text: pw.TextSpan(
+                      children: [
+                        pw.TextSpan(
+                          text: 'Observação: ',
+                          style: pw.TextStyle(
+                            fontWeight: pw.FontWeight.bold,
+                            fontSize: 10,
+                          ),
+                        ),
+                        const pw.TextSpan(
+                          text:
+                              'O aluno que for indisciplinado e não rever suas atitudes será suspenso por tempo estimulado pelo instrutor. Se caso a atitude for grave e podendo ou não acarretar expulsão.',
+                          style: pw.TextStyle(fontSize: 10),
+                        ),
+                      ],
+                    ),
+                  ),
+                  pw.SizedBox(height: 5),
+
+                  // Endereco
+                  pw.RichText(
+                    text: pw.TextSpan(
+                      children: [
+                        const pw.TextSpan(
+                          text: 'Endereço do ',
+                          style: pw.TextStyle(
+                            fontSize: 10,
+                          ),
+                        ),
+                        pw.TextSpan(
+                          text: 'Projeto Mais que Vencedor: ',
+                          style: pw.TextStyle(
+                            fontWeight: pw.FontWeight.bold,
+                            fontSize: 10,
+                          ),
+                        ),
+                        const pw.TextSpan(
+                          text: 'Passagem Santo André Nº 53.',
+                          style: pw.TextStyle(fontSize: 10),
+                        ),
+                      ],
+                    ),
+                    softWrap: true,
+                    textAlign: pw.TextAlign.left,
+                  ),
+                  // Categories
+                  pw.SizedBox(height: 10),
+                  pw.Text(
+                    'CATEGORIAS:',
+                    style: pw.TextStyle(
+                        fontSize: 12, fontWeight: pw.FontWeight.bold),
+                  ),
+                  pw.Text(
+                    'Infantil: 8 a 10 anos\nJuvenil - Adulto: 12 diante',
+                    style: const pw.TextStyle(fontSize: 10),
+                  ),
+
+                  pw.SizedBox(height: 10),
+
+                  // Schedules
+                  pw.Text(
+                    'HORÁRIOS:',
+                    style: pw.TextStyle(
+                        fontSize: 12, fontWeight: pw.FontWeight.bold),
+                  ),
+                  pw.Text(
+                    'INFANTIL: 19:00 às 20:00 seg, qua e sex.\nJUVENIL - ADULTO: 20:00 às 22:00 seg, qua e sex.',
+                    style: pw.TextStyle(
+                        fontSize: 10, fontWeight: pw.FontWeight.bold),
+                  ),
+                ],
+              ),
+
+              pw.SizedBox(height: 20),
+
+              // Closing statement
+              pw.RichText(
+                text: const pw.TextSpan(
+                  children: [
+                    pw.TextSpan(
+                      text:
+                          'Nestes termos assino a presente INSCRIÇÃO e AUTORIZO o menor a frequentar o "Projeto Mais que Vencedo" jiu-jitsu, informando ainda que o mesmo encontrasse matriculado em escola de ensino regular, em plenas condições de saúde para prática de esporte, consciente e me responsabilizando por todo e qualquer acidente que o menor, venha sofrer praticando esporte nos locais de treino nas instalações do Projeto Mais que Vencedor jiu-jitsu.',
+                      style: pw.TextStyle(
+                        fontSize: 10,
+                      ),
+                    ),
+                  ],
+                ),
+                softWrap: true,
+                textAlign: pw.TextAlign.left,
+              ),
+              pw.SizedBox(height: 5),
+              pw.RichText(
+                text: pw.TextSpan(
+                  children: [
+                    pw.TextSpan(
+                      text: 'Observação: ',
+                      style: pw.TextStyle(
+                          fontSize: 10, fontWeight: pw.FontWeight.bold),
+                    ),
+                    const pw.TextSpan(
+                      text:
+                          'A inscrição só terá validade mediante a apresentação desta ficha preenchida e assinada peloresponsável.',
+                      style: pw.TextStyle(
+                        fontSize: 10,
+                      ),
+                    ),
+                  ],
+                ),
+                softWrap: true,
+                textAlign: pw.TextAlign.left,
+              ),
+
+              pw.Spacer(),
+              pw.Align(
+                alignment: pw.Alignment.centerRight,
+                child: pw.Text(
+                  'ANANIDEUA,______de______de________',
+                  style: const pw.TextStyle(
+                    fontSize: 10,
+                  ),
+                ),
+              ),
+              pw.SizedBox(height: 40),
+              pw.Text(
+                '____________________________________________',
+                style: const pw.TextStyle(fontSize: 12),
+                textAlign: pw.TextAlign.center,
+              ),
+              pw.SizedBox(height: 2),
+              pw.Text(
+                'ASSINATURA DO RESPONSÁVEL',
+                style: const pw.TextStyle(fontSize: 10),
+                textAlign: pw.TextAlign.center,
+              ),
+            ],
+          );
+        },
+      ),
+    );
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PreviewScreen(
+          doc: doc,
+          pdfFileName: "${_nomeController.text}.pdf",
+          titulo: "Visualizar Ficha Cadastral",
+        ),
+      ),
+    );
+  }
+
+  pw.Widget _buildSectionTitle(String title) {
+    return pw.Padding(
+      padding: const pw.EdgeInsets.symmetric(vertical: 5),
+      child: pw.Container(
+        color: PdfColor.fromHex('eaf1f8'),
+        width: double.infinity,
+        child: pw.Center(
+          child: pw.Text(
+            title,
+            textAlign: pw.TextAlign.center,
+            style: pw.TextStyle(
+              fontWeight: pw.FontWeight.bold,
+              fontSize: 14,
+            ),
           ),
         ),
       ),
-    ),
-  );
-}
+    );
+  }
 
-pw.Widget _buildLabeledField(String label, String value) {
-  return pw.Row(
-    children: [
-      pw.Text(
-        label,
-        style: pw.TextStyle(
-          fontWeight: pw.FontWeight.bold,
+  pw.Widget _buildLabeledField(String label, String value) {
+    return pw.Row(
+      children: [
+        pw.Text(
+          label,
+          style: pw.TextStyle(
+            fontWeight: pw.FontWeight.bold,
+          ),
         ),
-      ),
-      pw.Text(
-        value.isNotEmpty ? value : '',
-      ),
-    ],
-  );
+        pw.Text(
+          value.isNotEmpty ? value : '',
+        ),
+      ],
+    );
+  }
 }
