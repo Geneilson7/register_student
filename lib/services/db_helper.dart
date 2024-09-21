@@ -160,9 +160,9 @@ class DBHelper {
     }
   }
 
-  Future<void> insertAluno(Map<String, dynamic> aluno) async {
+  Future<int> insertAluno(Map<String, dynamic> aluno) async {
     final db = await database;
-    await db.insert('alunos', aluno);
+    return await db.insert('alunos', aluno);
   }
 
   Future<List<Map<String, dynamic>>> getAlunos() async {
@@ -440,7 +440,7 @@ class DBHelper {
     FROM    formacao_aluno
     JOIN    faixas ON formacao_aluno.faixa_id = faixas.id
     WHERE   formacao_aluno.aluno_id = ? AND formacao_aluno.data_mudanca BETWEEN ? AND ?
-            ORDER BY formacao_aluno.data_mudanca DESC
+            ORDER BY formacao_aluno.data_mudanca
   ''', [alunoId, start, end]);
   }
 
@@ -514,4 +514,12 @@ class DBHelper {
     final db = await database; // função que obtém o database
     return await db.query('turmas', columns: ['id', 'descricao']);
   }
+
+  Future<List<Map<String, dynamic>>> getAlunosByTurma(int turmaId) async {
+    final db = await database;
+    return await db
+        .query('alunos', where: 'turma_id = ?', whereArgs: [turmaId]);
+  }
+
+ 
 }

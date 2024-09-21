@@ -3,9 +3,9 @@ import 'package:google_fonts/google_fonts.dart';
 
 class Turma extends StatefulWidget {
   final String label;
-  final int? selectedTurmaId; // Mude para int?
-  final List<Map<String, dynamic>> turmas; // id e descricao
-  final ValueChanged<int?> onChanged; // Mude para int?
+  final int? selectedTurmaId; // Permitir valores nulos
+  final List<Map<String, dynamic>> turmas; // Lista de turmas com id e descricao
+  final ValueChanged<int?> onChanged; // Permitir callback com valores nulos
 
   const Turma({
     Key? key,
@@ -32,13 +32,13 @@ class _TurmaState extends State<Turma> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            DropdownButtonFormField<int>(
-              value: widget.selectedTurmaId,
-              onChanged: widget.onChanged,
-              items: widget.turmas.map<DropdownMenuItem<int>>((faixa) {
-                return DropdownMenuItem<int>(
-                  value: faixa['id'], // deve ser int
-                  child: Text(faixa['descricao']),
+            DropdownButtonFormField<int?>(
+              value: widget.selectedTurmaId, // Valor atual da turma selecionada
+              onChanged: widget.onChanged, // Callback para quando o valor mudar
+              items: widget.turmas.map<DropdownMenuItem<int?>>((turma) {
+                return DropdownMenuItem<int?>(
+                  value: turma['id'], // Certificar que o id é int
+                  child: Text(turma['descricao']),
                 );
               }).toList(),
               decoration: InputDecoration(
@@ -46,9 +46,10 @@ class _TurmaState extends State<Turma> {
                 fillColor: const Color(0xFFF1F4FF).withOpacity(0.9),
                 filled: true,
                 labelStyle: GoogleFonts.poppins(
-                    fontWeight: FontWeight.w500,
-                    fontSize: 16,
-                    color: const Color(0xFF626262)),
+                  fontWeight: FontWeight.w500,
+                  fontSize: 16,
+                  color: const Color(0xFF626262),
+                ),
                 isDense: true,
                 border: OutlineInputBorder(
                   borderSide:

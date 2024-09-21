@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:register_student/pages/home_page.dart';
 import 'package:register_student/register/cadastrar_faixa.dart';
+import 'package:register_student/register/cadastrar_turma.dart';
 import 'package:register_student/services/db_helper.dart';
 
 class TurmaScreen extends StatefulWidget {
@@ -208,7 +209,7 @@ class _TurmaScreenState extends State<TurmaScreen> {
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) =>
-                                          CadastrarFaixa(alunoId: item['id']),
+                                          CadastrarTurma(alunoId: item['id']),
                                     ),
                                   ).then((value) => _refreshItems());
                                 },
@@ -227,7 +228,7 @@ class _TurmaScreenState extends State<TurmaScreen> {
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) =>
-                                          CadastrarFaixa(alunoId: item['id']),
+                                          CadastrarTurma(alunoId: item['id']),
                                     ),
                                   ).then((value) => _refreshItems());
                                 },
@@ -239,7 +240,66 @@ class _TurmaScreenState extends State<TurmaScreen> {
                                     color: Colors.red,
                                   ),
                                   onPressed: () {
-                                    _showDeleteDialog(context);
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          title: Text(
+                                            'Confirmação',
+                                            style: GoogleFonts.poppins(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.w500,
+                                              color: const Color(0xFF000000),
+                                            ),
+                                          ),
+                                          content: const Text(
+                                              'Deseja realmente cancelar?'),
+                                          actions: [
+                                            ElevatedButton(
+                                              onPressed: () {
+                                                _deleteItem(item['id']);
+                                                Navigator.of(context).pop();
+                                              },
+                                              style: ElevatedButton.styleFrom(
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(13),
+                                                ),
+                                                elevation: 3,
+                                                backgroundColor:
+                                                    const Color(0xFFda2828),
+                                              ),
+                                              child: Text(
+                                                'Sim',
+                                                style: GoogleFonts.poppins(
+                                                    color: const Color(
+                                                        0xFFFFFFFF)),
+                                              ),
+                                            ),
+                                            ElevatedButton(
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                              style: ElevatedButton.styleFrom(
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(13),
+                                                ),
+                                                elevation: 3,
+                                                backgroundColor:
+                                                    const Color(0xFF008000),
+                                              ),
+                                              child: Text(
+                                                'Não',
+                                                style: GoogleFonts.poppins(
+                                                    color: const Color(
+                                                        0xFFFFFFFF)),
+                                              ),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
                                   },
                                 ),
                               ),
@@ -255,64 +315,6 @@ class _TurmaScreenState extends State<TurmaScreen> {
           ],
         ),
       ),
-    );
-  }
-
-  void _showDeleteDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(
-            'Confirmação',
-            style: GoogleFonts.poppins(
-              fontSize: 18,
-              fontWeight: FontWeight.w500,
-              color: const Color(0xFF000000),
-            ),
-          ),
-          content: const Text('Deseja realmente cancelar?'),
-          actions: [
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(
-                    builder: (context) => const HomePage(),
-                  ),
-                  (route) => false,
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(13),
-                ),
-                elevation: 3,
-                backgroundColor: const Color(0xFFda2828),
-              ),
-              child: Text(
-                'Sim',
-                style: GoogleFonts.poppins(color: const Color(0xFFFFFFFF)),
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(13),
-                ),
-                elevation: 3,
-                backgroundColor: const Color(0xFF008000),
-              ),
-              child: Text(
-                'Não',
-                style: GoogleFonts.poppins(color: const Color(0xFFFFFFFF)),
-              ),
-            ),
-          ],
-        );
-      },
     );
   }
 }

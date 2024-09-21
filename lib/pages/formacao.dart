@@ -1,10 +1,10 @@
-import 'dart:io';
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:register_student/services/db_helper.dart';
 import 'package:intl/intl.dart';
 import 'package:pdf/widgets.dart' as pw;
-import 'package:path_provider/path_provider.dart';
 import 'package:register_student/util/error_code.dart';
 import 'package:register_student/util/view_pdf.dart';
 
@@ -65,8 +65,25 @@ class _FormacaoAlunoScreenState extends State<FormacaoAlunoScreen> {
 
     if (selectedDateRange != null) {
       setState(() {
-        startDate = selectedDateRange.start;
-        endDate = selectedDateRange.end;
+        // Ajuste as datas para incluir todo o dia
+        startDate = DateTime(
+          selectedDateRange.start.year,
+          selectedDateRange.start.month,
+          selectedDateRange.start.day,
+          0,
+          0,
+          0,
+        );
+        endDate = DateTime(
+          selectedDateRange.end.year,
+          selectedDateRange.end.month,
+          selectedDateRange.end.day,
+          23,
+          59,
+          59,
+          999,
+        );
+
         selectedDateRangeText = _formatDateRange(startDate, endDate);
         _loadFormacao();
       });

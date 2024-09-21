@@ -258,11 +258,77 @@ class _ListagemFrequenciaScreenState extends State<ListagemFrequenciaScreen> {
                                   ),
                                   const SizedBox(width: 10),
                                   IconButton(
-                                    icon: const Icon(Icons.delete,
-                                        color: Colors.red, size: 30),
-                                    onPressed: () =>
-                                        _showConfirmDialog(alunoId),
-                                  ),
+                                      icon: const Icon(Icons.delete,
+                                          color: Colors.red, size: 30),
+                                      onPressed: () {
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              title: Text(
+                                                'Confirmação',
+                                                style: GoogleFonts.poppins(
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.w500,
+                                                  color:
+                                                      const Color(0xFF000000),
+                                                ),
+                                              ),
+                                              content: const Text(
+                                                  'Deseja realmente cancelar?'),
+                                              actions: [
+                                                ElevatedButton(
+                                                  onPressed: () {
+                                                    _showConfirmDialog(alunoId);
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  style:
+                                                      ElevatedButton.styleFrom(
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              13),
+                                                    ),
+                                                    elevation: 3,
+                                                    backgroundColor:
+                                                        const Color(0xFFda2828),
+                                                  ),
+                                                  child: Text(
+                                                    'Sim',
+                                                    style: GoogleFonts.poppins(
+                                                        color: const Color(
+                                                            0xFFFFFFFF)),
+                                                  ),
+                                                ),
+                                                ElevatedButton(
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  style:
+                                                      ElevatedButton.styleFrom(
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              13),
+                                                    ),
+                                                    elevation: 3,
+                                                    backgroundColor:
+                                                        const Color(0xFF008000),
+                                                  ),
+                                                  child: Text(
+                                                    'Não',
+                                                    style: GoogleFonts.poppins(
+                                                        color: const Color(
+                                                            0xFFFFFFFF)),
+                                                  ),
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
+                                      }),
                                 ],
                               ),
                             ),

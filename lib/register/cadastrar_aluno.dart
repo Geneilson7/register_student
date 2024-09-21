@@ -9,7 +9,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:register_student/pages/alunos.dart';
 import 'package:register_student/pages/home_page.dart';
 import 'package:register_student/services/db_helper.dart';
-import 'package:register_student/src/dropdown_categoria.dart';
+import 'package:register_student/src/dropdown_turma.dart';
 import 'package:register_student/src/dropdown_faixa.dart';
 import 'package:register_student/src/dropdown_pcd.dart';
 import 'package:register_student/src/dropdown_status.dart';
@@ -128,8 +128,12 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
     _endescolaController.text = aluno['endescola'];
     tipoTurno = aluno['turnoescolar'];
     tipoTurnoTreino = aluno['turnotreino'];
-    tipoFaixa = aluno['faixa_id'];
-    tipoTurma = aluno['turma_id'];
+    tipoFaixa = aluno['faixa_id'] is String
+        ? int.tryParse(aluno['faixa_id'])
+        : aluno['faixa_id'];
+    tipoTurma = aluno['turma_id'] is String
+        ? int.tryParse(aluno['turma_id'])
+        : aluno['turma_id'];
     tipoParentesco = aluno['grau'];
     tipoParentesco2 = aluno['grau2'];
     _numCasaController.text = aluno['numero_casa'];
@@ -139,7 +143,7 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
     if (dataIso.isNotEmpty) {
       DateTime dataCadastro = DateTime.parse(dataIso);
       String dataFormatada = DateFormat('dd/MM/yyyy').format(dataCadastro);
-      _dataInscricaoController.text = dataFormatada;
+      _dataInscricaoController.text = dataFormatada;  
     } else {
       _dataInscricaoController.text = '';
     }
@@ -198,9 +202,15 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
         };
 
         if (widget.alunoId != null) {
+          // Atualizando o aluno existente
           await dbHelper.updateAluno(widget.alunoId!, aluno);
         } else {
-          await dbHelper.insertAluno(aluno);
+          // Inserindo um novo aluno
+          int novoAlunoId = await dbHelper.insertAluno(aluno);
+
+          // Inserir a formação da primeira faixa para o novo aluno
+          await dbHelper.addFormacao(novoAlunoId,
+              tipoFaixa!); // Insere a primeira faixa logo após o cadastro
         }
 
         Navigator.push(
