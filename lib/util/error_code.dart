@@ -1,9 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class ErrorPage extends StatelessWidget {
-  const ErrorPage({super.key});
+class ErrorPage extends StatefulWidget {
+  final String label;
+  const ErrorPage({
+    super.key,
+    required this.label,
+  });
 
+  @override
+  State<ErrorPage> createState() => _ErrorPageState();
+}
+
+class _ErrorPageState extends State<ErrorPage> {
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -16,9 +25,9 @@ class ErrorPage extends StatelessWidget {
             height: 450,
           ),
           Text(
-            'Ups!... nenhum resultado encontrado',
+            widget.label,
             style: GoogleFonts.poppins(
-              fontSize: 32,
+              fontSize: 18,
               color: const Color(0xFF000000),
               fontWeight: FontWeight.w300,
             ),

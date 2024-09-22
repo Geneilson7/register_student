@@ -185,7 +185,9 @@ class _FormacaoAlunoScreenState extends State<FormacaoAlunoScreen> {
               ],
             ),
             _formacaoItems.isEmpty
-                ? const ErrorPage()
+                ? const ErrorPage(
+                    label: "Não há formação para esse aluno.",
+                  )
                 : Expanded(
                     child: ListView.builder(
                       itemCount: _formacaoItems.length,

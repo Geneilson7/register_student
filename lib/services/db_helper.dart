@@ -68,15 +68,17 @@ class DBHelper {
     ''');
 
     await db.execute('''
-    CREATE TABLE frequencia (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      aluno_id INTEGER,
-      data TEXT,
-      presente INTEGER,
-      data_cadastro TEXT DEFAULT (datetime('now')),
-      FOREIGN KEY (aluno_id) REFERENCES alunos(id)
-    )
-  ''');
+      CREATE TABLE frequencia (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        aluno_id INTEGER,
+        turma_id INTEGER,
+        data TEXT,
+        presente INTEGER,
+        data_cadastro TEXT DEFAULT (datetime('now')),
+        FOREIGN KEY (aluno_id) REFERENCES alunos(id),
+        FOREIGN KEY (turma_id) REFERENCES turmas(id) 
+      )
+''');
 
     await db.execute('''
       CREATE TABLE faixas (
@@ -521,5 +523,30 @@ class DBHelper {
         .query('alunos', where: 'turma_id = ?', whereArgs: [turmaId]);
   }
 
- 
+Future<List<Map<String, dynamic>>> getAlunosComFrequenciaPorTurma(
+    int turmaId, String data) async {
+  final db = await database;
+
+  // Consulta os alunos pela turma
+  List<Map<String, dynamic>> alunos = await db.query(
+    'alunos',
+    where: 'turma_id = ?',
+    whereArgs: [turmaId],
+  );
+
+  // Consulta a frequência dos alunos na data especificada
+  List<Map<String, dynamic>> frequencia = await db.rawQuery('''
+    SELECT f.*, a.nome FROM frequencia f
+    JOIN alunos a ON f.aluno_id = a.id
+    WHERE f.data = ? AND a.turma_id = ?
+  ''', [data, turmaId]);
+
+  for (var aluno in alunos) {
+    aluno['frequencia'] = frequencia.where((f) => f['aluno_id'] == aluno['id']).toList();
+  }
+
+  return alunos; // Retorne a lista de alunos com suas frequências
+}
+
+
 }

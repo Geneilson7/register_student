@@ -142,7 +142,14 @@ class _FrequenciaScreenState extends State<FrequenciaScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text("Marcar Todos"),
+                      Text(
+                        "Marcar Todos",
+                        style: GoogleFonts.poppins(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: const Color(0xff000000),
+                        ),
+                      ),
                       Switch(
                         value: marcarTodos,
                         activeColor: const Color(0xFF1d1e2b),
@@ -156,7 +163,10 @@ class _FrequenciaScreenState extends State<FrequenciaScreen> {
                     child: Padding(
                       padding: const EdgeInsets.only(top: 20),
                       child: alunos.isEmpty
-                          ? const ErrorPage()
+                          ? const ErrorPage(
+                              label:
+                                  "Selecione uma turma ou verifique se há aluno cadastrado na turma.",
+                            )
                           : ListView.builder(
                               itemCount: alunos.length,
                               itemBuilder: (context, index) {
