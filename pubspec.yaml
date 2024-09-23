@@ -62,6 +62,7 @@ flutter:
     - assets/image/listafrequencia.png
     - assets/image/evento.png
     - assets/image/404.png
+    - assets/image/turma.png
 
   # fonts:
   #   - family: Roboto

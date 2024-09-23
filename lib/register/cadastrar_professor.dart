@@ -245,7 +245,6 @@ class _CadastrarPofessorState extends State<CadastrarPofessor> {
               _buildLabeledField('Sexo: ', _sexoController.text),
               _buildLabeledField('PDC: ', tipoValue!),
               _buildLabeledField('Contato: ', _telefoneController.text),
-              _buildLabeledField('N°: ', _numCasaController.text),
 
               pw.SizedBox(height: 10),
 
@@ -255,6 +254,7 @@ class _CadastrarPofessorState extends State<CadastrarPofessor> {
               _buildLabeledField('Município: ', _municipioController.text),
               _buildLabeledField('Bairro: ', _bairroController.text),
               _buildLabeledField('Endereço: ', _enderecoController.text),
+              _buildLabeledField('N°: ', _numCasaController.text),
 
               pw.SizedBox(height: 10),
 
@@ -692,7 +692,7 @@ class _CadastrarPofessorState extends State<CadastrarPofessor> {
                           ),
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF1F41BB),
+                              backgroundColor: Colors.blue,
                               foregroundColor: Colors.white,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(11),

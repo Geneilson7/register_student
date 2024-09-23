@@ -211,7 +211,7 @@ class _HomePageState extends State<HomePage> {
                                 },
                               ),
                               buildListTile(
-                                imagePath: 'assets/image/listafrequencia.png',
+                                imagePath: 'assets/image/turma.png',
                                 index: 6,
                                 title: "Turmas",
                                 onTap: () {

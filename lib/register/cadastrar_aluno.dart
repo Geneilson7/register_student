@@ -762,7 +762,7 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                         ),
                         const SizedBox(width: 25),
                         SizedBox(
-                          width: 200,
+                          width: 150,
                           child: Status(
                             label: "Status",
                             selectedValue: tipoStatus,
@@ -772,7 +772,7 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                         ),
                         const SizedBox(width: 25),
                         SizedBox(
-                          width: 200,
+                          width: 150,
                           child: TurnoTreino(
                             label: "Turno Treino",
                             selectedValue: tipoTurnoTreino,

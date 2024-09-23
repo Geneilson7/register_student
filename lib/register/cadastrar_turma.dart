@@ -175,7 +175,7 @@ class _CadastrarTurmaState extends State<CadastrarTurma> {
                       child: Padding(
                         padding: const EdgeInsets.only(bottom: 15),
                         child: TextFormField(
-                          decoration: textFormField("Faixa"),
+                          decoration: textFormField("Turma"),
                           controller: _descricaoController,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
