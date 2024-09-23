@@ -47,6 +47,10 @@ class _CadastrarPofessorState extends State<CadastrarPofessor> {
   final TextEditingController _municipioController = TextEditingController();
   final TextEditingController _telefoneController = TextEditingController();
   final TextEditingController _cepController = TextEditingController();
+  final TextEditingController _numCasaController = TextEditingController();
+  final TextEditingController _dataInscricaoController =
+      TextEditingController();
+  final TextEditingController _dataInativoController = TextEditingController();
   int? tipoFaixa;
 
   final _formKey = GlobalKey<FormState>();
@@ -78,7 +82,28 @@ class _CadastrarPofessorState extends State<CadastrarPofessor> {
     _municipioController.text = aluno['municipio'];
     _telefoneController.text = aluno['telefone'];
     _cepController.text = aluno['cep'];
+    _numCasaController.text = aluno['numero_casa'];
     tipoFaixa = aluno['faixa_id'];
+    // Data cadastro
+    String dataIso = aluno['data_cadastro'];
+    if (dataIso.isNotEmpty) {
+      DateTime dataCadastro = DateTime.parse(dataIso);
+      String dataFormatada = DateFormat('dd/MM/yyyy').format(dataCadastro);
+      _dataInscricaoController.text = dataFormatada;
+    } else {
+      _dataInscricaoController.text = '';
+    }
+
+    // Data
+    String dataInativoIso = aluno['data_inativo'];
+    if (dataInativoIso.isNotEmpty) {
+      DateTime dataInativo = DateTime.parse(dataInativoIso);
+      String dataInativoFormatada =
+          DateFormat('dd/MM/yyyy').format(dataInativo);
+      _dataInativoController.text = dataInativoFormatada;
+    } else {
+      _dataInativoController.text = ''; // Limpa caso o aluno esteja ativo
+    }
     setState(() {});
   }
 
@@ -106,6 +131,7 @@ class _CadastrarPofessorState extends State<CadastrarPofessor> {
           'municipio': _municipioController.text,
           'telefone': _telefoneController.text,
           'cep': _cepController.text,
+          'numero_casa': _numCasaController.text,
           'faixa_id': tipoFaixa,
         };
 
@@ -218,6 +244,8 @@ class _CadastrarPofessorState extends State<CadastrarPofessor> {
                   'Data Nascimento: ', _dtnascimentoController.text),
               _buildLabeledField('Sexo: ', _sexoController.text),
               _buildLabeledField('PDC: ', tipoValue!),
+              _buildLabeledField('Contato: ', _telefoneController.text),
+              _buildLabeledField('N°: ', _numCasaController.text),
 
               pw.SizedBox(height: 10),
 
@@ -529,6 +557,18 @@ class _CadastrarPofessorState extends State<CadastrarPofessor> {
                         ),
                       ),
                     ),
+                    const SizedBox(width: 25),
+                    SizedBox(
+                      width: 100,
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 15),
+                        child: TextFormField(
+                          decoration: textFormField("N°"),
+                          keyboardType: TextInputType.number,
+                          controller: _numCasaController,
+                        ),
+                      ),
+                    ),
                   ],
                 ),
                 Row(
@@ -584,6 +624,50 @@ class _CadastrarPofessorState extends State<CadastrarPofessor> {
                         },
                       ),
                     ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    SizedBox(
+                      width: 200,
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 15),
+                        child: TextFormField(
+                          decoration: textFormField("Data Inscrição"),
+                          keyboardType: TextInputType.number,
+                          controller: _dataInscricaoController,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                            TelefoneInputFormatter(),
+                          ],
+                          readOnly: true,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 25),
+                    if (tipoStatus == 'Inativo')
+                      SizedBox(
+                        width: 200,
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 15),
+                          child: TextFormField(
+                            decoration: textFormField("Data Inativo"),
+                            keyboardType: TextInputType.number,
+                            controller: _dataInativoController,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return "Campo obrigatório.";
+                              }
+                              return null;
+                            },
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly,
+                              TelefoneInputFormatter(),
+                            ],
+                            readOnly: true,
+                          ),
+                        ),
+                      ),
                   ],
                 ),
                 const SizedBox(height: 50),

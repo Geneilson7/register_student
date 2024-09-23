@@ -9,6 +9,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:register_student/pages/alunos.dart';
 import 'package:register_student/pages/home_page.dart';
 import 'package:register_student/services/db_helper.dart';
+import 'package:register_student/src/dropdown_categoria.dart';
 import 'package:register_student/src/dropdown_turma.dart';
 import 'package:register_student/src/dropdown_faixa.dart';
 import 'package:register_student/src/dropdown_pcd.dart';
@@ -65,6 +66,7 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
   final TextEditingController _numCasaController = TextEditingController();
   String? tipoTurno = '';
   String? tipoTurnoTreino = '';
+  String? categoria = '';
   int? tipoFaixa;
   int? tipoTurma;
   String? tipoParentesco = '';
@@ -128,6 +130,7 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
     _endescolaController.text = aluno['endescola'];
     tipoTurno = aluno['turnoescolar'];
     tipoTurnoTreino = aluno['turnotreino'];
+    categoria = aluno['categoria'];
     tipoFaixa = aluno['faixa_id'] is String
         ? int.tryParse(aluno['faixa_id'])
         : aluno['faixa_id'];
@@ -143,7 +146,7 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
     if (dataIso.isNotEmpty) {
       DateTime dataCadastro = DateTime.parse(dataIso);
       String dataFormatada = DateFormat('dd/MM/yyyy').format(dataCadastro);
-      _dataInscricaoController.text = dataFormatada;  
+      _dataInscricaoController.text = dataFormatada;
     } else {
       _dataInscricaoController.text = '';
     }
@@ -194,6 +197,7 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
           'endescola': _endescolaController.text,
           'turnoescolar': tipoTurno,
           'turnotreino': tipoTurnoTreino,
+          'categoria': categoria,
           'faixa_id': tipoFaixa,
           'turma_id': tipoTurma,
           'grau': tipoParentesco,
@@ -359,6 +363,7 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
               _buildLabeledField('Sexo: ', _sexoController.text),
               _buildLabeledField('PDC: ', tipoValue!),
               _buildLabeledField('Contato: ', _telefoneController.text),
+              _buildLabeledField('Categoria: ', categoria!),
               pw.SizedBox(height: 10),
               _buildSectionTitle('ENDEREÇO'),
               _buildLabeledField('CEP: ', _cepController.text),
@@ -683,6 +688,18 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                         ),
                       ),
                     ),
+                    const SizedBox(width: 25),
+                    SizedBox(
+                      width: 100,
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 15),
+                        child: TextFormField(
+                          decoration: textFormField("N°"),
+                          keyboardType: TextInputType.number,
+                          controller: _numCasaController,
+                        ),
+                      ),
+                    ),
                   ],
                 ),
                 Row(
@@ -732,6 +749,20 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                       children: [
                         SizedBox(
                           width: 200,
+                          child: Categoria(
+                            label: "Categoria",
+                            selectedValue: categoria,
+                            items: const ['Infantil', 'Juvenil - Adulto'],
+                            onChanged: (newValue) {
+                              setState(() {
+                                categoria = newValue!;
+                              });
+                            },
+                          ),
+                        ),
+                        const SizedBox(width: 25),
+                        SizedBox(
+                          width: 200,
                           child: Status(
                             label: "Status",
                             selectedValue: tipoStatus,
@@ -758,19 +789,7 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                   ],
                 ),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    SizedBox(
-                      width: 200,
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 15),
-                        child: TextFormField(
-                          decoration: textFormField("N°"),
-                          // keyboardType: TextInputType.number,
-                          controller: _numCasaController,
-                        ),
-                      ),
-                    ),
                     SizedBox(
                       width: 200,
                       child: Turma(
@@ -786,6 +805,7 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                         },
                       ),
                     ),
+                    const SizedBox(width: 25),
                     SizedBox(
                       width: 200,
                       child: Padding(
@@ -802,6 +822,7 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                         ),
                       ),
                     ),
+                    const SizedBox(width: 25),
                     if (tipoStatus == 'Inativo')
                       SizedBox(
                         width: 200,
@@ -1125,7 +1146,7 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                           ),
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF1F41BB),
+                              backgroundColor: Colors.blue,
                               foregroundColor: Colors.white,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(11),
@@ -1168,7 +1189,7 @@ class _CadastrarAlunoState extends State<CadastrarAluno> {
                         ),
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF1F41BB),
+                            backgroundColor: Colors.blue,
                             foregroundColor: Colors.white,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(11),

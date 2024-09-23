@@ -112,6 +112,7 @@ class DBHelper {
         bairro TEXT,
         endereco TEXT,
         telefone TEXT,
+        numero_casa TEXT,
         data_cadastro TEXT DEFAULT (datetime('now')),
         data_inativo TEXT,
         FOREIGN KEY (faixa_id) REFERENCES faixas(id)
@@ -523,30 +524,21 @@ class DBHelper {
         .query('alunos', where: 'turma_id = ?', whereArgs: [turmaId]);
   }
 
-Future<List<Map<String, dynamic>>> getAlunosComFrequenciaPorTurma(
-    int turmaId, String data) async {
-  final db = await database;
+  Future<List<Map<String, dynamic>>> getAlunosComFrequenciaPorTurma(
+      int turmaId, String data) async {
+    final db = await database;
 
-  // Consulta os alunos pela turma
-  List<Map<String, dynamic>> alunos = await db.query(
-    'alunos',
-    where: 'turma_id = ?',
-    whereArgs: [turmaId],
-  );
+    // Remove a parte da hora da data para comparação
+    String formattedDate = data.split(' ')[0];
 
-  // Consulta a frequência dos alunos na data especificada
-  List<Map<String, dynamic>> frequencia = await db.rawQuery('''
-    SELECT f.*, a.nome FROM frequencia f
-    JOIN alunos a ON f.aluno_id = a.id
-    WHERE f.data = ? AND a.turma_id = ?
-  ''', [data, turmaId]);
+    // Consulta os alunos e suas frequências
+    List<Map<String, dynamic>> frequencia = await db.rawQuery('''
+    SELECT alunos.nome, frequencia.data
+    FROM frequencia
+    LEFT OUTER JOIN alunos ON frequencia.aluno_id = alunos.id 
+    WHERE alunos.turma_id = ? AND DATE(frequencia.data) = ?
+  ''', [turmaId, formattedDate]);
 
-  for (var aluno in alunos) {
-    aluno['frequencia'] = frequencia.where((f) => f['aluno_id'] == aluno['id']).toList();
+    return frequencia;
   }
-
-  return alunos; // Retorne a lista de alunos com suas frequências
-}
-
-
 }

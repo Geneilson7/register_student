@@ -1,9 +1,13 @@
-// ignore_for_file: use_build_context_synchronously, library_private_types_in_public_api
+// ignore_for_file: use_build_context_synchronously, library_private_types_in_public_api, deprecated_member_use, depend_on_referenced_packages
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:register_student/services/db_helper.dart';
 import 'package:register_student/util/error_code.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:register_student/util/view_pdf.dart';
+import 'package:intl/intl.dart';
 
 class FrequenciaScreen extends StatefulWidget {
   const FrequenciaScreen({super.key});
@@ -61,6 +65,59 @@ class _FrequenciaScreenState extends State<FrequenciaScreen> {
         frequencia[aluno['id']] = marcarTodos;
       }
     });
+  }
+
+  Future<void> gerarPDF() async {
+    final pdf = pw.Document();
+    final dataFrequencia =
+        DateTime.now(); // Aqui você pode definir a data da frequência.
+    final String dataFrequenciaFormatada =
+        DateFormat('dd/MM/yyyy').format(dataFrequencia);
+
+    pdf.addPage(
+      pw.Page(
+        pageFormat: PdfPageFormat.a4,
+        build: (pw.Context context) {
+          return pw.Column(
+            children: [
+              pw.Text(
+                'Lista de Frequência',
+                style:
+                    pw.TextStyle(fontSize: 24, fontWeight: pw.FontWeight.bold),
+              ),
+              pw.SizedBox(height: 20),
+              pw.Text('Data da Frequência: $dataFrequenciaFormatada.'),
+              pw.SizedBox(height: 20),
+              pw.Table.fromTextArray(
+                headers: ['Nome', 'Assinatura'],
+                data: alunos.map((aluno) {
+                  return [
+                    aluno['nome'],
+                  ];
+                }).toList(),
+                columnWidths: {
+                  0: const pw.FixedColumnWidth(
+                      200), // Ajuste a largura da coluna do nome conforme necessário
+                  1: const pw.FixedColumnWidth(
+                      150), // Ajuste a largura da coluna da assinatura conforme necessário
+                },
+              ),
+            ],
+          );
+        },
+      ),
+    );
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PreviewScreen(
+          doc: pdf,
+          pdfFileName: 'Relatório de Presença - $dataFrequencia.pdf',
+          titulo: "Visualizar Lista de Presença",
+        ),
+      ),
+    );
   }
 
   @override
@@ -218,6 +275,48 @@ class _FrequenciaScreenState extends State<FrequenciaScreen> {
                               },
                             ),
                     ),
+                  ),
+                  if (selectedTurmaId != null) ...[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          height: 50,
+                          width: 150,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              gerarPDF();
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.blue,
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(11),
+                              ),
+                            ),
+                            child: Center(
+                              child: Text(
+                                'Gerar PDF',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 19,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ] else ...[
+                    const SizedBox(height: 20),
+                    Text(
+                      "Selecione uma turma para gerar o PDF.",
+                      style:
+                          GoogleFonts.poppins(fontSize: 16, color: Colors.grey),
+                    ),
+                  ],
+                  const SizedBox(
+                    height: 20,
                   ),
                 ],
               ),

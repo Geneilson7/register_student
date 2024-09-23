@@ -3,12 +3,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:register_student/services/db_helper.dart';
-import 'package:intl/intl.dart'; // Para formatar a data
+import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
-import 'package:path_provider/path_provider.dart';
-import 'dart:io';
-
+import 'package:register_student/util/error_code.dart';
 import 'package:register_student/util/view_pdf.dart';
 
 class ListagemFrequenciaScreen extends StatefulWidget {
@@ -21,14 +19,31 @@ class ListagemFrequenciaScreen extends StatefulWidget {
 
 class _ListagemFrequenciaScreenState extends State<ListagemFrequenciaScreen> {
   DateTime? dataSelecionada;
+  List<Map<String, dynamic>> alunos = [];
+  List<Map<String, dynamic>> turmas = [];
   List<Map<String, dynamic>> frequencias = [];
   bool isLoading = false;
+  int? selectedTurmaId;
 
   @override
   void initState() {
     super.initState();
     dataSelecionada = DateTime.now();
+    buscarTurmas();
     buscarFrequencia();
+  }
+
+  // Método para buscar turmas
+  Future<void> buscarTurmas() async {
+    final db = DBHelper();
+    try {
+      final result = await db.getTurmas();
+      setState(() {
+        turmas = result;
+      });
+    } catch (e) {
+      print('Erro ao buscar turmas: $e');
+    }
   }
 
   Future<void> buscarFrequencia() async {
@@ -38,19 +53,53 @@ class _ListagemFrequenciaScreenState extends State<ListagemFrequenciaScreen> {
 
     final db = DBHelper();
     String data = DateFormat('yyyy-MM-dd').format(dataSelecionada!);
-    final result = await db.getFrequenciaPorData(data);
+    try {
+      final result = await db.getFrequenciaPorData(data);
+      setState(() {
+        frequencias = result;
+      });
+    } catch (e) {
+      // Tratamento de erro
+      print('Erro ao buscar frequência: $e');
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
 
-    setState(() {
-      frequencias = result;
-      isLoading = false;
-    });
+  Future<void> carregarAlunosPorTurma(int turmaId) async {
+    final db = DBHelper();
+    try {
+      // Consultar dados do backend
+      final result = await db.getAlunosComFrequenciaPorTurma(
+        turmaId,
+        DateFormat('yyyy-MM-dd').format(dataSelecionada!),
+      );
+
+      // Verifica se encontrou alunos
+      if (result.isEmpty) {
+        print(
+            'Nenhum aluno encontrado para a turma $turmaId na data $dataSelecionada');
+      }
+
+      // Atualiza a lista de alunos com ou sem resultados
+      setState(() {
+        alunos = result;
+        buscarFrequencia();
+      });
+
+      print('Turma ID: $turmaId, Data: $dataSelecionada, Resultados: $result');
+    } catch (e) {
+      print('Erro ao carregar alunos: $e');
+    }
   }
 
   Future<void> _selecionarData(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
       locale: const Locale('pt', 'BR'),
-      initialDate: dataSelecionada ?? DateTime.now(),
+      initialDate: dataSelecionada,
       firstDate: DateTime(2020),
       lastDate: DateTime(2101),
     );
@@ -58,7 +107,11 @@ class _ListagemFrequenciaScreenState extends State<ListagemFrequenciaScreen> {
       setState(() {
         dataSelecionada = picked;
       });
-      buscarFrequencia();
+
+      // Recarregar os alunos conforme a data e turma selecionada
+      if (selectedTurmaId != null) {
+        carregarAlunosPorTurma(selectedTurmaId!);
+      }
     }
   }
 
@@ -75,6 +128,7 @@ class _ListagemFrequenciaScreenState extends State<ListagemFrequenciaScreen> {
 
     pdf.addPage(
       pw.Page(
+        pageFormat: PdfPageFormat.a4,
         build: (pw.Context context) {
           return pw.Column(
             children: [
@@ -86,33 +140,22 @@ class _ListagemFrequenciaScreenState extends State<ListagemFrequenciaScreen> {
               ),
               pw.SizedBox(height: 20),
               pw.Table(
-                border: pw.TableBorder.all(
-                  color: PdfColors.black,
-                  width: 1,
-                ),
+                border: pw.TableBorder.all(color: PdfColors.black, width: 1),
                 children: [
                   pw.TableRow(
                     children: [
                       pw.Padding(
                         padding: const pw.EdgeInsets.symmetric(
-                          horizontal: 35,
-                          vertical: 8,
-                        ),
-                        child: pw.Text(
-                          'Nome do Aluno',
-                          style: pw.TextStyle(
-                            fontWeight: pw.FontWeight.bold,
-                          ),
-                          textAlign: pw.TextAlign.center,
-                        ),
+                            horizontal: 35, vertical: 8),
+                        child: pw.Text('Nome do Aluno',
+                            style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                            textAlign: pw.TextAlign.center),
                       ),
                       pw.Padding(
                         padding: const pw.EdgeInsets.all(8.0),
-                        child: pw.Text(
-                          'Status',
-                          style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
-                          textAlign: pw.TextAlign.center,
-                        ),
+                        child: pw.Text('Status',
+                            style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                            textAlign: pw.TextAlign.center),
                       ),
                     ],
                   ),
@@ -122,18 +165,16 @@ class _ListagemFrequenciaScreenState extends State<ListagemFrequenciaScreen> {
                     return pw.TableRow(
                       children: [
                         pw.Padding(
-                          padding: const pw.EdgeInsets.all(8.0),
-                          child: pw.Text(nome),
-                        ),
+                            padding: const pw.EdgeInsets.all(8.0),
+                            child: pw.Text(nome)),
                         pw.Padding(
                           padding: const pw.EdgeInsets.all(8.0),
                           child: pw.Text(
                             presente == 1 ? 'Presente' : 'Faltou',
                             style: pw.TextStyle(
-                              color: presente == 1
-                                  ? PdfColors.green
-                                  : PdfColors.red,
-                            ),
+                                color: presente == 1
+                                    ? PdfColors.green
+                                    : PdfColors.red),
                           ),
                         ),
                       ],
@@ -174,10 +215,9 @@ class _ListagemFrequenciaScreenState extends State<ListagemFrequenciaScreen> {
                       Text(
                         "Listagem de Frequência",
                         style: GoogleFonts.poppins(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w700,
-                          color: const Color(0xFF000000),
-                        ),
+                            fontSize: 20,
+                            fontWeight: FontWeight.w700,
+                            color: const Color(0xFF000000)),
                       ),
                     ],
                   ),
@@ -191,9 +231,7 @@ class _ListagemFrequenciaScreenState extends State<ListagemFrequenciaScreen> {
                       Text(
                         'Frequência do dia: ${DateFormat('dd/MM/yyyy').format(dataSelecionada!)}',
                         style: GoogleFonts.poppins(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
+                            fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                       IconButton(
                         icon: const Icon(Icons.calendar_today),
@@ -202,140 +240,204 @@ class _ListagemFrequenciaScreenState extends State<ListagemFrequenciaScreen> {
                     ],
                   ),
                 ),
+                SizedBox(
+                  width: 250,
+                  child: DropdownButtonFormField<int>(
+                    hint: const Text("Selecione uma turma"),
+                    value: selectedTurmaId,
+                    items: turmas.map((turma) {
+                      return DropdownMenuItem<int>(
+                        value: turma[
+                            'id'], // 'id' é o campo de identificação da turma
+                        child: Text(turma['descricao']),
+                      );
+                    }).toList(),
+                    onChanged: (turmaId) {
+                      setState(() {
+                        selectedTurmaId = turmaId;
+                      });
+                      if (selectedTurmaId != null && dataSelecionada != null) {
+                        // Ao selecionar a turma, buscar alunos conforme a turma e data selecionada
+                        carregarAlunosPorTurma(selectedTurmaId!);
+                      }
+                    },
+                    decoration: InputDecoration(
+                      label: const Text("Turma"),
+                      fillColor: const Color(0xFFF1F4FF).withOpacity(0.9),
+                      filled: true,
+                      labelStyle: GoogleFonts.poppins(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 16,
+                          color: const Color(0xFF626262)),
+                      isDense: true,
+                      border: OutlineInputBorder(
+                        borderSide: const BorderSide(
+                            color: Color(0xFF262c40), width: 2.0),
+                        borderRadius: BorderRadius.circular(11),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(
+                            color: Color(0xFF262c40), width: 2.0),
+                        borderRadius: BorderRadius.circular(11),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(
+                            color: Color(0xFF262c40), width: 2.0),
+                        borderRadius: BorderRadius.circular(11),
+                      ),
+                    ),
+                  ),
+                ),
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 15),
-                    child: ListView.builder(
-                      itemCount: frequencias.length,
-                      itemBuilder: (context, index) {
-                        final freq = frequencias[index];
-                        final alunoId = freq['id'] ?? '';
-                        final nome = freq['nome'] ?? 'Desconhecido';
-                        final presente = freq['presente'] ?? 0;
+                    child: alunos.isEmpty
+                        ? const ErrorPage(
+                            label:
+                                "Selecione uma turma ou verifique se há aluno cadastrado na turma.",
+                          )
+                        : ListView.builder(
+                            itemCount: frequencias.length,
+                            itemBuilder: (context, index) {
+                              final freq = frequencias[index];
+                              final alunoId = freq['id'] ?? '';
+                              final nome = freq['nome'] ?? 'Desconhecido';
+                              final presente = freq['presente'] ?? 0;
 
-                        return Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(25),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.5),
-                                spreadRadius: 0,
-                                blurRadius: 5,
-                                offset: const Offset(0, 3),
-                              ),
-                            ],
-                          ),
-                          child: Card(
-                            color: const Color(0xFFFFFFFF),
-                            elevation: 0,
-                            child: ListTile(
-                              contentPadding:
-                                  const EdgeInsets.symmetric(horizontal: 20),
-                              leading: Text(
-                                alunoId.toString(),
-                                style: GoogleFonts.poppins(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: const Color(0xff000000),
+                              return Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(25),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey.withOpacity(0.5),
+                                      spreadRadius: 0,
+                                      blurRadius: 5,
+                                      offset: const Offset(0, 3),
+                                    ),
+                                  ],
                                 ),
-                              ),
-                              title: Text(
-                                nome,
-                                style: GoogleFonts.poppins(
-                                    fontSize: 15, fontWeight: FontWeight.bold),
-                              ),
-                              trailing: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(
-                                    presente == 1
-                                        ? Icons.check_circle
-                                        : Icons.cancel,
-                                    color: presente == 1
-                                        ? Colors.green
-                                        : Colors.red,
-                                    size: 30,
+                                child: Card(
+                                  color: const Color(0xFFFFFFFF),
+                                  elevation: 0,
+                                  child: ListTile(
+                                    contentPadding: const EdgeInsets.symmetric(
+                                        horizontal: 20),
+                                    leading: Text(
+                                      alunoId.toString(),
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: const Color(0xff000000),
+                                      ),
+                                    ),
+                                    title: Text(
+                                      nome,
+                                      style: GoogleFonts.poppins(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    trailing: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(
+                                          presente == 1
+                                              ? Icons.check_circle
+                                              : Icons.cancel,
+                                          color: presente == 1
+                                              ? Colors.green
+                                              : Colors.red,
+                                          size: 30,
+                                        ),
+                                        const SizedBox(width: 10),
+                                        IconButton(
+                                            icon: const Icon(Icons.delete,
+                                                color: Colors.red, size: 30),
+                                            onPressed: () {
+                                              showDialog(
+                                                context: context,
+                                                builder:
+                                                    (BuildContext context) {
+                                                  return AlertDialog(
+                                                    title: Text(
+                                                      'Confirmação',
+                                                      style:
+                                                          GoogleFonts.poppins(
+                                                        fontSize: 18,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color: const Color(
+                                                            0xFF000000),
+                                                      ),
+                                                    ),
+                                                    content: const Text(
+                                                        'Deseja realmente cancelar?'),
+                                                    actions: [
+                                                      ElevatedButton(
+                                                        onPressed: () {
+                                                          _deletarFrequencia(
+                                                              alunoId);
+                                                          Navigator.of(context)
+                                                              .pop();
+                                                        },
+                                                        style: ElevatedButton
+                                                            .styleFrom(
+                                                          shape:
+                                                              RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        13),
+                                                          ),
+                                                          elevation: 3,
+                                                          backgroundColor:
+                                                              const Color(
+                                                                  0xFFda2828),
+                                                        ),
+                                                        child: Text(
+                                                          'Sim',
+                                                          style: GoogleFonts.poppins(
+                                                              color: const Color(
+                                                                  0xFFFFFFFF)),
+                                                        ),
+                                                      ),
+                                                      ElevatedButton(
+                                                        onPressed: () {
+                                                          Navigator.of(context)
+                                                              .pop();
+                                                        },
+                                                        style: ElevatedButton
+                                                            .styleFrom(
+                                                          shape:
+                                                              RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        13),
+                                                          ),
+                                                          elevation: 3,
+                                                          backgroundColor:
+                                                              const Color(
+                                                                  0xFF008000),
+                                                        ),
+                                                        child: Text(
+                                                          'Não',
+                                                          style: GoogleFonts.poppins(
+                                                              color: const Color(
+                                                                  0xFFFFFFFF)),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  );
+                                                },
+                                              );
+                                            }),
+                                      ],
+                                    ),
                                   ),
-                                  const SizedBox(width: 10),
-                                  IconButton(
-                                      icon: const Icon(Icons.delete,
-                                          color: Colors.red, size: 30),
-                                      onPressed: () {
-                                        showDialog(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return AlertDialog(
-                                              title: Text(
-                                                'Confirmação',
-                                                style: GoogleFonts.poppins(
-                                                  fontSize: 18,
-                                                  fontWeight: FontWeight.w500,
-                                                  color:
-                                                      const Color(0xFF000000),
-                                                ),
-                                              ),
-                                              content: const Text(
-                                                  'Deseja realmente cancelar?'),
-                                              actions: [
-                                                ElevatedButton(
-                                                  onPressed: () {
-                                                    _showConfirmDialog(alunoId);
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                  style:
-                                                      ElevatedButton.styleFrom(
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              13),
-                                                    ),
-                                                    elevation: 3,
-                                                    backgroundColor:
-                                                        const Color(0xFFda2828),
-                                                  ),
-                                                  child: Text(
-                                                    'Sim',
-                                                    style: GoogleFonts.poppins(
-                                                        color: const Color(
-                                                            0xFFFFFFFF)),
-                                                  ),
-                                                ),
-                                                ElevatedButton(
-                                                  onPressed: () {
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                  style:
-                                                      ElevatedButton.styleFrom(
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              13),
-                                                    ),
-                                                    elevation: 3,
-                                                    backgroundColor:
-                                                        const Color(0xFF008000),
-                                                  ),
-                                                  child: Text(
-                                                    'Não',
-                                                    style: GoogleFonts.poppins(
-                                                        color: const Color(
-                                                            0xFFFFFFFF)),
-                                                  ),
-                                                ),
-                                              ],
-                                            );
-                                          },
-                                        );
-                                      }),
-                                ],
-                              ),
-                            ),
+                                ),
+                              );
+                            },
                           ),
-                        );
-                      },
-                    ),
                   ),
                 ),
               ],
@@ -346,62 +448,6 @@ class _ListagemFrequenciaScreenState extends State<ListagemFrequenciaScreen> {
         onPressed: _gerarPdf,
         child: const Icon(Icons.picture_as_pdf),
       ),
-    );
-  }
-
-  Future<void> _showConfirmDialog(int alunoId) async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(
-            'Confirmação',
-            style: GoogleFonts.poppins(
-              fontSize: 18,
-              fontWeight: FontWeight.w500,
-              color: const Color(0xFF000000),
-            ),
-          ),
-          content: const Text(
-              'Você tem certeza que deseja excluir esta frequência?'),
-          actions: [
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                _deletarFrequencia(alunoId);
-              },
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(13),
-                ),
-                elevation: 3,
-                backgroundColor: const Color(0xFFda2828),
-              ),
-              child: Text(
-                'Excluir',
-                style: GoogleFonts.poppins(color: const Color(0xFFFFFFFF)),
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(13),
-                ),
-                elevation: 3,
-                backgroundColor: const Color(0xFF008000),
-              ),
-              child: Text(
-                'Cancelar',
-                style: GoogleFonts.poppins(color: const Color(0xFFFFFFFF)),
-              ),
-            ),
-          ],
-        );
-      },
     );
   }
 }
