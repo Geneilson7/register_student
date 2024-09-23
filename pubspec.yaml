@@ -63,6 +63,7 @@ flutter:
     - assets/image/evento.png
     - assets/image/404.png
     - assets/image/turma.png
+    - assets/image/home.png
 
   # fonts:
   #   - family: Roboto

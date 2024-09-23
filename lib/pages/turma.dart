@@ -42,7 +42,7 @@ class _TurmaScreenState extends State<TurmaScreen> {
 
   void _deleteItem(int id) async {
     try {
-      await dbHelper.deleteFaixa(id);
+      await dbHelper.deleteTurma(id);
       _refreshItems();
     } catch (e) {
       print('Erro ao deletar faixa: $e');

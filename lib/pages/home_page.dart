@@ -107,31 +107,31 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildHomeScreen() {
-    return Column(
+    return Stack(
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+        Positioned.fill(
+          child: Image.asset(
+            // 'assets/image/background.jpg',
+            'assets/image/screen.png',
+            // fit: BoxFit.cover,
+          ),
+        ),
+        Column(
           children: [
             const SizedBox(height: 50),
-            Text(
-              'Home',
-              style: GoogleFonts.poppins(
-                fontSize: 20,
-                fontWeight: FontWeight.w700,
-                color: const Color(0xFF404046),
+            Center(
+              child: Text(
+                'Home',
+                style: GoogleFonts.poppins(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700,
+                  // color: const Color(0xFFFFFFFF),
+                  color: const Color(0xFF404046),
+                ),
               ),
             ),
           ],
         ),
-        const Spacer(),
-        Center(
-          child: Image.asset(
-            'assets/image/screen.png',
-            height: 400,
-            width: 400,
-          ),
-        ),
-        const Spacer(),
       ],
     );
   }
@@ -162,6 +162,87 @@ class _HomePageState extends State<HomePage> {
                         Expanded(
                           child: ListView(
                             children: [
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 2),
+                                child: ListTile(
+                                  leading: Image.asset(
+                                    'assets/image/home.png',
+                                    height: 26,
+                                    color: Colors.white54,
+                                  ),
+                                  title: Text(
+                                    "Home",
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 15,
+                                      color: Colors.white54,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  onTap: () {
+                                    Navigator.of(context).pushAndRemoveUntil(
+                                      MaterialPageRoute(
+                                        builder: (context) => const HomePage(),
+                                      ),
+                                      (route) => false,
+                                    );
+                                  },
+                                ),
+                              ),
+                              ExpansionTile(
+                                leading: Image.asset(
+                                  'assets/image/cadastro.png',
+                                  height: 26,
+                                  color: Colors.white54,
+                                ),
+                                iconColor: Colors.white54,
+                                collapsedIconColor: Colors.white54,
+                                title: Text(
+                                  "Cadastros",
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 15,
+                                    color: Colors.white54,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                children: <Widget>[
+                                  buildSubListTile(
+                                    title: "Cadastrar Aluno",
+                                    index: 7,
+                                    onTap: () {
+                                      _onItemTapped(7);
+                                    },
+                                  ),
+                                  buildSubListTile(
+                                    title: "Cadastrar Professor",
+                                    index: 8,
+                                    onTap: () {
+                                      _onItemTapped(8);
+                                    },
+                                  ),
+                                  buildSubListTile(
+                                    title: "Cadastrar Faixa",
+                                    index: 9,
+                                    onTap: () {
+                                      _onItemTapped(9);
+                                    },
+                                  ),
+                                  buildSubListTile(
+                                    title: "Cadastrar Evento",
+                                    index: 10,
+                                    onTap: () {
+                                      _onItemTapped(10);
+                                    },
+                                  ),
+                                  buildSubListTile(
+                                    title: "Cadastrar Turma",
+                                    index: 11,
+                                    onTap: () {
+                                      _onItemTapped(11);
+                                    },
+                                  ),
+                                ],
+                              ),
                               buildListTile(
                                 imagePath: 'assets/image/aluno.png',
                                 index: 0,
@@ -217,60 +298,6 @@ class _HomePageState extends State<HomePage> {
                                 onTap: () {
                                   _onItemTapped(6);
                                 },
-                              ),
-                              ExpansionTile(
-                                leading: Image.asset(
-                                  'assets/image/cadastro.png',
-                                  height: 26,
-                                  color: Colors.white54,
-                                ),
-                                iconColor: Colors.white54,
-                                collapsedIconColor: Colors.white54,
-                                title: Text(
-                                  "Cadastros",
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 15,
-                                    color: Colors.white54,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                children: <Widget>[
-                                  buildSubListTile(
-                                    title: "Cadastrar Aluno",
-                                    index: 7,
-                                    onTap: () {
-                                      _onItemTapped(7);
-                                    },
-                                  ),
-                                  buildSubListTile(
-                                    title: "Cadastrar Professor",
-                                    index: 8,
-                                    onTap: () {
-                                      _onItemTapped(8);
-                                    },
-                                  ),
-                                  buildSubListTile(
-                                    title: "Cadastrar Faixa",
-                                    index: 9,
-                                    onTap: () {
-                                      _onItemTapped(9);
-                                    },
-                                  ),
-                                  buildSubListTile(
-                                    title: "Cadastrar Evento",
-                                    index: 10,
-                                    onTap: () {
-                                      _onItemTapped(10);
-                                    },
-                                  ),
-                                  buildSubListTile(
-                                    title: "Cadastrar Turma",
-                                    index: 11,
-                                    onTap: () {
-                                      _onItemTapped(11);
-                                    },
-                                  ),
-                                ],
                               ),
                               buildListTile(
                                 imagePath: 'assets/image/sobre.png',

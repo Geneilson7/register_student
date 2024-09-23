@@ -20,7 +20,6 @@ class _FrequenciaScreenState extends State<FrequenciaScreen> {
   List<Map<String, dynamic>> alunos = [];
   List<Map<String, dynamic>> turmas = [];
   Map<int, bool> frequencia = {};
-  bool isLoading = true;
   bool marcarTodos = false;
   int? selectedTurmaId;
 
@@ -35,7 +34,6 @@ class _FrequenciaScreenState extends State<FrequenciaScreen> {
     final result = await db.fetchTurmas();
     setState(() {
       turmas = result;
-      isLoading = false;
     });
   }
 
@@ -123,204 +121,201 @@ class _FrequenciaScreenState extends State<FrequenciaScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15),
-              child: Column(
-                children: [
-                  const SizedBox(height: 20),
-                  Text(
-                    "Lista de Frequência",
-                    style: GoogleFonts.poppins(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w700,
-                      color: const Color(0xFF000000),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 15),
+        child: Column(
+          children: [
+            const SizedBox(height: 20),
+            Text(
+              "Lista de Frequência",
+              style: GoogleFonts.poppins(
+                fontSize: 20,
+                fontWeight: FontWeight.w700,
+                color: const Color(0xFF000000),
+              ),
+            ),
+            const SizedBox(height: 10),
 
-                  SizedBox(
-                    width: 250,
-                    child: DropdownButtonFormField<int>(
-                      hint: const Text("Selecione uma turma"),
-                      value: selectedTurmaId,
-                      items: turmas.map((turma) {
-                        return DropdownMenuItem<int>(
-                          value: turma['id'],
-                          child: Text(turma['descricao']),
-                        );
-                      }).toList(),
-                      onChanged: (turmaId) {
-                        setState(() {
-                          selectedTurmaId = turmaId!;
-                          carregarAlunosPorTurma(turmaId);
-                        });
-                      },
-                      decoration: InputDecoration(
-                        label: const Text("Turma"),
-                        fillColor: const Color(0xFFF1F4FF).withOpacity(0.9),
-                        filled: true,
-                        labelStyle: GoogleFonts.poppins(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 16,
-                          color: const Color(0xFF626262),
-                        ),
-                        isDense: true,
-                        border: OutlineInputBorder(
-                          borderSide: const BorderSide(
-                              color: Color(0xFF262c40), width: 2.0),
-                          borderRadius: BorderRadius.circular(11),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(
-                              color: Color(0xFF262c40), width: 2.0),
-                          borderRadius: BorderRadius.circular(11),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(
-                              color: Color(0xFF262c40), width: 2.0),
-                          borderRadius: BorderRadius.circular(11),
-                        ),
-                        focusedErrorBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(
-                              color: Color(0xFF262c40), width: 2.0),
-                          borderRadius: BorderRadius.circular(11),
-                        ),
-                        errorBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(
-                              color: Color(0xFF262c40), width: 2.0),
-                          borderRadius: BorderRadius.circular(11),
-                        ),
-                      ),
-                    ),
+            SizedBox(
+              width: 250,
+              child: DropdownButtonFormField<int>(
+                hint: const Text("Selecione uma turma"),
+                value: selectedTurmaId,
+                items: turmas.map((turma) {
+                  return DropdownMenuItem<int>(
+                    value: turma['id'],
+                    child: Text(turma['descricao']),
+                  );
+                }).toList(),
+                onChanged: (turmaId) {
+                  setState(() {
+                    selectedTurmaId = turmaId!;
+                    carregarAlunosPorTurma(turmaId);
+                  });
+                },
+                decoration: InputDecoration(
+                  label: const Text("Turma"),
+                  fillColor: const Color(0xFFF1F4FF).withOpacity(0.9),
+                  filled: true,
+                  labelStyle: GoogleFonts.poppins(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 16,
+                    color: const Color(0xFF626262),
                   ),
-
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Marcar Todos",
-                        style: GoogleFonts.poppins(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: const Color(0xff000000),
-                        ),
-                      ),
-                      Switch(
-                        value: marcarTodos,
-                        activeColor: const Color(0xFF1d1e2b),
-                        onChanged: _toggleMarcarTodos,
-                      ),
-                    ],
+                  isDense: true,
+                  border: OutlineInputBorder(
+                    borderSide:
+                        const BorderSide(color: Color(0xFF262c40), width: 2.0),
+                    borderRadius: BorderRadius.circular(11),
                   ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide:
+                        const BorderSide(color: Color(0xFF262c40), width: 2.0),
+                    borderRadius: BorderRadius.circular(11),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide:
+                        const BorderSide(color: Color(0xFF262c40), width: 2.0),
+                    borderRadius: BorderRadius.circular(11),
+                  ),
+                  focusedErrorBorder: OutlineInputBorder(
+                    borderSide:
+                        const BorderSide(color: Color(0xFF262c40), width: 2.0),
+                    borderRadius: BorderRadius.circular(11),
+                  ),
+                  errorBorder: OutlineInputBorder(
+                    borderSide:
+                        const BorderSide(color: Color(0xFF262c40), width: 2.0),
+                    borderRadius: BorderRadius.circular(11),
+                  ),
+                ),
+              ),
+            ),
 
-                  // Lista de alunos filtrados pela turma
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 20),
-                      child: alunos.isEmpty
-                          ? const ErrorPage(
-                              label:
-                                  "Selecione uma turma ou verifique se há aluno cadastrado na turma.",
-                            )
-                          : ListView.builder(
-                              itemCount: alunos.length,
-                              itemBuilder: (context, index) {
-                                final aluno = alunos[index];
-                                return Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(25),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.grey.withOpacity(0.5),
-                                        spreadRadius: 0,
-                                        blurRadius: 5,
-                                        offset: const Offset(0, 3),
-                                      ),
-                                    ],
-                                  ),
-                                  child: Card(
-                                    color: const Color(0xFFFFFFFF),
-                                    elevation: 0,
-                                    child: ListTile(
-                                      leading: Text(
-                                        aluno['id'].toString(),
-                                        style: GoogleFonts.poppins(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                          color: const Color(0xff000000),
-                                        ),
-                                      ),
-                                      title: Text(
-                                        aluno['nome'],
-                                        style: GoogleFonts.poppins(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                          color: const Color(0xff000000),
-                                        ),
-                                      ),
-                                      trailing: Switch(
-                                        value: frequencia[aluno['id']] ?? false,
-                                        activeColor: const Color(0xFF1d1e2b),
-                                        onChanged: (valor) {
-                                          setState(() {
-                                            frequencia[aluno['id']] = valor;
-                                          });
-                                        },
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              },
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Marcar Todos",
+                  style: GoogleFonts.poppins(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: const Color(0xff000000),
+                  ),
+                ),
+                Switch(
+                  value: marcarTodos,
+                  activeColor: const Color(0xFF1d1e2b),
+                  onChanged: _toggleMarcarTodos,
+                ),
+              ],
+            ),
+
+            // Lista de alunos filtrados pela turma
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 20),
+                child: alunos.isEmpty
+                    ? const ErrorPage(
+                        label:
+                            "Selecione uma turma ou verifique se há aluno cadastrado na turma.",
+                      )
+                    : ListView.builder(
+                        itemCount: alunos.length,
+                        itemBuilder: (context, index) {
+                          final aluno = alunos[index];
+                          return Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(25),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.5),
+                                  spreadRadius: 0,
+                                  blurRadius: 5,
+                                  offset: const Offset(0, 3),
+                                ),
+                              ],
                             ),
-                    ),
-                  ),
-                  if (selectedTurmaId != null) ...[
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        SizedBox(
-                          height: 50,
-                          width: 150,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              gerarPDF();
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.blue,
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(11),
-                              ),
-                            ),
-                            child: Center(
-                              child: Text(
-                                'Gerar PDF',
-                                style: GoogleFonts.poppins(
-                                  fontSize: 19,
-                                  fontWeight: FontWeight.w700,
+                            child: Card(
+                              color: const Color(0xFFFFFFFF),
+                              elevation: 0,
+                              child: ListTile(
+                                leading: Text(
+                                  aluno['id'].toString(),
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: const Color(0xff000000),
+                                  ),
+                                ),
+                                title: Text(
+                                  aluno['nome'],
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: const Color(0xff000000),
+                                  ),
+                                ),
+                                trailing: Switch(
+                                  value: frequencia[aluno['id']] ?? false,
+                                  activeColor: const Color(0xFF1d1e2b),
+                                  onChanged: (valor) {
+                                    setState(() {
+                                      frequencia[aluno['id']] = valor;
+                                    });
+                                  },
                                 ),
                               ),
                             ),
+                          );
+                        },
+                      ),
+              ),
+            ),
+            if (selectedTurmaId != null) ...[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    height: 50,
+                    width: 150,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        gerarPDF();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(11),
+                        ),
+                      ),
+                      child: Center(
+                        child: Text(
+                          'Gerar PDF',
+                          style: GoogleFonts.poppins(
+                            fontSize: 19,
+                            fontWeight: FontWeight.w700,
                           ),
                         ),
-                      ],
+                      ),
                     ),
-                  ] else ...[
-                    const SizedBox(height: 20),
-                    Text(
-                      "Selecione uma turma para gerar o PDF.",
-                      style:
-                          GoogleFonts.poppins(fontSize: 16, color: Colors.grey),
-                    ),
-                  ],
-                  const SizedBox(
-                    height: 20,
                   ),
                 ],
               ),
+            ] else ...[
+              const SizedBox(height: 20),
+              Text(
+                "Selecione uma turma para gerar o PDF.",
+                style: GoogleFonts.poppins(fontSize: 16, color: Colors.grey),
+              ),
+            ],
+            const SizedBox(
+              height: 20,
             ),
+          ],
+        ),
+      ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: const Color(0xFF1d1e2b),
         foregroundColor: const Color(0xFFFFFFFF),
