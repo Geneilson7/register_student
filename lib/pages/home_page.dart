@@ -36,22 +36,6 @@ class _HomePageState extends State<HomePage> {
     super.initState();
   }
 
-  // void _onItemTapped(int index) {
-  //   setState(() {
-  //     _selectedIndex = index;
-  //   });
-  // }
-
-  // void _onItemTapped(int index) {
-  //   setState(() {
-  //     _selectedIndex = index;
-  //   });
-
-  //   _navigatorKey.currentState?.pushReplacement(
-  //     MaterialPageRoute(builder: (context) => _getSelectedScreen(index)),
-  //   );
-  // }
-
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -138,6 +122,37 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    // Definição de tamanhos de tela
+
+    bool isMediumScreen =
+        screenWidth >= 600 && screenWidth < 1366; // Telas médias (ex: tablets)
+    bool isLargeScreen = screenWidth >= 1024; // Telas grandes (ex: desktops)
+
+    // Definindo valores com base no tamanho da tela
+    double topPosition = screenHeight * 0.4; // Altura proporcional
+    double leftPosition = 0.0; // Inicializando
+    double rightPosition = 0.0; // Inicializando
+    double avatarRadius;
+    double iconSize;
+
+    // Condições para ajustar o posicionamento e tamanhos
+    if (isLargeScreen && isExpanded) {
+      leftPosition = screenWidth * 0.39; // Para telas grandes, quando expandido
+      rightPosition = screenWidth * 0.79; // Ajuste a posição à direita
+      avatarRadius = 16; // Tamanho maior em telas grandes
+      iconSize = 16; // Tamanho do ícone maior
+    } else if (isMediumScreen) {
+      leftPosition = screenWidth * 0.05; // Para telas médias
+      avatarRadius = 15; // Tamanho intermediário
+      iconSize = 15; // Tamanho do ícone intermediário
+    } else {
+      leftPosition = screenWidth * 0.04; // Para telas pequenas
+      avatarRadius = 15; // Tamanho padrão em telas pequenas
+      iconSize = 15; // Tamanho do ícone padrão
+    }
     return Scaffold(
       backgroundColor: const Color(0xFF1d1e2b),
       body: SafeArea(
@@ -145,12 +160,15 @@ class _HomePageState extends State<HomePage> {
           children: [
             Row(
               children: [
-                if (isExpanded)
-                  Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 20),
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
+                  width:
+                      isExpanded ? MediaQuery.of(context).size.width * 0.2 : 82,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 20),
+                      if (isExpanded)
                         ListTile(
                           title: Image.asset(
                             'assets/image/logo.png',
@@ -158,161 +176,208 @@ class _HomePageState extends State<HomePage> {
                             width: 100,
                           ),
                         ),
+                      if (isExpanded)
                         Divider(thickness: 1, color: Colors.grey[300]),
-                        Expanded(
-                          child: ListView(
-                            children: [
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 2),
-                                child: ListTile(
-                                  leading: Image.asset(
-                                    'assets/image/home.png',
-                                    height: 26,
-                                    color: Colors.white54,
-                                  ),
-                                  title: Text(
-                                    "Home",
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 15,
-                                      color: Colors.white54,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  onTap: () {
-                                    Navigator.of(context).pushAndRemoveUntil(
-                                      MaterialPageRoute(
-                                        builder: (context) => const HomePage(),
-                                      ),
-                                      (route) => false,
-                                    );
-                                  },
-                                ),
-                              ),
-                              ExpansionTile(
+                      Expanded(
+                        child: ListView(
+                          children: [
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 2),
+                              child: ListTile(
                                 leading: Image.asset(
-                                  'assets/image/cadastro.png',
+                                  'assets/image/home.png',
                                   height: 26,
                                   color: Colors.white54,
                                 ),
-                                iconColor: Colors.white54,
-                                collapsedIconColor: Colors.white54,
-                                title: Text(
-                                  "Cadastros",
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 15,
-                                    color: Colors.white54,
-                                    fontWeight: FontWeight.w600,
-                                  ),
+                                title: isExpanded
+                                    ? Text(
+                                        "Home",
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 15,
+                                          color: Colors.white54,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      )
+                                    : null,
+                                onTap: () {
+                                  Navigator.of(context).pushAndRemoveUntil(
+                                    MaterialPageRoute(
+                                      builder: (context) => const HomePage(),
+                                    ),
+                                    (route) => false,
+                                  );
+                                },
+                              ),
+                            ),
+                            ExpansionTile(
+                              leading: Image.asset(
+                                'assets/image/cadastro.png',
+                                height: 26,
+                                color: Colors.white54,
+                              ),
+                              iconColor: Colors.white54,
+                              collapsedIconColor: Colors.white54,
+                              title: isExpanded
+                                  ? Text(
+                                      "Cadastros",
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 15,
+                                        color: Colors.white54,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    )
+                                  : const SizedBox.shrink(),
+                              onExpansionChanged: (expanded) {
+                                // Quando o ExpansionTile é expandido ou colapsado
+                                if (!expanded) {
+                                  // Se está colapsando, não faz nada
+                                  return;
+                                } else {
+                                  // Se está expandindo, altera o estado
+                                  setState(() {
+                                    isExpanded = true;
+                                  });
+                                }
+                              },
+                              children: <Widget>[
+                                buildSubListTile(
+                                  title: "Cadastrar Aluno",
+                                  index: 7,
+                                  onTap: () {
+                                    if (!isExpanded) {
+                                      setState(() {
+                                        isExpanded =
+                                            true; // Abre o menu se estiver fechado
+                                      });
+                                    }
+                                    _onItemTapped(7);
+                                  },
                                 ),
-                                children: <Widget>[
-                                  buildSubListTile(
-                                    title: "Cadastrar Aluno",
-                                    index: 7,
-                                    onTap: () {
-                                      _onItemTapped(7);
-                                    },
-                                  ),
-                                  buildSubListTile(
-                                    title: "Cadastrar Professor",
-                                    index: 8,
-                                    onTap: () {
-                                      _onItemTapped(8);
-                                    },
-                                  ),
-                                  buildSubListTile(
-                                    title: "Cadastrar Faixa",
-                                    index: 9,
-                                    onTap: () {
-                                      _onItemTapped(9);
-                                    },
-                                  ),
-                                  buildSubListTile(
-                                    title: "Cadastrar Evento",
-                                    index: 10,
-                                    onTap: () {
-                                      _onItemTapped(10);
-                                    },
-                                  ),
-                                  buildSubListTile(
-                                    title: "Cadastrar Turma",
-                                    index: 11,
-                                    onTap: () {
-                                      _onItemTapped(11);
-                                    },
-                                  ),
-                                ],
-                              ),
-                              buildListTile(
-                                imagePath: 'assets/image/aluno.png',
-                                index: 0,
-                                title: "Alunos",
-                                onTap: () {
-                                  _onItemTapped(0);
-                                },
-                              ),
-                              buildListTile(
-                                imagePath: 'assets/image/professojiujtsu.png',
-                                index: 1,
-                                title: "Professores",
-                                onTap: () {
-                                  _onItemTapped(1);
-                                },
-                              ),
-                              buildListTile(
-                                imagePath: 'assets/image/faixa.png',
-                                index: 2,
-                                title: "Faixas",
-                                onTap: () {
-                                  _onItemTapped(2);
-                                },
-                              ),
-                              buildListTile(
-                                imagePath: 'assets/image/evento.png',
-                                index: 3,
-                                title: "Eventos",
-                                onTap: () {
-                                  _onItemTapped(3);
-                                },
-                              ),
-                              buildListTile(
-                                imagePath: 'assets/image/addfrequencia.png',
-                                index: 4,
-                                title: "Frequências",
-                                onTap: () {
-                                  _onItemTapped(4);
-                                },
-                              ),
-                              buildListTile(
-                                imagePath: 'assets/image/listafrequencia.png',
-                                index: 5,
-                                title: "Lista de Frequências",
-                                onTap: () {
-                                  _onItemTapped(5);
-                                },
-                              ),
-                              buildListTile(
-                                imagePath: 'assets/image/turma.png',
-                                index: 6,
-                                title: "Turmas",
-                                onTap: () {
-                                  _onItemTapped(6);
-                                },
-                              ),
-                              buildListTile(
-                                imagePath: 'assets/image/sobre.png',
-                                title: "Sobre",
-                                onTap: () {
-                                  _onItemTapped(12);
-                                },
-                                index: 12,
-                              ),
-                            ],
-                          ),
+                                buildSubListTile(
+                                  title: "Cadastrar Professor",
+                                  index: 8,
+                                  onTap: () {
+                                    if (!isExpanded) {
+                                      setState(() {
+                                        isExpanded =
+                                            true; // Abre o menu se estiver fechado
+                                      });
+                                    }
+                                    _onItemTapped(8);
+                                  },
+                                ),
+                                buildSubListTile(
+                                  title: "Cadastrar Faixa",
+                                  index: 9,
+                                  onTap: () {
+                                    if (!isExpanded) {
+                                      setState(() {
+                                        isExpanded =
+                                            true; // Abre o menu se estiver fechado
+                                      });
+                                    }
+                                    _onItemTapped(9);
+                                  },
+                                ),
+                                buildSubListTile(
+                                  title: "Cadastrar Evento",
+                                  index: 10,
+                                  onTap: () {
+                                    if (!isExpanded) {
+                                      setState(() {
+                                        isExpanded =
+                                            true; // Abre o menu se estiver fechado
+                                      });
+                                    }
+                                    _onItemTapped(10);
+                                  },
+                                ),
+                                buildSubListTile(
+                                  title: "Cadastrar Turma",
+                                  index: 11,
+                                  onTap: () {
+                                    if (!isExpanded) {
+                                      setState(() {
+                                        isExpanded =
+                                            true; // Abre o menu se estiver fechado
+                                      });
+                                    }
+                                    _onItemTapped(11);
+                                  },
+                                ),
+                              ],
+                            ),
+                            buildListTile(
+                              imagePath: 'assets/image/aluno.png',
+                              index: 0,
+                              title: "Alunos",
+                              onTap: () {
+                                _onItemTapped(0);
+                              },
+                            ),
+                            buildListTile(
+                              imagePath: 'assets/image/professojiujtsu.png',
+                              index: 1,
+                              title: "Professores",
+                              onTap: () {
+                                _onItemTapped(1);
+                              },
+                            ),
+                            buildListTile(
+                              imagePath: 'assets/image/faixa.png',
+                              index: 2,
+                              title: "Faixas",
+                              onTap: () {
+                                _onItemTapped(2);
+                              },
+                            ),
+                            buildListTile(
+                              imagePath: 'assets/image/evento.png',
+                              index: 3,
+                              title: "Eventos",
+                              onTap: () {
+                                _onItemTapped(3);
+                              },
+                            ),
+                            buildListTile(
+                              imagePath: 'assets/image/addfrequencia.png',
+                              index: 4,
+                              title: "Frequências",
+                              onTap: () {
+                                _onItemTapped(4);
+                              },
+                            ),
+                            buildListTile(
+                              imagePath: 'assets/image/listafrequencia.png',
+                              index: 5,
+                              title: "Lista de Frequências",
+                              onTap: () {
+                                _onItemTapped(5);
+                              },
+                            ),
+                            buildListTile(
+                              imagePath: 'assets/image/turma.png',
+                              index: 6,
+                              title: "Turmas",
+                              onTap: () {
+                                _onItemTapped(6);
+                              },
+                            ),
+                            buildListTile(
+                              imagePath: 'assets/image/sobre.png',
+                              title: "Sobre",
+                              onTap: () {
+                                _onItemTapped(12);
+                              },
+                              index: 12,
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
+                ),
                 Expanded(
                   flex: 4,
                   child: Container(
@@ -330,13 +395,13 @@ class _HomePageState extends State<HomePage> {
                 ),
               ],
             ),
-            Positioned(
-              top: MediaQuery.of(context).size.height * 0.4,
-              left: isExpanded
-                  ? MediaQuery.of(context).size.width * 0.19
-                  : MediaQuery.of(context).size.width * 0.0,
+            AnimatedPositioned(
+              duration: const Duration(milliseconds: 300),
+              top: topPosition,
+              left: isExpanded ? null : leftPosition,
+              right: isExpanded ? rightPosition : null,
               child: CircleAvatar(
-                radius: 16,
+                radius: avatarRadius,
                 backgroundColor: Colors.blueAccent,
                 child: IconButton(
                   icon: Icon(isExpanded
@@ -348,7 +413,7 @@ class _HomePageState extends State<HomePage> {
                     });
                   },
                   color: const Color(0xFFFFFFFF),
-                  iconSize: 16,
+                  iconSize: iconSize,
                 ),
               ),
             ),
@@ -390,14 +455,16 @@ class _HomePageState extends State<HomePage> {
               height: 22,
               color: isSelected ? Colors.blue : Colors.white54,
             ),
-            title: Text(
-              title,
-              style: GoogleFonts.poppins(
-                fontSize: 15,
-                color: isSelected ? Colors.blue : Colors.white54,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
+            title: isExpanded
+                ? Text(
+                    title,
+                    style: GoogleFonts.poppins(
+                      fontSize: 15,
+                      color: isSelected ? Colors.blue : Colors.white54,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  )
+                : null,
           ),
         ),
       ),
@@ -428,19 +495,17 @@ class _HomePageState extends State<HomePage> {
               : [],
         ),
         child: ListTile(
-          contentPadding: const EdgeInsets.only(
-            left: 40,
-          ),
-          title: Text(
-            title,
-            style: GoogleFonts.poppins(
-              fontSize: 14,
-              color:
-                  _selectedIndex == index ? Colors.blueAccent : Colors.white54,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
           onTap: onTap,
+          title: isExpanded
+              ? Text(
+                  title,
+                  style: GoogleFonts.poppins(
+                    fontSize: 14,
+                    color: isSelected ? Colors.blue : Colors.white54,
+                    fontWeight: FontWeight.w600,
+                  ),
+                )
+              : null,
         ),
       ),
     );
@@ -522,33 +587,3 @@ class CustomButton extends StatelessWidget {
     );
   }
 }
-
-
-// class LinePainter extends CustomPainter {
-//   @override
-//   void paint(Canvas canvas, Size size) {
-//     final paint = Paint()
-//       ..color = Colors.grey.shade400
-//       ..strokeWidth = 1.0
-//       ..style = PaintingStyle.stroke;
-
-//     // Linha vertical principal
-//     canvas.drawLine(
-//       Offset(20, 0), // Início da linha
-//       Offset(20, size.height), // Fim da linha
-//       paint,
-//     );
-
-//     // Linha horizontal conectando à lista
-//     canvas.drawLine(
-//       Offset(20, size.height / 4), // Início da linha horizontal
-//       Offset(40, size.height / 4), // Fim da linha horizontal
-//       paint,
-//     );
-//   }
-
-//   @override
-//   bool shouldRepaint(CustomPainter oldDelegate) {
-//     return false;
-//   }
-// }
